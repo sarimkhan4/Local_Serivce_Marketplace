@@ -1,0 +1,110 @@
+<div class="earnings-page">
+
+  <header>
+    <h1 class="text-3xl font-bold text-900 m-0">Earnings</h1>
+    <p class="text-500 text-sm mt-2 mb-0 line-height-3">Track your income, payment history, and outstanding amounts.</p>
+  </header>
+
+  <div class="earnings-stats">
+    <div class="earnings-stat-card">
+      <div class="icon-box" style="background:linear-gradient(135deg,#ccfbf1,#a7f3d0);">
+        <i class="pi pi-dollar text-xl" style="color:#0d9488;"></i>
+      </div>
+      <div>
+        <div class="text-400 text-xs uppercase font-semibold mb-1">Total Earned</div>
+        <div class="text-3xl font-bold text-900">${{ bookingService.totalEarned() }}</div>
+      </div>
+    </div>
+    <div class="earnings-stat-card">
+      <div class="icon-box" style="background:linear-gradient(135deg,#fef9c3,#fde68a);">
+        <i class="pi pi-clock text-xl" style="color:#d97706;"></i>
+      </div>
+      <div>
+        <div class="text-400 text-xs uppercase font-semibold mb-1">Pending</div>
+        <div class="text-3xl font-bold text-900">${{ bookingService.pendingEarnings() }}</div>
+      </div>
+    </div>
+    <div class="earnings-stat-card">
+      <div class="icon-box" style="background:linear-gradient(135deg,#e0e7ff,#c7d2fe);">
+        <i class="pi pi-chart-line text-xl" style="color:#6366f1;"></i>
+      </div>
+      <div>
+        <div class="text-400 text-xs uppercase font-semibold mb-1">Avg. Per Job</div>
+        <div class="text-3xl font-bold text-900">${{ avgPerJob() }}</div>
+      </div>
+    </div>
+    <div class="earnings-stat-card">
+      <div class="icon-box" style="background:linear-gradient(135deg,#ffe4e6,#fecdd3);">
+        <i class="pi pi-list text-xl" style="color:#dc2626;"></i>
+      </div>
+      <div>
+        <div class="text-400 text-xs uppercase font-semibold mb-1">Total Jobs</div>
+        <div class="text-3xl font-bold text-900">{{ bookingService.providerPayments().length }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="earnings-filter-bar">
+    <p-selectbutton
+      [ngModel]="statusFilter()"
+      (ngModelChange)="statusFilter.set($event)"
+      [options]="statusOptions"
+      optionLabel="label"
+      optionValue="value"
+      [allowEmpty]="false">
+    </p-selectbutton>
+    <span class="text-500 text-sm"><strong class="text-900">{{ filteredPayments().length }}</strong> transactions</span>
+  </div>
+
+  <div class="earnings-table-shell">
+    <p-table [value]="filteredPayments()" [paginator]="true" [rows]="8" [rowHover]="true" styleClass="p-datatable-sm">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:3rem">#</th>
+          <th>Service</th>
+          <th>Customer</th>
+          <th>Method</th>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-payment let-rowIndex="rowIndex">
+        <tr>
+          <td class="text-400 text-sm">{{ rowIndex + 1 }}</td>
+          <td>
+            <span class="text-900 font-medium text-sm">{{ payment.serviceName }}</span>
+          </td>
+          <td class="text-700 text-sm">{{ displayCustomer(payment) }}</td>
+          <td>
+            <div class="flex align-items-center gap-2">
+              <i [class]="getMethodIcon(payment.method)" style="color:#64748b;"></i>
+              <span class="text-700 text-sm">{{ payment.method }}</span>
+            </div>
+          </td>
+          <td class="text-500 text-sm">{{ formatDate(payment.date) }}</td>
+          <td>
+            <span class="font-bold text-lg" style="color:#0d9488;">${{ payment.amount }}</span>
+          </td>
+          <td>
+            <p-tag [value]="payment.status" [severity]="getStatusSeverity(payment.status)"></p-tag>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7">
+            <div class="flex flex-column align-items-center py-6 gap-2">
+              <i class="pi pi-dollar text-4xl text-200"></i>
+              <span class="text-500">No transactions found.</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+</div>

@@ -1,0 +1,250 @@
+.hero-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 5%;
+  min-height: calc(100vh - 80px);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-content {
+  width: 100%;
+  max-width: 800px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-title {
+  font-size: 4rem;
+  line-height: 1.1;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 2.5rem;
+  letter-spacing: -0.03em;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.search-box-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+p-iconfield {
+  width: 100%;
+  display: block;
+}
+
+.custom-search-input {
+  width: 100% !important;
+  font-family: inherit;
+  padding-left: 3rem !important;
+}
+
+.tag {
+  background: white;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+}
+
+.tag:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.trusted-section {
+  padding: 3rem 5%;
+  background: white;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.trusted-subtitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
+}
+
+.brand-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #94a3b8;
+  filter: grayscale(100%);
+  opacity: 0.7;
+  padding: 1rem;
+}
+
+.brand-item i {
+  font-size: 1.75rem;
+}
+
+.brand-item:hover {
+  filter: grayscale(0%);
+  opacity: 1;
+  color: var(--text-main);
+}
+
+.services-catalog-section {
+  padding: 6rem 5%;
+  background: var(--color-bg-base);
+}
+
+.section-header {
+  margin-bottom: 3rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.section-header h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+}
+
+.section-header p {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.service-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.service-price {
+  font-size: 0.875rem;
+  color: #15803d;
+  font-weight: 700;
+}
+
+.testimonials-section {
+  padding: 6rem 5%;
+  background: white;
+  border-top: 1px solid #e2e8f0;
+}
+
+.carousel-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.testimonial-card {
+  padding: 2.5rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  margin: 0.5rem;
+  height: 100%;
+}
+
+.test-rating {
+  color: #fbbf24;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.test-comment {
+  font-size: 1.125rem;
+  color: var(--text-main);
+  font-style: italic;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.test-customer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.test-avatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.test-info h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.test-service {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.cta-section {
+  padding: 4rem 5%;
+  background: white;
+  margin-bottom: 4rem;
+}
+
+.cta-card {
+  background: linear-gradient(135deg, #1e1b4b, var(--color-primary));
+  padding: 2rem;
+  text-align: center;
+  color: white;
+  min-height: 550px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.cta-card h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.cta-card p {
+  font-size: 1.125rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}

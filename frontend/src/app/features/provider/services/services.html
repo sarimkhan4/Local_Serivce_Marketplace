@@ -1,0 +1,69 @@
+<p-toast></p-toast>
+<div class="services-page">
+    <div class="services-header">
+        <div>
+            <h1 class="m-0 text-3xl font-semibold text-900">Service Configuration</h1>
+            <p class="text-600 mt-2 mb-0 line-height-3">Select from the master catalog which services you offer and set your specific asking rates.</p>
+        </div>
+        <div class="services-header-actions">
+            <p-tag [value]="activeCount + ' Selected'" icon="pi pi-check" [style]="{'background':'#e0f2fe','color':'#0284c7', 'font-weight':'bold'}"></p-tag>
+            <p-button label="Save Configuration" icon="pi pi-save" (click)="saveConfiguration()"
+              [style]="{ 'background': '#0d9488', 'border-color': '#0d9488' }"></p-button>
+        </div>
+    </div>
+
+    <div class="services-table-wrap">
+        <p-table [value]="allViewModels" sortField="categoryName" sortMode="single" rowGroupMode="subheader" groupRowsBy="categoryName" [scrollable]="true" scrollHeight="75vh" styleClass="p-datatable-striped">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 5rem" class="text-center">Offer</th>
+                    <th style="min-width: 250px">Service Description</th>
+                    <th style="width: 14rem" class="text-center">Guideline Price</th>
+                    <th style="width: 16rem" class="text-center">Your Specific Price</th>
+                    <th style="width: 10rem" class="text-center">Status</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="groupheader" let-svc>
+                <tr pRowGroupHeader>
+                    <td colspan="5" class="surface-ground surface-border border-bottom-1">
+                        <div class="flex align-items-center gap-2 py-2">
+                            <i class="pi pi-folder-open text-700 text-xl"></i>
+                            <span class="font-bold text-800 text-lg">{{svc.categoryName}}</span>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-svc>
+                <tr>
+                    <td class="text-center">
+                        <p-checkbox [(ngModel)]="svc.isOffered" [binary]="true"></p-checkbox>
+                    </td>
+                    <td>
+                        <div class="flex flex-column gap-1">
+                            <span class="font-bold text-900" [ngClass]="{'text-teal-600': svc.isOffered}">{{svc.title}}</span>
+                            <span class="text-500 text-sm" style="max-width: 450px; line-height: 1.4;">{{svc.description}}</span>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <span class="text-600 font-medium">${{svc.basePrice}}</span>
+                    </td>
+                    <td class="text-center">
+                        <div class="flex justify-content-center">
+                           <p-inputNumber [(ngModel)]="svc.providerPrice" mode="currency" currency="USD" locale="en-US" [disabled]="!svc.isOffered" styleClass="w-9rem" [min]="0"></p-inputNumber>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <div class="flex justify-content-center">
+                            <p-toggleswitch [(ngModel)]="svc.isActive" [disabled]="!svc.isOffered"></p-toggleswitch>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="5" class="text-center p-6">No services found in the catalog.</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

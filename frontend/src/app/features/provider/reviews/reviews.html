@@ -1,0 +1,55 @@
+<div class="reviews-page">
+  <header>
+    <h1 class="m-0 text-3xl font-semibold text-900">Customer Reviews</h1>
+    <p class="text-600 mt-2 mb-0 line-height-3">See what customers are saying about your provided services.</p>
+  </header>
+
+  <div class="reviews-summary-card">
+    <div class="reviews-summary-score">
+      <span class="text-6xl font-bold text-teal-600">{{ averageRating() | number:'1.1-1' }}</span>
+      <p-rating [ngModel]="averageRating()" [readonly]="true"></p-rating>
+      <span class="text-500 font-medium text-sm">Out of 5 Stars ({{ myReviews().length }} total)</span>
+    </div>
+
+    <div class="reviews-breakdown">
+      <div *ngFor="let row of ratingBreakdown()" class="reviews-breakdown-row">
+        <span class="text-600 font-medium text-sm text-right">{{ row.stars }} <i class="pi pi-star text-xs"></i></span>
+        <p-progressbar [value]="row.percentage" [showValue]="false" styleClass="h-1rem w-full"></p-progressbar>
+        <span class="text-500 text-sm text-right">{{ row.count }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="myReviews().length > 0; else noReviews" class="reviews-list">
+    <div *ngFor="let r of myReviews()" class="review-list-card">
+      <p-avatar
+        [label]="r.customerInitials"
+        shape="square"
+        size="large"
+        [style]="{ 'background': r.customerColor, 'color': '#fff', 'font-weight': '700', 'flex-shrink': '0' }">
+      </p-avatar>
+
+      <div class="flex flex-column flex-1 min-w-0">
+        <div class="flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+          <div>
+            <span class="text-900 font-bold block">{{ r.customerName }}</span>
+            <span class="text-500 text-sm">Service: <strong class="text-700">{{ r.serviceName }}</strong></span>
+          </div>
+          <span class="text-400 text-xs font-medium">{{ r.createdAt | date:'mediumDate' }}</span>
+        </div>
+
+        <p-rating [ngModel]="r.rating" [readonly]="true" class="mb-2"></p-rating>
+
+        <p class="text-700 m-0 line-height-3">"{{ r.comment }}"</p>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noReviews>
+    <div class="reviews-empty">
+      <i class="pi pi-star text-6xl text-300"></i>
+      <h2 class="text-900 m-0 font-semibold text-xl">No Reviews Yet</h2>
+      <p class="text-500 m-0 line-height-3">You haven't received any reviews from your customers yet. Keep providing great service!</p>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,21 @@
+.saved-page {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 960px;
+}
+
+.saved-empty {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  padding: 2.5rem 1.5rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.saved-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}

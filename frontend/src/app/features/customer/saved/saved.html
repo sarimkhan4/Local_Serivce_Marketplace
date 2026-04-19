@@ -1,0 +1,53 @@
+<div class="saved-page">
+  <header>
+    <h1 class="m-0 text-3xl font-semibold text-900">Saved Professionals</h1>
+    <p class="text-600 mt-2 mb-0 line-height-3">Manage and access your explicitly saved Service Providers here.</p>
+  </header>
+
+  <div *ngIf="savedProviders().length === 0" class="saved-empty surface-card">
+    <i class="pi pi-heart text-5xl text-400"></i>
+    <h2 class="text-900 font-semibold text-xl m-0">No Saved Professionals</h2>
+    <p class="text-600 m-0 mb-2 line-height-3">You haven't explicitly saved any providers yet. Explore services to find professionals.</p>
+    <p-button label="Explore Services" icon="pi pi-search" severity="secondary" [outlined]="true" routerLink="/app/customer/services"></p-button>
+  </div>
+
+  <div class="saved-grid" *ngIf="savedProviders().length > 0">
+    <div *ngFor="let pro of savedProviders()">
+      <p-card styleClass="h-full border-1 surface-border">
+        <ng-template pTemplate="header">
+          <div class="p-4 border-bottom-1 surface-border flex align-items-center justify-content-between bg-teal-50">
+            <div class="flex gap-3 align-items-center">
+              <div class="bg-white p-2 border-1 surface-border flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <i class="pi pi-briefcase text-xl text-teal-600"></i>
+              </div>
+              <div>
+                <h3 class="m-0 text-900 font-bold text-lg p-0">{{ pro.companyName }}</h3>
+                <span class="text-sm text-600">{{ pro.firstName }} {{ pro.lastName }}</span>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="flex flex-column gap-3">
+          <div class="flex align-items-center justify-content-between flex-wrap gap-2">
+            <span class="text-700 font-medium bg-teal-100 text-teal-700 px-2 py-1 text-xs">{{ pro.category }}</span>
+            <div class="flex align-items-center gap-1">
+              <i class="pi pi-star-fill text-yellow-500"></i>
+              <span class="font-bold text-900">{{ pro.rating }}</span>
+              <span class="text-500 text-sm">({{ pro.reviews }})</span>
+            </div>
+          </div>
+
+          <p class="text-600 line-height-3 m-0 text-sm">{{ pro.bio }}</p>
+        </div>
+
+        <ng-template pTemplate="footer">
+          <div class="flex gap-2">
+            <p-button label="Book Now" icon="pi pi-calendar" styleClass="flex-1" [style]="{ 'background': '#0d9488', 'border-color': '#0d9488' }"></p-button>
+            <p-button icon="pi pi-heart-fill" severity="danger" [outlined]="true" (click)="unsave(pro)" [attr.aria-label]="'Unsave ' + pro.companyName"></p-button>
+          </div>
+        </ng-template>
+      </p-card>
+    </div>
+  </div>
+</div>

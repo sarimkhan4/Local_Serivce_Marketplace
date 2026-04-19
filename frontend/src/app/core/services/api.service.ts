@@ -1,0 +1,96 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ApiService {
+  private http = inject(HttpClient);
+  private baseUrl = environment.apiUrl;
+
+  // -- USERS --
+  getProviders() {
+    return this.http.get(`${this.baseUrl}/users/providers`);
+  }
+
+  // -- CATEGORIES --
+  getCategories() {
+    return this.http.get(`${this.baseUrl}/categories`);
+  }
+
+  // -- SERVICES --
+  getServices() {
+    return this.http.get(`${this.baseUrl}/services`);
+  }
+  
+  getProviderServices(providerId: string) {
+    return this.http.get(`${this.baseUrl}/services/provider/${providerId}`);
+  }
+
+  // -- BOOKINGS --
+  createBooking(data: any) {
+    return this.http.post(`${this.baseUrl}/bookings`, data);
+  }
+
+  addServiceToBooking(bookingId: string, serviceId: string | number) {
+    return this.http.post(`${this.baseUrl}/bookings/${bookingId}/services`, { serviceId });
+  }
+
+  getBookingDetails(bookingId: string) {
+    return this.http.get(`${this.baseUrl}/bookings/${bookingId}`);
+  }
+
+  getProviderBookings(providerId: string) {
+    return this.http.get(`${this.baseUrl}/bookings/provider/${providerId}`);
+  }
+
+  getCustomerBookings(customerId: string) {
+    return this.http.get(`${this.baseUrl}/bookings/customer/${customerId}`);
+  }
+
+  updateBookingStatus(bookingId: string, status: string) {
+    return this.http.patch(`${this.baseUrl}/bookings/${bookingId}/status`, { status });
+  }
+
+  // -- ADDRESSES --
+  getUserAddresses(userId: string) {
+    return this.http.get(`${this.baseUrl}/addresses/user/${userId}`);
+  }
+
+  createAddress(userId: string, data: { street: string; city: string; state: string; zipCode: string }) {
+    return this.http.post(`${this.baseUrl}/addresses/user/${userId}`, data);
+  }
+
+  // -- SCHEDULES --
+  getProviderSchedule(providerId: string) {
+    return this.http.get(`${this.baseUrl}/schedules/provider/${providerId}`);
+  }
+
+  createSchedule(providerId: string, data: any) {
+    return this.http.post(`${this.baseUrl}/schedules/provider/${providerId}`, data);
+  }
+
+  // -- REVIEWS --
+  getBookingReview(bookingId: string) {
+    return this.http.get(`${this.baseUrl}/reviews/booking/${bookingId}`);
+  }
+
+  createReview(bookingId: string, rating: number, comment: string) {
+    return this.http.post(`${this.baseUrl}/reviews/booking/${bookingId}`, { rating, comment });
+  }
+
+  // -- PAYMENTS --
+  getBookingPayment(bookingId: string) {
+    return this.http.get(`${this.baseUrl}/payments/booking/${bookingId}`);
+  }
+  
+  createPayment(bookingId: string, data: any) {
+    return this.http.post(`${this.baseUrl}/payments/booking/${bookingId}`, data);
+  }
+
+  // -- NOTIFICATIONS --
+  getUserNotifications(userId: string) {
+    return this.http.get(`${this.baseUrl}/notifications/user/${userId}`);
+  }
+}

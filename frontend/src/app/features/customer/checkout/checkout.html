@@ -1,0 +1,158 @@
+<div class="checkout-page">
+
+  <div *ngIf="success()" class="checkout-success surface-card border-1 surface-border">
+    <div class="inline-flex align-items-center justify-content-center border-1 surface-border mb-2" style="width:100px;height:100px;background:#dcfce7;">
+      <i class="pi pi-check text-6xl text-green-500"></i>
+    </div>
+    <h1 class="text-900 font-bold text-4xl m-0">Payment Successful!</h1>
+    <p class="text-600 text-lg m-0 mb-3">Your booking has been confirmed and providers have been notified.</p>
+    <p-button label="View My Bookings" icon="pi pi-calendar" size="large" [style]="{'background':'#0d9488','border-color':'#0d9488'}" (click)="goToBookings()"></p-button>
+  </div>
+
+  <div *ngIf="!success()">
+    <div class="checkout-intro mb-4">
+      <h1 class="text-3xl font-bold text-900 m-0">Checkout</h1>
+      <p class="text-500 m-0">Review your cart and complete payment.</p>
+    </div>
+
+    <div class="grid">
+      <div class="col-12 lg:col-7 xl:col-8 flex flex-column gap-4">
+
+        <div class="surface-card p-4 border-1 surface-border">
+          <h2 class="text-xl font-semibold m-0 mb-3 border-bottom-1 surface-border pb-3">
+            Services in Cart <span class="text-500 text-sm font-normal">({{ cartItems().length }} items)</span>
+          </h2>
+
+          <div *ngIf="cartItems().length === 0" class="checkout-empty">
+            <i class="pi pi-shopping-cart text-5xl text-300"></i>
+            <span class="text-500 font-medium">Your cart is empty.</span>
+            <p-button label="Browse Services" routerLink="/app/customer/services" severity="secondary"></p-button>
+          </div>
+
+          <div *ngFor="let item of cartItems(); let i = index" class="flex flex-column sm:flex-row align-items-start sm:align-items-center gap-4 py-3 border-bottom-1 surface-border">
+            <div class="flex-1 min-w-0">
+              <span class="text-900 font-bold block mb-1">{{ item.service.title }}</span>
+              <span class="text-600 text-sm block mb-1"><i class="pi pi-building text-xs mr-1"></i> {{ item.provider.companyName }}</span>
+              <span class="text-500 text-sm block"><i class="pi pi-calendar text-xs mr-1"></i> {{ item.date | date:'medium' }}</span>
+            </div>
+            <div class="flex align-items-center gap-4 w-full sm:w-auto mt-2 sm:mt-0 justify-content-between sm:justify-content-end">
+              <span class="text-xl font-bold" style="color:#0d9488;">${{ item.provider.price }}</span>
+              <p-button icon="pi pi-trash" severity="danger" [text]="true" (click)="removeItem(i)"></p-button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="cartItems().length > 0" class="surface-card p-4 border-1 surface-border">
+          <h2 class="text-xl font-semibold m-0 mb-3 border-bottom-1 surface-border pb-3">Service Address</h2>
+
+          <label class="text-700 font-medium block mb-2">Select where the service will take place</label>
+          <p-select
+            [options]="addresses()"
+            [(ngModel)]="selectedAddressId"
+            optionLabel="street"
+            optionValue="id"
+            placeholder="Select an Address"
+            styleClass="w-full mb-2">
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-items-center gap-2" *ngIf="selectedOption">
+                <i class="pi pi-map-marker" style="color:#0d9488;"></i>
+                <span class="font-medium">{{ selectedOption.label }}:</span>
+                <span>{{ selectedOption.street }}, {{ selectedOption.city }}</span>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="item" let-addr>
+              <div class="flex align-items-center gap-2">
+                <p-tag *ngIf="addr.isDefault" value="Default" severity="success"></p-tag>
+                <span class="font-medium ml-2">{{ addr.label }}:</span>
+                <span>{{ addr.street }}, {{ addr.city }}</span>
+              </div>
+            </ng-template>
+          </p-select>
+
+          <div *ngIf="addresses().length === 0" class="flex align-items-center gap-2 mt-2">
+            <i class="pi pi-info-circle text-orange-500"></i>
+            <span class="text-500 text-sm">Please add an address in your account settings.</span>
+          </div>
+        </div>
+
+        <div *ngIf="cartItems().length > 0" class="surface-card p-4 border-1 surface-border">
+          <h2 class="text-xl font-semibold m-0 mb-3 border-bottom-1 surface-border pb-3">Payment Method</h2>
+
+          <label class="text-700 font-medium block mb-2">Select how you want to pay</label>
+          <p-select
+            [options]="paymentMethods"
+            [(ngModel)]="selectedPaymentMethod"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select a Payment Method"
+            styleClass="w-full mb-4">
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-items-center gap-2" *ngIf="selectedOption">
+                <i [class]="selectedOption.icon" style="color:#64748b;"></i>
+                <span>{{ selectedOption.label }}</span>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="item" let-method>
+              <div class="flex align-items-center gap-2">
+                <i [class]="method.icon" style="color:#64748b;"></i>
+                <span>{{ method.label }}</span>
+              </div>
+            </ng-template>
+          </p-select>
+
+          <div *ngIf="selectedPaymentMethod() === 'Credit Card'" class="p-4 surface-50 border-1 surface-border">
+            <div class="grid formgrid p-fluid">
+              <div class="field col-12">
+                <label for="cc">Card Number</label>
+                <input id="cc" type="text" pInputText placeholder="0000 0000 0000 0000">
+              </div>
+              <div class="field col-6">
+                <label for="exp">Expiry Date</label>
+                <input id="exp" type="text" pInputText placeholder="MM/YY">
+              </div>
+              <div class="field col-6">
+                <label for="cvv">CVV</label>
+                <input id="cvv" type="text" pInputText placeholder="123">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 lg:col-5 xl:col-4" *ngIf="cartItems().length > 0">
+        <div class="surface-card p-4 border-1 surface-border sticky top-0" style="top: 2rem;">
+          <h2 class="text-xl font-semibold m-0 mb-3 border-bottom-1 surface-border pb-3">Order Summary</h2>
+
+          <div class="flex justify-content-between mb-3 text-700">
+            <span>Subtotal</span>
+            <span class="font-medium">${{ subtotal() | number:'1.2-2' }}</span>
+          </div>
+          <div class="flex justify-content-between mb-3 text-700">
+            <span>Platform Fee / Tax (8%)</span>
+            <span class="font-medium">${{ tax() | number:'1.2-2' }}</span>
+          </div>
+
+          <p-divider></p-divider>
+
+          <div class="flex justify-content-between mb-4">
+            <span class="text-xl font-bold text-900">Total</span>
+            <span class="text-2xl font-bold" style="color:#0d9488;">${{ total() | number:'1.2-2' }}</span>
+          </div>
+
+          <p-button
+            [label]="processing() ? 'Processing...' : 'Pay & Confirm Booking'"
+            [icon]="processing() ? 'pi pi-spin pi-spinner' : 'pi pi-lock'"
+            [disabled]="cartItems().length === 0 || !selectedPaymentMethod() || !selectedAddressId() || processing()"
+            styleClass="w-full"
+            [style]="{'background':'#0d9488','border-color':'#0d9488'}"
+            (click)="processPayment()">
+          </p-button>
+
+          <p class="text-500 text-xs text-center mt-3 line-height-3 m-0">
+            <i class="pi pi-shield mr-1"></i> Payments are secure and encrypted. Providers do not get paid until the job is completed.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

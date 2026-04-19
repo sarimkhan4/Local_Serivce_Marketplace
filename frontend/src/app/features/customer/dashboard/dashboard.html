@@ -1,0 +1,114 @@
+<div class="app-dashboard-page">
+  <div class="app-dash-grid stats-row">
+    <div class="stat-col" *ngFor="let stat of stats">
+      <div class="card mb-0">
+        <div class="card-header">
+          <div>
+            <span class="label-muted">{{ stat.label }}</span>
+            <div class="stat-value">{{ stat.value }}</div>
+          </div>
+          <div class="icon-box bg-{{ stat.color }}-tint">
+            <i class="{{ stat.icon }} icon-{{ stat.color }}"></i>
+          </div>
+        </div>
+        <div class="stat-footer">
+          <span class="detail-accent">{{ stat.detailValue }}</span>
+          <span class="label-muted">{{ stat.detailText }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-dash-grid main-row">
+    <div class="main-col left-col">
+
+      <div class="card mb-card">
+        <div class="card-title">Your Recent Bookings</div>
+        <p-table [value]="appointments" [paginator]="true" [rows]="7" responsiveLayout="scroll"
+          styleClass="app-dashboard-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Provider</th>
+              <th pSortableColumn="service">Service <p-sortIcon field="service"></p-sortIcon></th>
+              <th pSortableColumn="amount">Price <p-sortIcon field="amount"></p-sortIcon></th>
+              <th>Status</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-apt>
+            <tr>
+              <td class="provider-cell">
+                <img [src]="apt.image" class="avatar-circle" width="36" alt="avatar" />
+                <span class="provider-name">{{ apt.provider }}</span>
+              </td>
+              <td>{{ apt.service }}</td>
+              <td class="price-cell">{{ apt.amount }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="{
+                    'status-completed': apt.status === 'Completed',
+                    'status-confirmed': apt.status === 'Confirmed',
+                    'status-pending':   apt.status === 'Pending'
+                  }">
+                  {{ apt.status }}
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <div class="card">
+        <div class="widget-header">
+          <span class="card-title">Most Used Categories</span>
+          <button pButton type="button" icon="pi pi-ellipsis-v"
+            class="p-button-rounded p-button-text p-button-plain menu-btn"></button>
+        </div>
+
+        <ul class="product-list">
+          <li class="product-item" *ngFor="let s of mostBookedCategories">
+            <div class="product-info">
+              <span class="product-name">{{ s.name }}</span>
+              <div class="product-sub">{{ s.bookings }} Bookings Total</div>
+            </div>
+            <div class="progress-group">
+              <div class="progress-track">
+                <div class="progress-fill bg-{{ s.color }}-fill" [style.width]="s.progress + '%'"></div>
+              </div>
+              <span class="progress-label text-{{ s.color }}-accent">{{ s.revenue }}</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="main-col right-col">
+      <div class="card mb-card">
+        <div class="card-title">Spending Trends</div>
+        <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="350px"></p-chart>
+      </div>
+
+      <div class="card">
+        <div class="widget-header">
+          <span class="card-title">Activity & Updates</span>
+          <button pButton type="button" icon="pi pi-ellipsis-v"
+            class="p-button-rounded p-button-text p-button-plain menu-btn"></button>
+        </div>
+
+        <span class="section-label">RECENT</span>
+        <ul class="notif-list">
+          <li class="notif-item" *ngFor="let notif of notifications">
+            <div class="notif-icon-wrap bg-{{ notif.color }}-tint">
+              <i class="pi {{ notif.icon }} notif-icon icon-{{ notif.color }}"></i>
+            </div>
+            <span class="notif-text">
+              {{ notif.text }}
+              <span class="notif-amount" *ngIf="notif.amount">{{ notif.amount }}</span>
+              <span *ngIf="notif.suffix"> {{ notif.suffix }}</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>

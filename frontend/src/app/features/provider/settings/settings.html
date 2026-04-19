@@ -1,0 +1,50 @@
+<div class="provider-settings-page">
+  <header>
+    <h1 class="m-0 text-3xl font-semibold text-900">Provider Settings</h1>
+    <p class="text-600 mt-1 mb-0">Manage your professional information and business boundaries.</p>
+  </header>
+
+  <section class="provider-settings-panel">
+    <div class="provider-settings-profile">
+      <p-avatar icon="pi pi-briefcase" size="xlarge" shape="square"
+        [style]="{'width':'72px', 'height': '72px', 'font-size': '1.75rem', 'background':'#1b2435', 'color':'#cbd5e1'}">
+      </p-avatar>
+      <div class="flex flex-column gap-2">
+        <p-button label="Upload Logo" icon="pi pi-upload" severity="secondary" [outlined]="true" size="small"></p-button>
+        <span class="text-500 text-sm">Max size 2MB (JPG/PNG).</span>
+      </div>
+    </div>
+
+    <div class="provider-settings-form">
+      <div class="provider-settings-field">
+        <label class="text-700 font-medium text-sm">First & Last Name</label>
+        <input pInputText type="text" value="Jane Smith" disabled />
+      </div>
+
+      <div class="provider-settings-field">
+        <label class="text-700 font-medium text-sm">Company Name</label>
+        <input pInputText type="text" value="Jane's Elite Cleaning" />
+      </div>
+
+      <div class="provider-settings-field">
+        <label class="text-700 font-medium text-sm">Email Address</label>
+        <input pInputText type="email" value="jane@elitecleaning.com" disabled />
+      </div>
+
+      <div class="provider-settings-field">
+        <label class="text-700 font-medium text-sm">Years of Experience</label>
+        <input pInputText type="number" value="5" />
+      </div>
+
+      <div class="provider-settings-field provider-settings-field-full">
+        <label class="text-700 font-medium text-sm">Bio / Description</label>
+        <textarea pTextarea rows="4" style="resize:none;">Providing top-tier home and commercial cleaning services since 2019.</textarea>
+      </div>
+    </div>
+
+    <div class="provider-settings-actions">
+      <p-button label="Deactivate Agency" icon="pi pi-trash" severity="danger" [text]="true"></p-button>
+      <p-button label="Update Records" icon="pi pi-save" [style]="{'background':'#0d9488','border-color':'#0d9488'}"></p-button>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,65 @@
+.earnings-page {
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.earnings-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 992px) {
+  .earnings-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .earnings-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.earnings-stat-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.875rem;
+  align-items: center;
+  padding: 1rem 1.125rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.icon-box {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.earnings-filter-bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+@media (max-width: 640px) {
+  .earnings-filter-bar {
+    grid-template-columns: 1fr;
+  }
+}
+
+.earnings-table-shell {
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  background: #fff;
+}

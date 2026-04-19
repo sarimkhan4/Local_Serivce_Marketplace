@@ -1,0 +1,48 @@
+<div class="auth-container auth-panel">
+  <div class="auth-card-frame">
+    <div class="auth-card-inner">
+      
+      <div class="auth-header">
+        <div class="logo-icon mb-3 mx-auto flex justify-content-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="var(--color-primary)" width="48" height="48">
+            <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13h-13L12 6.5z"/>
+          </svg>
+        </div>
+        <h2>Welcome Back</h2>
+        <p>Log in to access your dashboard</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" class="auth-form">
+        <div class="form-group mb-4">
+          <label for="email">Email</label>
+          <p-iconfield styleClass="w-full">
+            <p-inputicon styleClass="pi pi-envelope" />
+            <input type="email" pInputText id="email" [(ngModel)]="email" name="email" placeholder="you@example.com" class="w-full" required />
+          </p-iconfield>
+        </div>
+
+        <div class="form-group mb-4">
+          <label for="password">Password</label>
+          <p-password [(ngModel)]="password" [toggleMask]="true" name="password" styleClass="w-full" [inputStyle]="{'width':'100%'}" placeholder="••••••••"></p-password>
+        </div>
+
+        <div class="form-options mb-5 flex justify-content-between align-items-center">
+          <div class="flex align-items-center gap-2">
+            <p-checkbox [(ngModel)]="rememberMe" [binary]="true" inputId="remember" name="remember"></p-checkbox>
+            <label for="remember" class="text-sm font-medium text-gray-600 m-0 cursor-pointer">Remember me</label>
+          </div>
+          <a href="#" class="forgot-link text-sm font-medium">Forgot password?</a>
+        </div>
+
+        <p-button type="submit" label="Sign In" styleClass="w-full" size="large"></p-button>
+      </form>
+
+      <div class="auth-footer">
+        <p class="text-sm text-gray-600">
+          Don't have an account? <a routerLink="/signup" class="font-semibold text-primary">Join Now</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>

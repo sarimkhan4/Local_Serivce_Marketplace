@@ -1,0 +1,69 @@
+<div class="public-wrapper">
+  <!-- PrimeNG Menubar -->
+  <p-menubar styleClass="custom-menubar">
+    <ng-template #start>
+      <div class="nav-brand" routerLink="/">
+        <div class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13h-13L12 6.5z"/>
+          </svg>
+        </div>
+        <span class="logo-text">Local Service Management System</span>
+      </div>
+    </ng-template>
+
+    <ng-template #end>
+      <div class="nav-actions">
+        <p-button label="Sign In" [text]="true" [rounded]="true" severity="secondary" routerLink="/login"></p-button>
+        <p-button label="Join as Professional" [rounded]="true" routerLink="/signup"></p-button>
+      </div>
+    </ng-template>
+  </p-menubar>
+
+  <!-- Page Content -->
+  <main class="public-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Fully Working PrimeNG Styled Footer -->
+  <footer class="p-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="nav-brand mb-3">
+          <div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13h-13L12 6.5z"/></svg></div>
+          <span class="logo-text">Local Service Management System</span>
+        </div>
+        <p class="footer-desc">The smartest way to manage and book your local services with trusted professionals.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a routerLink="/">About Us</a>
+        <a routerLink="/">Careers</a>
+        <a routerLink="/">Press</a>
+        <a routerLink="/">Blog</a>
+      </div>
+      <div class="footer-col">
+        <h4>For Providers</h4>
+        <a routerLink="/signup">Join Pro Network</a>
+        <a routerLink="/">Pricing Provider</a>
+        <a routerLink="/">Provider Success</a>
+        <a routerLink="/">Pro App</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a routerLink="/">Help Center</a>
+        <a routerLink="/">Safety Guidelines</a>
+        <a routerLink="/">Terms of Service</a>
+        <a routerLink="/">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Local Service Management System. All rights reserved.</p>
+      <div class="social-links">
+        <p-button icon="pi pi-facebook" [text]="true" [rounded]="true" severity="secondary"></p-button>
+        <p-button icon="pi pi-twitter" [text]="true" [rounded]="true" severity="secondary"></p-button>
+        <p-button icon="pi pi-instagram" [text]="true" [rounded]="true" severity="secondary"></p-button>
+      </div>
+    </div>
+  </footer>
+</div>

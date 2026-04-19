@@ -1,0 +1,77 @@
+<p-toast></p-toast>
+
+<div class="availability-page">
+  <!-- Header -->
+  <div class="availability-header">
+    <div>
+      <h1 class="text-3xl font-bold text-900 m-0">Schedule Management</h1>
+      <p class="text-500 text-sm mt-1 mb-0">Select a date on the calendar to declare your available time slots.</p>
+    </div>
+    <p-chip [label]="configuredDatesCount + ' Configured Dates'" icon="pi pi-calendar-check"
+      [style]="{'background':'#0d9488','color':'#fff', 'font-weight':'bold'}"></p-chip>
+  </div>
+
+  <div class="availability-layout">
+    <!-- LEFT: Calendar using PrimeNG v21 p-datepicker -->
+    <div class="availability-calendar-shell">
+      <p-datepicker [(ngModel)]="selectedDate" [inline]="true" styleClass="w-full">
+        <ng-template #date let-date>
+            <div class="flex flex-column align-items-center justify-content-center relative" style="height: 100%; width: 100%">
+                <span [ngClass]="{'font-bold text-teal-600': hasSlotsForDate(date.year, date.month, date.day)}">{{ date.day }}</span>
+                <div *ngIf="hasSlotsForDate(date.year, date.month, date.day)"
+                      class="absolute border-circle" 
+                      style="width: 5px; height: 5px; bottom: -2px; background-color: #0d9488;"></div>
+            </div>
+        </ng-template>
+      </p-datepicker>
+      <div class="text-center mt-3 text-500 text-xs">
+          <i class="pi pi-circle-fill text-teal-600 mr-1" style="font-size: 0.6rem;"></i> Has configured time slots
+      </div>
+    </div>
+
+    <!-- RIGHT: Time slots for selected date -->
+    <div class="availability-slots-shell">
+      <div *ngIf="selectedDate; else noDate">
+        <div class="availability-slots-header">
+          <div>
+            <h3 class="text-900 font-bold text-xl m-0">{{ selectedDate | date:'fullDate' }}</h3>
+            <span class="text-500 text-sm">Select when you're available for this specific date</span>
+          </div>
+          <div class="availability-slots-actions">
+            <p-button label="Select All" size="small" severity="secondary" [outlined]="true" (click)="selectAll()"></p-button>
+            <p-button label="Clear All" size="small" severity="danger" [outlined]="true" (click)="clearAll()"></p-button>
+          </div>
+        </div>
+
+        <div class="slots-grid">
+          <div *ngFor="let slot of allTimeSlots"
+               class="slot-tile"
+               [ngClass]="{'slot-available': isSlotActive(slot), 'slot-unavailable': !isSlotActive(slot)}"
+               (click)="toggleSlot(slot)">
+            <i class="text-xs mb-2" [class]="isSlotActive(slot) ? 'pi pi-check-circle' : 'pi pi-circle'"></i>
+            <span class="font-semibold" style="font-size: 0.95rem;">{{slot}}</span>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="flex align-items-center gap-4 mt-5 pt-3 border-top-1 surface-border">
+          <div class="flex align-items-center gap-2">
+            <div class="legend-dot" style="background:#0d9488;"></div>
+            <span class="text-500 text-sm font-medium">Available to Book</span>
+          </div>
+          <div class="flex align-items-center gap-2">
+            <div class="legend-dot" style="background:#e2e8f0;"></div>
+            <span class="text-500 text-sm font-medium">Closed</span>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noDate>
+         <div class="availability-empty">
+            <i class="pi pi-calendar-plus text-6xl text-300 mb-4"></i>
+            <span class="text-600 text-lg font-medium">Click a date on the calendar to manage time slots.</span>
+         </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

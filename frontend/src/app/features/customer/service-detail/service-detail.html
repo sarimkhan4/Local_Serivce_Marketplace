@@ -1,0 +1,241 @@
+<div class="service-detail-page flex flex-column gap-4">
+
+  <!-- ════ SERVICE FOUND ════ -->
+  <ng-container *ngIf="service">
+
+    <!-- Back link -->
+    <div>
+      <p-button
+        label="Back to Services"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [text]="true"
+        (click)="goBack()">
+      </p-button>
+    </div>
+
+    <!-- ── Service Header Card ── -->
+    <div class="surface-card border-1 surface-border border-round-2xl p-5 shadow-1">
+      <div class="flex flex-column sm:flex-row sm:align-items-start gap-4">
+
+        <!-- Hero icon -->
+        <div class="flex align-items-center justify-content-center border-round-xl flex-shrink-0"
+             style="width:88px;height:88px;background:linear-gradient(135deg,#ccfbf1,#a7f3d0);">
+          <i class="pi pi-sparkles text-4xl" style="color:#0d9488;"></i>
+        </div>
+
+        <div class="flex flex-column gap-2 flex-1">
+          <p-tag [value]="service.categoryName" severity="success" [rounded]="true"></p-tag>
+          <h1 class="text-3xl font-bold text-900 m-0">{{service.title}}</h1>
+          <p class="text-500 text-base m-0 line-height-3">{{service.description}}</p>
+
+          <!-- Meta chips (p-chip v21 API) -->
+          <div class="flex flex-wrap gap-2 mt-2">
+            <p-chip [label]="'From $' + service.basePrice" icon="pi pi-dollar"></p-chip>
+            <p-chip [label]="service.providers.length + ' provider' + (service.providers.length > 1 ? 's' : '')" icon="pi pi-users"></p-chip>
+            <p-chip label="Verified Professionals" icon="pi pi-verified"></p-chip>
+            <p-chip label="Instant Booking" icon="pi pi-bolt"></p-chip>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Providers Section ── -->
+    <div>
+      <h2 class="text-xl font-semibold text-900 m-0 mb-1">Available Providers</h2>
+      <p class="text-500 text-sm m-0 mb-4">Compare providers, check ratings, and book the one that fits your needs.</p>
+
+      <!-- Provider Cards -->
+      <div class="providers-grid">
+        <div *ngFor="let provider of service.providers" class="provider-card surface-card border-1 surface-border border-round-xl p-4 flex flex-column gap-3">
+
+          <!-- Provider top row -->
+          <div class="flex align-items-center gap-3">
+            <!-- p-avatar (PrimeNG) -->
+            <p-avatar
+              [label]="getInitials(provider.name)"
+              shape="circle"
+              size="large"
+              [style]="{'background':'linear-gradient(135deg,#14b8a6,#0891b2)', 'color':'#fff', 'font-weight':'700'}">
+            </p-avatar>
+            <div class="flex flex-column gap-1 flex-1 min-w-0">
+              <span class="text-900 font-semibold text-base">{{provider.name}}</span>
+              <span class="text-400 text-sm">{{provider.companyName}}</span>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <span class="text-300 text-xs block">Price</span>
+              <span class="text-2xl font-bold" style="color:#0d9488;">${{provider.price}}</span>
+            </div>
+          </div>
+
+          <p-divider styleClass="my-0"></p-divider>
+
+          <!-- Bio -->
+          <p class="text-500 text-sm m-0 line-height-3">{{provider.bio}}</p>
+
+          <!-- Stats chips -->
+          <div class="flex flex-wrap gap-2">
+            <!-- Rating pill (official DataView pattern) -->
+            <div class="bg-surface-100 p-1">
+              <div class="bg-surface-0 flex align-items-center gap-2 justify-content-center py-1 px-2 border-1 surface-border">
+                <span class="text-900 font-medium text-sm">{{provider.rating}}</span>
+                <i class="pi pi-star-fill text-yellow-500" style="font-size:.75rem;"></i>
+              </div>
+            </div>
+            <p-chip [label]="provider.reviews + ' reviews'" icon="pi pi-comments"></p-chip>
+            <p-chip [label]="provider.yearsExperience + ' yrs exp'" icon="pi pi-briefcase"></p-chip>
+          </div>
+
+          <!-- Book CTA -->
+          <p-button
+            label="Book This Provider"
+            icon="pi pi-calendar-plus"
+            [style]="{'background':'#0d9488','border-color':'#0d9488','width':'100%'}"
+            (click)="openBooking(provider)">
+          </p-button>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- ════ SERVICE NOT FOUND ════ -->
+  <div *ngIf="!service" class="flex flex-column align-items-center justify-content-center py-8 gap-3">
+    <i class="pi pi-exclamation-circle text-5xl text-200"></i>
+    <h2 class="text-600 m-0">Service not found</h2>
+    <p-button label="Back to Services" icon="pi pi-arrow-left" severity="secondary" [outlined]="true" (click)="goBack()"></p-button>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════
+     BOOKING DIALOG — PrimeNG v21 API
+     Uses [(visible)], [modal], ng-template #header, ng-template #footer
+     ════════════════════════════════════ -->
+<p-dialog
+  [(visible)]="bookingVisible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '28rem' }"
+  [breakpoints]="{ '768px': '90vw' }"
+  appendTo="body">
+
+  <!-- ── Dialog Header (ng-template #header — v21) ── -->
+  <ng-template #header>
+    <div class="flex align-items-center gap-3">
+      <div class="flex align-items-center justify-content-center border-round-lg"
+           style="width:40px;height:40px;background:linear-gradient(135deg,#ccfbf1,#a7f3d0);">
+        <i class="pi pi-calendar-plus text-xl" style="color:#0d9488;"></i>
+      </div>
+      <div>
+        <div class="text-900 font-bold text-lg">Book Service</div>
+        <div class="text-400 text-xs">{{service?.title}}</div>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- ── Dialog Body ── -->
+
+  <!-- SUCCESS STATE -->
+  <div *ngIf="bookingSuccess()" class="flex flex-column align-items-center gap-3 py-4">
+    <div class="flex align-items-center justify-content-center border-circle"
+         style="width:72px;height:72px;background:#dcfce7;">
+      <i class="pi pi-cart-plus text-4xl" style="color:#16a34a;"></i>
+    </div>
+    <h3 class="text-900 font-bold text-xl m-0">Added to Cart!</h3>
+    <p class="text-500 text-sm text-center m-0 line-height-3">
+      Your service with <strong class="text-900">{{selectedProvider?.companyName}}</strong> was added to your cart.<br/>
+      You can add more services or proceed to checkout.
+    </p>
+    <div class="flex gap-2 w-full mt-3">
+        <p-button
+          label="Keep Browsing"
+          severity="secondary"
+          [text]="true"
+          class="flex-1"
+          styleClass="w-full"
+          (click)="bookingVisible = false">
+        </p-button>
+        <p-button
+          label="Go To Checkout"
+          icon="pi pi-credit-card"
+          class="flex-1"
+          styleClass="w-full"
+          [style]="{'background':'#0d9488','border-color':'#0d9488'}"
+          (click)="goToCheckout()">
+        </p-button>
+    </div>
+  </div>
+
+  <!-- BOOKING FORM -->
+  <div *ngIf="!bookingSuccess()" class="flex flex-column gap-4">
+
+    <!-- Summary row: provider -->
+    <div class="flex align-items-center gap-3 p-3 border-round-lg" style="background:var(--surface-50);">
+      <p-avatar
+        [label]="getInitials(selectedProvider?.name || '')"
+        shape="circle"
+        [style]="{'background':'linear-gradient(135deg,#14b8a6,#0891b2)','color':'#fff','font-weight':'700'}">
+      </p-avatar>
+      <div class="flex flex-column gap-0">
+        <span class="text-900 font-semibold text-sm">{{selectedProvider?.name}}</span>
+        <span class="text-400 text-xs">{{selectedProvider?.companyName}}</span>
+      </div>
+      <span class="ml-auto text-xl font-bold" style="color:#0d9488;">${{selectedProvider?.price}}</span>
+    </div>
+
+    <!-- Date field (pInputText v21) -->
+    <div class="flex flex-column gap-2">
+      <label for="bookingDate" class="text-700 text-sm font-medium">Preferred Date</label>
+      <input
+        id="bookingDate"
+        type="date"
+        pInputText
+        [(ngModel)]="bookingDate"
+        [invalid]="!bookingDate && bookingDate !== ''" />
+      <small class="text-400">Select the date you'd like the service performed.</small>
+    </div>
+
+    <!-- Time field (pInputText v21) -->
+    <div class="flex flex-column gap-2">
+      <label for="bookingTime" class="text-700 text-sm font-medium">Preferred Time</label>
+      <input
+        id="bookingTime"
+        type="time"
+        pInputText
+        [(ngModel)]="bookingTime" />
+    </div>
+
+    <!-- Notes (optional) -->
+    <div class="flex flex-column gap-2">
+      <label for="bookingNotes" class="text-700 text-sm font-medium">Notes <span class="text-400 font-normal">(optional)</span></label>
+      <input
+        id="bookingNotes"
+        type="text"
+        pInputText
+        [(ngModel)]="bookingNotes"
+        placeholder="e.g. Please bring your own cleaning supplies" />
+    </div>
+  </div>
+
+  <!-- ── Dialog Footer (ng-template #footer — v21) ── -->
+  <ng-template #footer>
+    <div *ngIf="!bookingSuccess()" class="flex justify-content-end gap-2">
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        [text]="true"
+        (click)="bookingVisible = false">
+      </p-button>
+      <p-button
+        label="Add to Cart"
+        icon="pi pi-cart-plus"
+        [disabled]="!canConfirm"
+        [style]="{'background':'#0d9488','border-color':'#0d9488'}"
+        (click)="confirmBooking()">
+      </p-button>
+    </div>
+  </ng-template>
+
+</p-dialog>

@@ -1,0 +1,132 @@
+<div class="layout-wrapper flex flex-column h-screen overflow-hidden bg-gray-50 app-shell">
+  
+  <!-- TOPBAR -->
+  <header class="layout-topbar flex align-items-center justify-content-between px-4 surface-card border-bottom-1 surface-border">
+    <div class="flex align-items-center relative z-2">
+      <button pButton pRipple type="button" icon="pi pi-bars" class="p-button-rounded p-button-text p-button-plain mr-3 text-700 topbar-icon-btn" (click)="toggleSidebar()"></button>
+      <div class="logo-icon mr-2 flex align-items-center justify-content-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="currentColor" class="text-teal-500">
+          <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13h-13L12 6.5z"/>
+        </svg>
+      </div>
+      <span class="text-xl font-medium text-700 app-shell-brand">Local Service Management System</span>
+      <span class="ml-3 text-sm font-bold text-teal-600 bg-teal-100 px-2 py-1 border-round-xl hidden md:inline">PRO</span>
+    </div>
+
+    <div class="flex align-items-center gap-2 relative z-2">
+      <button
+        pButton
+        pRipple
+        type="button"
+        [icon]="topbarThemeIcon()"
+        class="p-button-rounded p-button-text p-button-plain text-600 topbar-icon-btn"
+        (click)="toggleTheme()">
+      </button>
+
+      <div class="relative">
+        <button
+          pButton pRipple type="button"
+          icon="pi pi-bell"
+          class="p-button-rounded p-button-text p-button-plain text-600 topbar-icon-btn"
+          pTooltip="Notifications" tooltipPosition="bottom"
+          (click)="notifPanel.toggle($event)">
+        </button>
+        <p-badge
+          *ngIf="notifService.providerUnreadCount() > 0"
+          [value]="notifService.providerUnreadCount().toString()"
+          severity="danger"
+          class="absolute"
+          style="top:-4px;right:-4px;pointer-events:none;">
+        </p-badge>
+      </div>
+
+      <button pButton pRipple type="button" icon="pi pi-user" class="p-button-rounded p-button-text p-button-plain text-900 surface-200 topbar-icon-btn" (click)="profileMenu.toggle($event)"></button>
+
+      <!-- Profile Menu -->
+      <p-menu #profileMenu [model]="profileMenuItems" [popup]="true" appendTo="body" styleClass="w-full md:w-15rem mt-2">
+        <ng-template pTemplate="end">
+          <button pRipple class="relative overflow-hidden w-full p-link flex align-items-center p-2 pl-3 text-color hover:surface-200 border-noround border-top-1 surface-border mt-2">
+            <p-avatar icon="pi pi-briefcase" styleClass="mr-2 bg-teal-100 text-teal-600" shape="circle"></p-avatar>
+            <span class="flex flex-column text-left">
+              <span class="font-bold text-900">Jane Smith</span>
+              <span class="text-sm text-600">Provider</span>
+            </span>
+          </button>
+        </ng-template>
+      </p-menu>
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <div class="flex flex-1 overflow-hidden relative">
+    <aside class="layout-sidebar w-16rem surface-card overflow-y-auto px-3 py-4 flex-shrink-0" [class.sidebar-hidden]="!sidebarVisible">
+      <p-menu [model]="menuItems" styleClass="app-shell-nav"></p-menu>
+    </aside>
+    <main class="layout-main flex-1 overflow-y-auto w-full">
+      <div class="p-4 md:p-5">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>
+
+<p-popover #notifPanel styleClass="notif-panel">
+
+  <div class="flex align-items-center justify-content-between mb-3">
+    <div class="flex align-items-center gap-2">
+      <i class="pi pi-bell text-teal-600 text-xl"></i>
+      <span class="text-900 font-bold text-lg">Notifications</span>
+      <p-badge *ngIf="notifService.providerUnreadCount() > 0"
+               [value]="notifService.providerUnreadCount().toString()"
+               severity="danger">
+      </p-badge>
+    </div>
+    <button pButton type="button" label="Mark all read" [text]="true" size="small"
+            class="text-teal-600 p-0"
+            (click)="notifService.markAllProviderRead()">
+    </button>
+  </div>
+
+  <p-divider styleClass="my-2"></p-divider>
+
+  <div class="flex flex-column gap-0" style="max-height:440px;overflow-y:auto;">
+    <div *ngFor="let n of notifService.providerNotifications(); let last = last"
+         class="flex align-items-start gap-3 py-3 px-1 cursor-pointer notif-item"
+         [ngClass]="{ 'notif-unread': !n.isRead }"
+         (click)="notifService.markProviderRead(n.id)">
+
+      <p-avatar
+        [label]="n.avatarLabel"
+        shape="circle"
+        size="normal"
+        [style]="{ 'background': n.avatarColor, 'color': '#fff', 'font-weight': '700', 'font-size': '0.7rem', 'flex-shrink': '0' }">
+      </p-avatar>
+
+      <div class="flex flex-column gap-1 flex-1 min-w-0">
+        <div class="flex align-items-center justify-content-between gap-2">
+          <span class="text-900 text-sm font-semibold">{{n.title}}</span>
+          <span class="text-400 text-xs flex-shrink-0">{{notifService.getTimeAgo(n.createdAt)}}</span>
+        </div>
+        <span class="text-500 text-sm line-height-3" style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">
+          {{n.message}}
+        </span>
+        <div class="flex align-items-center gap-2 mt-1">
+          <i [class]="notifService.getIconForType(n.type)" style="font-size:.7rem;color:#64748b;"></i>
+          <span *ngIf="!n.isRead" class="text-xs font-bold" style="color:#0d9488;">● Unread</span>
+        </div>
+      </div>
+
+      <button pButton type="button" icon="pi pi-times"
+              class="p-button-rounded p-button-text p-button-sm p-button-plain text-300 flex-shrink-0"
+              style="width:1.5rem;height:1.5rem;"
+              (click)="$event.stopPropagation(); notifService.deleteProviderNotification(n.id)">
+      </button>
+    </div>
+
+    <div *ngIf="notifService.providerNotifications().length === 0"
+         class="app-empty-state flex flex-column align-items-center justify-content-center py-6 gap-2">
+      <i class="pi pi-bell-slash text-4xl text-200"></i>
+      <span class="text-500 text-sm">No notifications yet.</span>
+    </div>
+  </div>
+</p-popover>

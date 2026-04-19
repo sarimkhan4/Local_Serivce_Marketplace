@@ -1,0 +1,89 @@
+<div class="auth-container auth-panel">
+  <div class="auth-card-frame auth-card-frame-wide">
+    <div class="auth-card-inner">
+      
+      <div class="auth-header text-center">
+        <h2>Create Your Account</h2>
+        <p>Join our community securely today</p>
+      </div>
+
+      <div class="role-selector text-center mb-5 mt-3">
+        <p-selectbutton [options]="roleOptions" [(ngModel)]="selectedRole" optionLabel="label" optionValue="value" styleClass="w-full role-toggle"></p-selectbutton>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" class="auth-form">
+        <div class="formgrid grid mb-3">
+          <div class="field col-12 md:col-6 mb-0">
+            <label for="firstName">First Name</label>
+            <input type="text" pInputText id="firstName" [(ngModel)]="firstName" name="firstName" placeholder="John" class="w-full" required />
+          </div>
+          <div class="field col-12 md:col-6 mb-0">
+            <label for="lastName">Last Name</label>
+            <input type="text" pInputText id="lastName" [(ngModel)]="lastName" name="lastName" placeholder="Doe" class="w-full" required />
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="email">Email Address</label>
+          <p-iconfield styleClass="w-full">
+            <p-inputicon styleClass="pi pi-envelope" />
+            <input type="email" pInputText id="email" [(ngModel)]="email" name="email" placeholder="you@example.com" class="w-full" required />
+          </p-iconfield>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="phoneNumber">Phone Number</label>
+          <p-iconfield styleClass="w-full">
+            <p-inputicon styleClass="pi pi-phone" />
+            <input type="text" pInputText id="phoneNumber" [(ngModel)]="phoneNumber" name="phoneNumber" placeholder="+1 234 567 8900" class="w-full" required />
+          </p-iconfield>
+        </div>
+
+        <ng-container *ngIf="selectedRole === 'customer'">
+          <div class="form-group mb-3">
+            <label for="address">Full Address</label>
+            <p-iconfield styleClass="w-full">
+              <p-inputicon styleClass="pi pi-map-marker" />
+              <input type="text" pInputText id="address" [(ngModel)]="address" name="address" placeholder="123 Main St, City, Country" class="w-full" required />
+            </p-iconfield>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="selectedRole === 'provider'">
+          <div class="form-group mb-3">
+            <label for="companyName">Company / Business Name</label>
+            <p-iconfield styleClass="w-full">
+              <p-inputicon styleClass="pi pi-briefcase" />
+              <input type="text" pInputText id="companyName" [(ngModel)]="companyName" name="companyName" placeholder="Pro Fixers LLC" class="w-full" required />
+            </p-iconfield>
+          </div>
+          
+          <div class="formgrid grid mb-3">
+            <div class="field col-12 md:col-8 mb-0">
+              <label for="bio">Short Bio</label>
+              <input type="text" pInputText id="bio" [(ngModel)]="bio" name="bio" placeholder="Expert in home repairs..." class="w-full" required />
+            </div>
+            <div class="field col-12 md:col-4 mb-0">
+              <label for="experienceYears">Experience (Yrs)</label>
+              <p-inputNumber inputId="experienceYears" [(ngModel)]="experienceYears" name="experienceYears" class="w-full" styleClass="w-full" [min]="0"></p-inputNumber>
+            </div>
+          </div>
+        </ng-container>
+
+        <div class="form-group mb-5 mt-2">
+          <label for="password">Create Password</label>
+          <p-password [(ngModel)]="password" [toggleMask]="true" name="password" styleClass="w-full" [inputStyle]="{'width':'100%'}" placeholder="••••••••"></p-password>
+        </div>
+
+        <p-button type="submit" [label]="selectedRole === 'customer' ? 'Create Customer Profile' : 'Register Provider Account'" styleClass="w-full" size="large"></p-button>
+      </form>
+
+      <div class="auth-footer">
+        <p class="text-sm text-gray-600">
+          Already have an account? <a routerLink="/login" class="font-semibold text-primary">Sign In</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>

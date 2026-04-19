@@ -1,0 +1,169 @@
+<div class="browse-page browse-page-grid">
+
+  <header class="browse-header">
+    <div class="browse-title-block">
+      <h1 class="m-0 text-3xl text-900">Browse Services</h1>
+      <p class="text-500 mb-0 text-sm">Find and book trusted local professionals across categories.</p>
+    </div>
+    <p-iconfield class="browse-search-field">
+      <p-inputicon class="pi pi-search" />
+      <input
+        pInputText
+        type="text"
+        placeholder="Search services…"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        class="w-full" />
+    </p-iconfield>
+  </header>
+
+  <div class="browse-chips">
+    <p-chip
+      label="All Services"
+      icon="pi pi-list"
+      [styleClass]="activeCategory === null ? 'chip-active' : 'chip-inactive'"
+      (click)="selectCategory(null)">
+    </p-chip>
+    <p-chip
+      *ngFor="let cat of categories"
+      [label]="cat.name"
+      [icon]="cat.icon"
+      [styleClass]="activeCategory === cat.id ? 'chip-active' : 'chip-inactive'"
+      (click)="selectCategory(cat.id)">
+    </p-chip>
+  </div>
+
+  <div class="browse-dataview-shell">
+    <p-dataview
+      [value]="filteredServices()"
+      [layout]="layout"
+      [paginator]="true"
+      [rows]="12"
+      [sortField]="sortField"
+      [sortOrder]="sortOrder">
+
+      <ng-template #header>
+        <div class="browse-dv-toolbar">
+          <span class="browse-dv-toolbar-meta text-600 text-sm">
+            Showing <strong class="text-900">{{ filteredServices().length }}</strong> services
+            in <strong class="text-primary">{{ activeCategoryLabel }}</strong>
+          </span>
+          <div class="browse-dv-toolbar-controls">
+            <p-select
+              [options]="sortOptions"
+              [(ngModel)]="sortKey"
+              placeholder="Sort by Price"
+              (onChange)="onSortChange($event)"
+              [style]="{ 'min-width': '11rem' }">
+            </p-select>
+            <p-selectbutton
+              [(ngModel)]="layout"
+              [options]="layoutOptions"
+              [allowEmpty]="false">
+              <ng-template #item let-item>
+                <i [ngClass]="{ 'pi pi-bars': item === 'list', 'pi pi-table': item === 'grid' }" class="pi"></i>
+              </ng-template>
+            </p-selectbutton>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #list let-items>
+        <div *ngFor="let svc of items; let first = first">
+          <div
+            class="browse-list-row"
+            [ngClass]="{ 'border-top-1 surface-border': !first }">
+
+            <div class="browse-list-icon">
+              <i class="pi pi-sparkles text-3xl" style="color:#0d9488;"></i>
+            </div>
+
+            <div class="browse-list-main">
+              <span class="text-500 text-xs font-medium uppercase tracking-wide">{{ svc.categoryName }}</span>
+              <span class="text-900 font-semibold text-lg">{{ svc.title }}</span>
+              <span class="text-500 text-sm text-overflow-ellipsis">{{ svc.description }}</span>
+              <div class="flex align-items-center gap-2 mt-1 flex-wrap">
+                <i class="pi pi-star-fill text-yellow-500" style="font-size:.75rem;"></i>
+                <span class="text-900 text-sm font-semibold">{{ svc.providers[0]?.rating }}</span>
+                <span class="text-400 text-sm">({{ svc.providers[0]?.reviews }} reviews)</span>
+                <span class="text-200">|</span>
+                <i class="pi pi-users text-400" style="font-size:.75rem;"></i>
+                <span class="text-400 text-sm">{{ svc.providers.length }} provider{{ svc.providers.length > 1 ? 's' : '' }}</span>
+              </div>
+            </div>
+
+            <div class="browse-list-aside">
+              <div class="text-right">
+                <span class="text-400 text-xs block">From</span>
+                <span class="text-2xl font-bold" style="color:#0d9488;">${{ svc.basePrice }}</span>
+              </div>
+              <p-button
+                label="View & Book"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                size="small"
+                [routerLink]="['/app/customer/services', svc.id]"
+                [style]="{ 'background': '#0d9488', 'border-color': '#0d9488' }">
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #grid let-items>
+        <div class="svc-grid-wrapper">
+          <div *ngFor="let svc of items" class="svc-grid-card surface-card">
+
+            <div class="flex justify-content-between align-items-center">
+              <p-tag [value]="svc.categoryName" severity="success"></p-tag>
+              <span class="text-400 text-xs">
+                <i class="pi pi-users mr-1"></i>{{ svc.providers.length }}
+              </span>
+            </div>
+
+            <div class="svc-grid-icon">
+              <i class="pi pi-sparkles text-2xl" style="color:#0d9488;"></i>
+            </div>
+
+            <div>
+              <div class="text-900 font-semibold text-base mb-1 line-height-3">{{ svc.title }}</div>
+              <div class="text-500 text-sm line-height-3 text-overflow-ellipsis">{{ svc.description }}</div>
+            </div>
+
+            <div class="bg-surface-100 p-1 align-self-start">
+              <div class="bg-surface-0 flex align-items-center gap-2 py-1 px-2 border-1 surface-border">
+                <span class="text-900 font-medium text-xs">{{ svc.providers[0]?.rating }}</span>
+                <i class="pi pi-star-fill text-yellow-500" style="font-size:.7rem;"></i>
+                <span class="text-400 text-xs">({{ svc.providers[0]?.reviews }})</span>
+              </div>
+            </div>
+
+            <div class="flex align-items-center justify-content-between mt-auto pt-3 border-top-1 surface-border">
+              <div>
+                <span class="text-400 text-xs block">From</span>
+                <span class="text-xl font-bold" style="color:#0d9488;">${{ svc.basePrice }}</span>
+              </div>
+              <p-button
+                label="Book"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                size="small"
+                [routerLink]="['/app/customer/services', svc.id]"
+                [style]="{ 'background': '#0d9488', 'border-color': '#0d9488' }">
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #empty>
+        <div class="flex flex-column align-items-center justify-content-center py-8 gap-3">
+          <i class="pi pi-search text-5xl text-200"></i>
+          <span class="text-600 text-lg font-medium">No services match your criteria.</span>
+          <p-button label="Clear Filters" severity="secondary" [outlined]="true" icon="pi pi-times" (click)="selectCategory(null)"></p-button>
+        </div>
+      </ng-template>
+
+    </p-dataview>
+  </div>
+</div>

@@ -1,0 +1,113 @@
+<div class="home-page">
+<div class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-title">
+      Find the perfect <br />
+      <span class="text-gradient">Professional</span> for your needs
+    </h1>
+
+    <div class="search-box-wrapper">
+      <p-iconfield iconPosition="left" class="w-full">
+        <p-inputicon class="pi pi-search" />
+        <input type="text" pInputText placeholder="What service are you looking for?"
+          class="p-inputtext-lg w-full custom-search-input" />
+      </p-iconfield>
+    </div>
+  </div>
+
+</div>
+
+<section class="trusted-section">
+  <p class="trusted-subtitle">TRUSTED BY LOCAL BUSINESSES AND COMMUNITIES</p>
+  <div class="carousel-container">
+    <p-carousel [value]="trustedBrands" [numVisible]="4" [numScroll]="1" [circular]="true" [autoplayInterval]="3000">
+      <ng-template let-brand #item>
+        <div class="brand-item">
+          <i class="pi" [ngClass]="brand.icon"></i>
+          <span>{{ brand.name }}</span>
+        </div>
+      </ng-template>
+    </p-carousel>
+  </div>
+</section>
+
+<section class="services-catalog-section">
+  <div class="section-header text-center">
+    <h2>Explore Categories</h2>
+    <p>Discover thousands of services tailored to your exact needs smoothly.</p>
+  </div>
+
+  <div class="mt-4">
+    <p-tabs [value]="selectedCategoryId">
+      <p-tablist>
+        <p-tab *ngFor="let category of categories" [value]="category.id">
+          <div class="flex align-items-center gap-2 justify-content-end">
+            <i class="pi" [ngClass]="category.icon"></i>
+            <span class="font-medium">{{ category.name }}</span>
+          </div>
+        </p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel *ngFor="let category of categories" [value]="category.id">
+          <div class="services-grid">
+            <p-card *ngFor="let service of category.services" [style]="{ overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }">
+              <ng-template #header>
+                <img [alt]="service.name" class="w-full" [src]="service.image" style="height: 200px; object-fit: cover; display: block;" />
+              </ng-template>
+              <ng-template #title>
+                <span class="service-name">{{ service.name }}</span>
+              </ng-template>
+              <ng-template #subtitle>
+                <span class="service-price">From ${{ service.startingPrice }}</span>
+              </ng-template>
+              <ng-template #footer>
+                <div class="flex gap-2 w-full">
+                  <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" (onClick)="onSaveService(service, category.name)"></p-button>
+                  <p-button label="Book" icon="pi pi-calendar" (onClick)="onBookService(service)" severity="success" styleClass="w-full" class="flex-1"></p-button>
+                </div>
+              </ng-template>
+            </p-card>
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+</section>
+
+<section class="testimonials-section">
+  <div class="section-header text-center">
+    <h2>Real Experiences, Real Trust</h2>
+    <p>See why thousands of users trust our platform for local service management.</p>
+  </div>
+
+  <div class="carousel-container testimonials-carousel">
+    <p-carousel [value]="testimonials" [numVisible]="2" [numScroll]="1" [circular]="true" [autoplayInterval]="5000">
+      <ng-template let-test #item>
+        <div class="testimonial-card">
+          <div class="test-rating">
+            <i class="pi pi-star-fill" *ngFor="let i of [1,2,3,4,5]"></i>
+          </div>
+          <p class="test-comment">"{{ test.comment }}"</p>
+          <div class="test-customer">
+            <div class="test-avatar">{{ test.avatarInitials }}</div>
+            <div class="test-info">
+              <h4>{{ test.customerName }}</h4>
+              <span class="test-service">Booked: {{ test.serviceReceived }}</span>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </p-carousel>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-card">
+    <h2>Ready to grow your local business?</h2>
+    <p>Join thousands of providers scaling their services with our intelligent booking and management tools.</p>
+    <div class="mt-4">
+      <p-button label="Become a Provider Today" size="large"></p-button>
+    </div>
+  </div>
+</section>
+</div>

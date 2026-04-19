@@ -1,0 +1,35 @@
+.checkout-page {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.checkout-success {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 1rem;
+  padding: 2rem 1.5rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  max-width: 36rem;
+  margin: 2rem auto 0;
+}
+
+.checkout-intro h1 {
+  line-height: 1.2;
+}
+
+.checkout-intro p {
+  margin-top: 0.35rem;
+  line-height: 1.5;
+}
+
+.checkout-empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  padding: 2.5rem 1rem;
+  text-align: center;
+}

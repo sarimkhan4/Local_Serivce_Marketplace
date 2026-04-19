@@ -1,0 +1,188 @@
+<p-toast></p-toast>
+
+<div class="bookings-page">
+
+  <header>
+    <h1 class="text-3xl font-bold text-900 m-0">My Bookings</h1>
+    <p class="text-500 text-sm mt-2 mb-0 line-height-3">Track all your service bookings and leave reviews.</p>
+  </header>
+
+  <div class="bookings-stats">
+    <div class="bookings-stat-card">
+      <div class="icon-box" style="background:linear-gradient(135deg,#ccfbf1,#a7f3d0);">
+        <i class="pi pi-calendar text-xl" style="color:#0d9488;"></i>
+      </div>
+      <div>
+        <div class="text-400 text-xs uppercase font-semibold mb-1">Total</div>
+        <div class="text-3xl font-bold text-900">{{ bookings().length }}</div>
+      </div>
+    </div>
+    <div class="bookings-stat-card">
+      <div class="icon-box" style="background:linear-gradient(135deg,#d1fae5,#6ee7b7);">
+        <i class="pi pi-check-circle text-xl" style="color:#059669;"></i>
+      </div>
+      <div>
+        <div class="text-400 text-xs uppercase font-semibold mb-1">Completed</div>
+        <div class="text-3xl font-bold text-900">{{ completedCount() }}</div>
+      </div>
+    </div>
+    <div class="bookings-stat-card">
+      <div class="icon-box" style="background:linear-gradient(135deg,#fef9c3,#fde68a);">
+        <i class="pi pi-clock text-xl" style="color:#d97706;"></i>
+      </div>
+      <div>
+        <div class="text-400 text-xs uppercase font-semibold mb-1">Pending</div>
+        <div class="text-3xl font-bold text-900">{{ pendingCount() }}</div>
+      </div>
+    </div>
+    <div class="bookings-stat-card">
+      <div class="icon-box" style="background:linear-gradient(135deg,#e0e7ff,#c7d2fe);">
+        <i class="pi pi-dollar text-xl" style="color:#6366f1;"></i>
+      </div>
+      <div>
+        <div class="text-400 text-xs uppercase font-semibold mb-1">Total Spent</div>
+        <div class="text-3xl font-bold text-900">${{ totalSpent() }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bookings-filter-bar">
+    <p-selectbutton
+      [ngModel]="statusFilter()"
+      (ngModelChange)="statusFilter.set($event)"
+      [options]="statusOptions"
+      optionLabel="label"
+      optionValue="value"
+      [allowEmpty]="false">
+    </p-selectbutton>
+    <span class="bookings-count"><strong class="text-900">{{ filteredBookings().length }}</strong> bookings</span>
+  </div>
+
+  <div class="bookings-list-shell">
+    <p-dataview [value]="filteredBookings()" [paginator]="true" [rows]="6">
+
+      <ng-template #list let-items>
+        <div *ngFor="let b of items; let first = first">
+          <div class="booking-row" [ngClass]="{ 'border-top-1 surface-border': !first }">
+
+            <p-avatar
+              [label]="b.providerInitials"
+              shape="square"
+              size="large"
+              [style]="{ 'background': b.providerColor, 'color': '#fff', 'font-weight': '700', 'flex-shrink': '0' }">
+            </p-avatar>
+
+            <div class="booking-row-main">
+              <div class="flex align-items-center gap-2 flex-wrap">
+                <p-tag [value]="b.status" [severity]="getStatusSeverity(b.status)"></p-tag>
+                <p-chip [label]="b.providerName" icon="pi pi-user" styleClass="text-xs"></p-chip>
+              </div>
+              <span class="text-900 font-semibold text-base">{{ b.serviceName }}</span>
+              <div class="booking-meta-row">
+                <span><i class="pi pi-calendar"></i>{{ formatDate(b.date) }}</span>
+                <span><i class="pi pi-clock"></i>{{ formatTime(b.time) }}</span>
+                <span><i class="pi pi-map-marker"></i>{{ b.address }}</span>
+              </div>
+              <div *ngIf="b.status === 'Completed'" class="flex align-items-center gap-2 mt-1 flex-wrap">
+                <span *ngIf="bookingService.hasReview(b.id)" class="text-xs text-500">
+                  <i class="pi pi-star-fill text-yellow-400 mr-1"></i>Review submitted
+                </span>
+                <p-button
+                  *ngIf="canReview(b)"
+                  label="Leave Review"
+                  icon="pi pi-star"
+                  size="small"
+                  severity="secondary"
+                  [outlined]="true"
+                  (click)="openReview(b)">
+                </p-button>
+              </div>
+            </div>
+
+            <div class="booking-price flex-shrink-0">
+              <div class="text-2xl font-bold" style="color:#0d9488;">${{ b.price }}</div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #empty>
+        <div class="flex flex-column align-items-center py-8 gap-3">
+          <i class="pi pi-calendar text-5xl text-200"></i>
+          <span class="text-500">No bookings found for this filter.</span>
+          <p-button label="Show All" severity="secondary" [outlined]="true" (click)="statusFilter.set('All')"></p-button>
+        </div>
+      </ng-template>
+
+    </p-dataview>
+  </div>
+
+  <section *ngIf="bookingService.reviews().length > 0" class="reviews-section">
+    <h2 class="text-900 m-0">My Reviews</h2>
+    <div class="reviews-section-inner">
+      <div *ngFor="let r of bookingService.reviews()" class="review-card">
+        <p-avatar
+          [label]="r.providerInitials"
+          shape="square"
+          [style]="{ 'background': r.providerColor, 'color':'#fff','font-weight':'700','flex-shrink':'0' }">
+        </p-avatar>
+        <div class="flex flex-column gap-1 flex-1 min-w-0">
+          <div class="flex align-items-center justify-content-between flex-wrap gap-2">
+            <span class="text-900 font-semibold">{{ r.serviceName }}</span>
+            <span class="text-400 text-xs">{{ r.createdAt | date:'mediumDate' }}</span>
+          </div>
+          <span class="text-500 text-sm">{{ r.providerName }}</span>
+          <div class="flex align-items-center gap-1 my-1">
+            <i *ngFor="let s of [1,2,3,4,5]"
+               class="text-sm"
+               [class]="s <= r.rating ? 'pi pi-star-fill text-yellow-400' : 'pi pi-star text-300'"></i>
+          </div>
+          <p class="text-700 text-sm m-0 line-height-3">"{{ r.comment }}"</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<p-dialog [(visible)]="showReviewDialog" [modal]="true" [style]="{ width: '26rem' }"
+  [draggable]="false" [resizable]="false" appendTo="body">
+
+  <ng-template #header>
+    <div class="flex align-items-center gap-2">
+      <i class="pi pi-star-fill text-yellow-400"></i>
+      <span class="font-bold text-900">Leave a Review</span>
+    </div>
+  </ng-template>
+
+  <div *ngIf="reviewTarget" class="review-dialog-body">
+
+    <div class="review-dialog-service">
+      <div class="text-400 text-xs mb-1 font-semibold">SERVICE</div>
+      <div class="text-900 font-semibold">{{ reviewTarget.serviceName }}</div>
+      <div class="text-500 text-sm">by {{ reviewTarget.providerName }}</div>
+    </div>
+
+    <div class="review-dialog-field">
+      <label class="text-700 font-medium text-sm">Your Rating <span class="text-red-400">*</span></label>
+      <p-rating [(ngModel)]="reviewRating"></p-rating>
+      <span *ngIf="reviewRating > 0" class="text-500 text-xs">
+        {{ ['', 'Terrible', 'Poor', 'Average', 'Good', 'Excellent!'][reviewRating] }}
+      </span>
+    </div>
+
+    <div class="review-dialog-field">
+      <label class="text-700 font-medium text-sm">Comments (Optional)</label>
+      <textarea pTextarea [(ngModel)]="reviewComment" rows="3"
+        placeholder="Share your experience with this service..." class="w-full"></textarea>
+    </div>
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [text]="true" (click)="showReviewDialog = false"></p-button>
+    <p-button label="Submit Review" icon="pi pi-check"
+      [style]="{ 'background': '#0d9488', 'border-color': '#0d9488' }"
+      [disabled]="reviewRating === 0"
+      (click)="submitReview()">
+    </p-button>
+  </ng-template>
+</p-dialog>

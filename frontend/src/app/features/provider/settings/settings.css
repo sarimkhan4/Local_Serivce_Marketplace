@@ -1,0 +1,52 @@
+.provider-settings-page {
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.provider-settings-panel {
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  padding: 1.25rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.provider-settings-profile {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.provider-settings-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem 1rem;
+}
+
+@media (max-width: 840px) {
+  .provider-settings-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+.provider-settings-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.provider-settings-field-full {
+  grid-column: 1 / -1;
+}
+
+.provider-settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}

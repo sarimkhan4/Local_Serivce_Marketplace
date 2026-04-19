@@ -1,0 +1,212 @@
+<p-toast></p-toast>
+
+<div class="settings-page">
+
+  <div class="settings-page-header">
+    <h1 class="text-3xl font-bold text-900 m-0">Account Settings</h1>
+    <p class="text-500 text-sm m-0">Manage your profile, addresses, and security.</p>
+  </div>
+
+  <!-- p-tabs (PrimeNG v21) -->
+  <p-tabs value="0">
+
+    <!-- Tab 1: Profile -->
+    <p-tablist>
+      <p-tab value="0"><i class="pi pi-user mr-2"></i>Profile</p-tab>
+      <p-tab value="1"><i class="pi pi-map-marker mr-2"></i>Addresses</p-tab>
+      <p-tab value="2"><i class="pi pi-lock mr-2"></i>Security</p-tab>
+    </p-tablist>
+
+    <p-tabpanels>
+
+      <!-- ── PROFILE TAB ── -->
+      <p-tabpanel value="0">
+        <div class="settings-panel">
+          <input #photoInput type="file" accept="image/*" class="hidden" (change)="onProfilePhotoChange($event)" />
+
+          <div class="settings-profile-row">
+            <p-avatar
+              *ngIf="profile().photoUrl; else profileInitialTpl"
+              [image]="profile().photoUrl!"
+              shape="square"
+              size="xlarge"
+              styleClass="settings-profile-avatar">
+            </p-avatar>
+            <ng-template #profileInitialTpl>
+              <p-avatar [label]="profileInitials()" shape="square" size="xlarge"
+                [style]="{'background':'#0d9488','color':'#fff','font-size':'1.1rem','font-weight':'600'}"
+                styleClass="settings-profile-avatar">
+              </p-avatar>
+            </ng-template>
+            <div class="settings-profile-meta">
+              <div class="text-900 font-bold text-xl">{{profile().name}}</div>
+              <div class="text-500 text-sm">Customer Account</div>
+              <p-button label="Change Photo" icon="pi pi-camera" [text]="true" size="small" class="mt-1 p-0"
+                (click)="photoInput.click()">
+              </p-button>
+            </div>
+          </div>
+
+          <p-divider></p-divider>
+
+          <div class="settings-form-grid">
+            <div class="settings-field">
+              <label class="text-700 font-medium text-sm">Full Name</label>
+              <input pInputText [ngModel]="profile().name"
+                (ngModelChange)="profile.update(p => ({...p, name: $event}))"
+                class="w-full" placeholder="Your full name" />
+            </div>
+            <div class="settings-field">
+              <label class="text-700 font-medium text-sm">Email Address</label>
+              <input pInputText [ngModel]="profile().email"
+                (ngModelChange)="profile.update(p => ({...p, email: $event}))"
+                class="w-full" placeholder="your@email.com" />
+            </div>
+            <div class="settings-field">
+              <label class="text-700 font-medium text-sm">Phone Number</label>
+              <input pInputText [ngModel]="profile().phone"
+                (ngModelChange)="profile.update(p => ({...p, phone: $event}))"
+                class="w-full" placeholder="+92 3xx xxxxxxx" />
+            </div>
+          </div>
+
+          <div class="settings-form-actions">
+            <p-button label="Save Profile" icon="pi pi-save"
+              [style]="{'background':'#0d9488','border-color':'#0d9488'}"
+              (click)="saveProfile()">
+            </p-button>
+          </div>
+        </div>
+      </p-tabpanel>
+
+      <!-- ── ADDRESSES TAB ── -->
+      <p-tabpanel value="1">
+        <div class="settings-addresses">
+
+          <div class="settings-address-toolbar">
+            <p-button label="Add Address" icon="pi pi-plus"
+              [style]="{'background':'#0d9488','border-color':'#0d9488'}"
+              (click)="openAddAddress()">
+            </p-button>
+          </div>
+
+          <div *ngFor="let addr of bookingService.addresses()" class="settings-address-card">
+
+            <div class="settings-address-main">
+              <div class="settings-address-icon">
+                <i class="pi pi-map-marker text-xl" style="color:#0d9488;"></i>
+              </div>
+              <div class="settings-address-meta">
+                <div class="settings-address-title-row">
+                  <span class="text-900 font-semibold">{{addr.label}}</span>
+                  <p-tag *ngIf="addr.isDefault" value="Default" severity="success"></p-tag>
+                </div>
+                <span class="text-700 text-sm">{{addr.street}}</span>
+                <span class="text-500 text-sm">{{addr.city}}, {{addr.state}} {{addr.zipCode}}</span>
+              </div>
+            </div>
+
+            <div class="settings-address-actions">
+              <p-button *ngIf="!addr.isDefault" icon="pi pi-star" severity="secondary" [outlined]="true"
+                size="small" pTooltip="Set as Default" (click)="setDefault(addr.id)"></p-button>
+              <p-button icon="pi pi-pencil" severity="secondary" [outlined]="true"
+                size="small" pTooltip="Edit" (click)="openEditAddress(addr)"></p-button>
+              <p-button icon="pi pi-trash" severity="danger" [outlined]="true"
+                size="small" pTooltip="Delete" (click)="deleteAddress(addr.id)"></p-button>
+            </div>
+          </div>
+
+          <div *ngIf="bookingService.addresses().length === 0" class="settings-empty">
+            <i class="pi pi-map-marker text-5xl text-200"></i>
+            <span class="text-500">No addresses added yet.</span>
+          </div>
+        </div>
+      </p-tabpanel>
+
+      <!-- ── SECURITY TAB ── -->
+      <p-tabpanel value="2">
+        <div class="settings-panel">
+          <h3 class="text-900 font-bold m-0 mb-4">Change Password</h3>
+          <div class="settings-security-form">
+            <div class="settings-field">
+              <label class="text-700 font-medium text-sm">Current Password</label>
+              <input pInputText type="password"
+                [ngModel]="profile().currentPassword"
+                (ngModelChange)="profile.update(p => ({...p, currentPassword: $event}))"
+                class="w-full" placeholder="••••••••" />
+            </div>
+            <div class="settings-field">
+              <label class="text-700 font-medium text-sm">New Password</label>
+              <input pInputText type="password"
+                [ngModel]="profile().newPassword"
+                (ngModelChange)="profile.update(p => ({...p, newPassword: $event}))"
+                class="w-full" placeholder="••••••••" />
+            </div>
+            <div class="settings-field">
+              <label class="text-700 font-medium text-sm">Confirm Password</label>
+              <input pInputText type="password"
+                [ngModel]="profile().confirmPassword"
+                (ngModelChange)="profile.update(p => ({...p, confirmPassword: $event}))"
+                class="w-full" placeholder="••••••••" />
+            </div>
+            <p-button label="Update Password" icon="pi pi-lock"
+              [style]="{'background':'#0d9488','border-color':'#0d9488'}"
+              (click)="changePassword()">
+            </p-button>
+          </div>
+        </div>
+      </p-tabpanel>
+
+    </p-tabpanels>
+  </p-tabs>
+</div>
+
+<!-- ── ADDRESS DIALOG ── -->
+<p-dialog [(visible)]="showAddressDialog" [modal]="true" [style]="{width:'28rem'}"
+  [draggable]="false" [resizable]="false" appendTo="body">
+
+  <ng-template #header>
+    <div class="flex align-items-center gap-2">
+      <i class="pi pi-map-marker text-teal-600"></i>
+      <span class="font-bold text-900">{{editingAddress ? 'Edit Address' : 'Add New Address'}}</span>
+    </div>
+  </ng-template>
+
+  <div class="settings-address-dialog">
+    <div class="settings-field">
+      <label class="text-700 font-medium text-sm mb-2 block">Label</label>
+      <p-select [options]="labelOptions" [(ngModel)]="addressForm.label"
+        optionLabel="label" optionValue="value" class="w-full"></p-select>
+    </div>
+    <div class="settings-field">
+      <label class="text-700 font-medium text-sm mb-2 block">Street / Area</label>
+      <input pInputText [(ngModel)]="addressForm.street" class="w-full" placeholder="House #, Street, Area" />
+    </div>
+    <div class="settings-address-dialog-grid">
+      <div class="settings-field">
+        <label class="text-700 font-medium text-sm">City</label>
+        <input pInputText [(ngModel)]="addressForm.city" class="w-full" placeholder="Karachi" />
+      </div>
+      <div class="settings-field">
+        <label class="text-700 font-medium text-sm">State</label>
+        <input pInputText [(ngModel)]="addressForm.state" class="w-full" placeholder="Sindh" />
+      </div>
+    </div>
+    <div class="settings-field">
+      <label class="text-700 font-medium text-sm mb-2 block">ZIP Code</label>
+      <input pInputText [(ngModel)]="addressForm.zipCode" class="w-full" placeholder="75300" />
+    </div>
+    <div class="flex align-items-center gap-2 mt-1">
+      <p-toggleswitch [(ngModel)]="addressForm.isDefault" inputId="isDefault"></p-toggleswitch>
+      <label for="isDefault" class="text-700 text-sm cursor-pointer">Set as default address</label>
+    </div>
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [text]="true" (click)="showAddressDialog = false"></p-button>
+    <p-button [label]="editingAddress ? 'Update' : 'Add Address'" icon="pi pi-check"
+      [style]="{'background':'#0d9488','border-color':'#0d9488'}"
+      (click)="saveAddress()">
+    </p-button>
+  </ng-template>
+</p-dialog>

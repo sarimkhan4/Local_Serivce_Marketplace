@@ -22,7 +22,6 @@
       <!-- ── PROFILE TAB ── -->
       <p-tabpanel value="0">
         <div class="settings-panel">
-          <input #photoInput type="file" accept="image/*" class="hidden" (change)="onProfilePhotoChange($event)" />
 
           <div class="settings-profile-row">
             <p-avatar
@@ -41,9 +40,17 @@
             <div class="settings-profile-meta">
               <div class="text-900 font-bold text-xl">{{profile().name}}</div>
               <div class="text-500 text-sm">Customer Account</div>
-              <p-button label="Change Photo" icon="pi pi-camera" [text]="true" size="small" class="mt-1 p-0"
-                (click)="photoInput.click()">
-              </p-button>
+              <p-fileUpload 
+                  mode="basic" 
+                  name="demo[]" 
+                  chooseIcon="pi pi-upload" 
+                  url="https://www.primefaces.org/cdn/api/upload.php" 
+                  accept="image/*" 
+                  maxFileSize="1000000" 
+                  (onUpload)="onBasicUploadAuto($event)" 
+                  [auto]="true" 
+                  chooseLabel="Browse">
+              </p-fileUpload>
             </div>
           </div>
 

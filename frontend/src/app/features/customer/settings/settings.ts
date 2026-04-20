@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -15,6 +15,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
+import { FileUploadModule } from 'primeng/fileupload';
 
 import { BookingService, Address } from '../../../core/services/booking.service';
 import { AuthService } from '../../../core/services/auth';
@@ -41,7 +42,7 @@ export interface AddressLabelOption {
     CommonModule, FormsModule,
     ButtonModule, InputTextModule, AvatarModule, DividerModule,
     TabsModule, DialogModule, TagModule, SelectModule, ToggleSwitchModule, ToastModule,
-    TooltipModule,
+    TooltipModule, FileUploadModule
   ],
   providers: [MessageService],
   templateUrl: './settings.html',
@@ -55,9 +56,9 @@ export class CustomerSettings implements OnInit {
 
   // ── Profile form ──
   profile = signal<CustomerProfileForm>({
-    name: 'Hunain Abbas',
-    email: 'hunain@example.com',
-    phone: '+92 300 1234567',
+    name: `${this.authService.currentUser()?.firstName || ''} ${this.authService.currentUser()?.lastName || ''}`.trim() || 'Customer Name',
+    email: this.authService.currentUser()?.email || 'customer@example.com',
+    phone: '',
     photoUrl: null,
     currentPassword: '',
     newPassword: '',
@@ -148,6 +149,19 @@ export class CustomerSettings implements OnInit {
       return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
     }
     return n.slice(0, 2).toUpperCase();
+  }
+
+  onBasicUploadAuto(event: any) {
+    if (event.files && event.files.length > 0) {
+      const file = event.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = typeof reader.result === 'string' ? reader.result : null;
+        this.profile.update(v => ({ ...v, photoUrl: result }));
+        this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Auto Mode' });
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   onProfilePhotoChange(event: Event): void {

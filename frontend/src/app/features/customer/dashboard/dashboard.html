@@ -24,7 +24,7 @@
 
       <div class="card mb-card">
         <div class="card-title">Your Recent Bookings</div>
-        <p-table [value]="loading() ? [1,2,3,4,5] : appointments" [paginator]="!loading()" [rows]="loading() ? 5 : 7" responsiveLayout="scroll"
+        <p-table [value]="loading() ? [1,2,3,4,5] : $any(appointments)" [paginator]="!loading()" [rows]="loading() ? 5 : 7" responsiveLayout="scroll"
           styleClass="app-dashboard-table">
           <ng-template pTemplate="header">
             <tr>

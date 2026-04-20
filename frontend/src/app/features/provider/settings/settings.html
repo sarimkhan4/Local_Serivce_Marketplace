@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <div class="provider-settings-page">
   <header>
     <h1 class="m-0 text-3xl font-semibold text-900">Provider Settings</h1>
@@ -6,11 +7,24 @@
 
   <section class="provider-settings-panel">
     <div class="provider-settings-profile">
-      <p-avatar icon="pi pi-briefcase" size="xlarge" shape="square"
+      <p-avatar *ngIf="!photoUrl" icon="pi pi-briefcase" size="xlarge" shape="square"
         [style]="{'width':'72px', 'height': '72px', 'font-size': '1.75rem', 'background':'#1b2435', 'color':'#cbd5e1'}">
       </p-avatar>
+      <p-avatar *ngIf="photoUrl" [image]="photoUrl" size="xlarge" shape="square"
+        [style]="{'width':'72px', 'height': '72px'}">
+      </p-avatar>
       <div class="flex flex-column gap-2">
-        <p-button label="Upload Logo" icon="pi pi-upload" severity="secondary" [outlined]="true" size="small"></p-button>
+        <p-fileUpload 
+            mode="basic" 
+            name="demo[]" 
+            chooseIcon="pi pi-upload" 
+            url="https://www.primefaces.org/cdn/api/upload.php" 
+            accept="image/*" 
+            maxFileSize="2000000" 
+            (onUpload)="onBasicUploadAuto($event)" 
+            [auto]="true" 
+            chooseLabel="Upload Logo">
+        </p-fileUpload>
         <span class="text-500 text-sm">Max size 2MB (JPG/PNG).</span>
       </div>
     </div>
@@ -18,27 +32,27 @@
     <div class="provider-settings-form">
       <div class="provider-settings-field">
         <label class="text-700 font-medium text-sm">First & Last Name</label>
-        <input pInputText type="text" value="Jane Smith" disabled />
+        <input pInputText type="text" [value]="providerName" disabled />
       </div>
 
       <div class="provider-settings-field">
         <label class="text-700 font-medium text-sm">Company Name</label>
-        <input pInputText type="text" value="Jane's Elite Cleaning" />
+        <input pInputText type="text" [value]="companyName" />
       </div>
 
       <div class="provider-settings-field">
         <label class="text-700 font-medium text-sm">Email Address</label>
-        <input pInputText type="email" value="jane@elitecleaning.com" disabled />
+        <input pInputText type="email" [value]="providerEmail" disabled />
       </div>
 
       <div class="provider-settings-field">
         <label class="text-700 font-medium text-sm">Years of Experience</label>
-        <input pInputText type="number" value="5" />
+        <input pInputText type="number" [value]="experience" />
       </div>
 
       <div class="provider-settings-field provider-settings-field-full">
         <label class="text-700 font-medium text-sm">Bio / Description</label>
-        <textarea pTextarea rows="4" style="resize:none;">Providing top-tier home and commercial cleaning services since 2019.</textarea>
+        <textarea pTextarea rows="4" style="resize:none;">{{description}}</textarea>
       </div>
     </div>
 

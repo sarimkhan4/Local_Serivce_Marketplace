@@ -41,7 +41,7 @@ export class Login {
 
   async onSubmit() {
     console.log('Login attempt:', this.email);
-    await this.authService.login(this.email, 'Customer');
+    await this.authService.login(this.email, this.password);
     
     // Check for pending actions
     const pending = localStorage.getItem('pendingAction');

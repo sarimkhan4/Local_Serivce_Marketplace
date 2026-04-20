@@ -34,24 +34,25 @@ export class AuthService {
     }
   }
 
-  async login(email: string, role: 'Customer' | 'Provider'): Promise<void> {
+  async login(email: string, password: string): Promise<void> {
     try {
-      // In reality, password should be prompted. Using default for dev bridging.
       const response = await lastValueFrom(
         this.http.post<{access_token: string, userId: string, name: string, role: string}>(
           `${environment.apiUrl}/auth/login`, 
-          { email, password: 'password123' } // using hardcoded pass for dev tests
+          { email, password }
         )
       );
 
       const [firstName, ...lastNames] = (response.name || '').split(' ');
+      
+      const formattedRole = response.role ? (response.role.charAt(0).toUpperCase() + response.role.slice(1).toLowerCase()) : 'Customer';
       
       const user: User = {
         id: response.userId.toString(),
         email,
         firstName: firstName || 'User',
         lastName: lastNames.join(' ') || '',
-        role: response.role as any
+        role: formattedRole as any
       };
       
       this.currentUser.set(user);
@@ -78,12 +79,14 @@ export class AuthService {
 
       const [firstName, ...lastNames] = (response.name || '').split(' ');
       
+      const formattedRole = response.role ? (response.role.charAt(0).toUpperCase() + response.role.slice(1).toLowerCase()) : 'Customer';
+      
       const user: User = {
         id: response.userId.toString(),
         email: data.email,
         firstName: firstName || 'User',
         lastName: lastNames.join(' ') || '',
-        role: response.role as any
+        role: formattedRole as any
       };
       
       this.currentUser.set(user);

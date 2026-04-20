@@ -12,11 +12,15 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+import { DialogModule } from 'primeng/dialog';
+import { SelectModule } from 'primeng/select';
+import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth';
 
 export interface ProviderServiceViewModel {
-  catalogServiceId: number;
+  catalogServiceId?: number;
   title: string;
   description: string;
   categoryName: string;
@@ -29,7 +33,8 @@ export interface ProviderServiceViewModel {
   standalone: true,
   imports: [
     CommonModule, FormsModule, TableModule, ButtonModule, 
-    InputNumberModule, CheckboxModule, TagModule, ToastModule
+    InputNumberModule, CheckboxModule, TagModule, ToastModule,
+    DialogModule, SelectModule, InputTextModule, TextareaModule
   ],
   providers: [MessageService],
   templateUrl: './services.html',
@@ -42,6 +47,16 @@ export class Services implements OnInit {
   private authService = inject(AuthService);
 
   allViewModels: ProviderServiceViewModel[] = [];
+  categories: any[] = [];
+
+  // Modal State
+  displayNewServiceDialog = false;
+  newServiceForm = {
+    name: '',
+    description: '',
+    categoryId: null as number | null,
+    price: 0
+  };
 
   constructor() {
     this.titleService.setTitle('Servicio PRO | Service Configuration');
@@ -56,10 +71,13 @@ export class Services implements OnInit {
       const user = this.authService.currentUser();
       if (!user) return;
 
-      const [catalogServices, myServices] = await Promise.all([
+      const [catalogServices, myServices, categories] = await Promise.all([
         lastValueFrom(this.http.get<any[]>(`${environment.apiUrl}/services`)),
-        lastValueFrom(this.http.get<any[]>(`${environment.apiUrl}/services/provider/${user.id}`))
+        lastValueFrom(this.http.get<any[]>(`${environment.apiUrl}/services/provider/${user.id}`)),
+        lastValueFrom(this.http.get<any[]>(`${environment.apiUrl}/categories`))
       ]);
+
+      this.categories = categories;
 
       this.allViewModels = catalogServices.map(catSvc => {
         const existing = myServices.find(s => s.service.serviceId === catSvc.serviceId);
@@ -75,6 +93,32 @@ export class Services implements OnInit {
     } catch (err) {
       console.error('Error loading services', err);
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Could not load services.' });
+    }
+  }
+
+  showNewServiceDialog() {
+    this.displayNewServiceDialog = true;
+    this.newServiceForm = { name: '', description: '', categoryId: null, price: 0 };
+  }
+
+  async saveNewService() {
+    try {
+      if (!this.newServiceForm.name || !this.newServiceForm.categoryId) {
+        this.messageService.add({ severity: 'warn', summary: 'Missing Data', detail: 'Please fill name and category.' });
+        return;
+      }
+      await lastValueFrom(this.http.post(`${environment.apiUrl}/services/provider`, {
+        name: this.newServiceForm.name,
+        description: this.newServiceForm.description,
+        categoryId: this.newServiceForm.categoryId,
+        price: this.newServiceForm.price
+      }));
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Custom service added to catalog.' });
+      this.displayNewServiceDialog = false;
+      this.loadData();
+    } catch (err) {
+      console.error('Save failed', err);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Could not create new service.' });
     }
   }
 

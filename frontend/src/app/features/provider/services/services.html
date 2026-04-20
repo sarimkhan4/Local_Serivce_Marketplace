@@ -5,7 +5,8 @@
             <h1 class="m-0 text-3xl font-semibold text-900">Service Configuration</h1>
             <p class="text-600 mt-2 mb-0 line-height-3">Select from the master catalog which services you offer and set your specific asking rates.</p>
         </div>
-        <div class="services-header-actions">
+        <div class="services-header-actions gap-2 flex">
+            <p-button label="Add Custom Service" icon="pi pi-plus" (click)="showNewServiceDialog()" styleClass="p-button-outlined"></p-button>
             <p-tag [value]="activeCount + ' Selected'" icon="pi pi-check" [style]="{'background':'#e0f2fe','color':'#0284c7', 'font-weight':'bold'}"></p-tag>
             <p-button label="Save Configuration" icon="pi pi-save" (click)="saveConfiguration()"
               [style]="{ 'background': '#0d9488', 'border-color': '#0d9488' }"></p-button>
@@ -57,3 +58,28 @@
         </p-table>
     </div>
 </div>
+
+<p-dialog header="Create New Custom Service" [(visible)]="displayNewServiceDialog" [modal]="true" [style]="{width: '450px'}" [breakpoints]="{'960px': '75vw', '640px': '100vw'}">
+    <div class="flex flex-column gap-3 mt-3">
+        <div class="flex flex-column gap-2">
+            <label class="font-semibold" for="cat">Category</label>
+            <p-select [options]="categories" [(ngModel)]="newServiceForm.categoryId" optionLabel="categoryName" optionValue="categoryId" placeholder="Select a Category" id="cat" appendTo="body"></p-select>
+        </div>
+        <div class="flex flex-column gap-2">
+            <label class="font-semibold" for="sname">Service Title</label>
+            <input pInputText id="sname" [(ngModel)]="newServiceForm.name" placeholder="e.g. Vintage Clock Repair" />
+        </div>
+        <div class="flex flex-column gap-2">
+            <label class="font-semibold" for="sdesc">Description</label>
+            <textarea pTextarea id="sdesc" [(ngModel)]="newServiceForm.description" rows="3" placeholder="Briefly describe what this service entails..."></textarea>
+        </div>
+        <div class="flex flex-column gap-2">
+            <label class="font-semibold" for="sprice">Your Price ($)</label>
+            <p-inputNumber id="sprice" [(ngModel)]="newServiceForm.price" mode="currency" currency="USD" locale="en-US" [min]="0"></p-inputNumber>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" icon="pi pi-times" (click)="displayNewServiceDialog = false" styleClass="p-button-text p-button-secondary"></p-button>
+        <p-button label="Create & Offer" icon="pi pi-check" (click)="saveNewService()"></p-button>
+    </ng-template>
+</p-dialog>

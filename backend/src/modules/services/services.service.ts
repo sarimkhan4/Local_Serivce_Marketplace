@@ -43,13 +43,34 @@ export class ServicesService {
   }
 
   /**
-   * Provider: Links a provider to a service with a specific price
+   * Provider: Links a provider to an existing service with a specific price,
+   * or dynamically creates a new service if one is not provided.
    */
-  async addProviderService(providerId: number, serviceId: number, price: number): Promise<ProviderService> {
+  async addProviderService(
+    providerId: number, 
+    data: { serviceId?: number, name?: string, description?: string, categoryId?: number, price: number }
+  ): Promise<ProviderService> {
+    let targetServiceId = data.serviceId;
+
+    // Dynamically create a Service if it doesn't exist
+    if (!targetServiceId && data.name && data.categoryId) {
+      const newService = this.serviceRepository.create({
+        name: data.name,
+        description: data.description,
+        category: { categoryId: data.categoryId } as any
+      });
+      const savedService = await this.serviceRepository.save(newService);
+      targetServiceId = savedService.serviceId;
+    }
+
+    if (!targetServiceId) {
+      throw new Error('You must provide either an existing serviceId or required details (name, categoryId) to create a new one.');
+    }
+
     const newProviderService = this.providerServiceRepository.create({
       provider: { userId: providerId } as any,
-      service: { serviceId: serviceId } as any,
-      price: price
+      service: { serviceId: targetServiceId } as any,
+      price: data.price
     });
     return this.providerServiceRepository.save(newProviderService);
   }

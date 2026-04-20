@@ -30,9 +30,7 @@ export class ServicesController {
 
   @Get(':id')
   getService(@Param('id') id: string) {
-    if (isNaN(+id)) {
-      return null;
-    }
+    if (isNaN(+id)) return null; // Simple guard
     return this.servicesService.findById(+id);
   }
 
@@ -48,11 +46,10 @@ export class ServicesController {
   @Post('provider')
   addProviderService(
     @Request() req: any,
-    @Body('serviceId') serviceId: number,
-    @Body('price') price: number
+    @Body() body: { serviceId?: number; name?: string; description?: string; categoryId?: number; price: number }
   ) {
     const providerId = req.user.userId;
-    return this.servicesService.addProviderService(+providerId, serviceId, price);
+    return this.servicesService.addProviderService(+providerId, body);
   }
 
   @Roles('Provider')

@@ -1,6 +1,11 @@
 # Local Service Management System (LSM)
 
 ![LSM Banner](https://img.shields.io/badge/LSM-Local%20Service%20Management-blueviolet?style=for-the-badge)
+![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
+![TypeORM](https://img.shields.io/badge/TypeORM-FE0803?style=for-the-badge&logo=typeorm&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![PrimeNG](https://img.shields.io/badge/PrimeNG-007ACC?style=for-the-badge&logo=prime&logoColor=white)
 
 A comprehensive, full-stack platform designed for orchestrating local services. Connecting customers with service providers seamlessly, managing everything from scheduling and bookings to payments and reviews.
 

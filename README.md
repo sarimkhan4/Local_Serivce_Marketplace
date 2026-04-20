@@ -1,86 +1,141 @@
 # Local Service Management System (LSM)
 
-## Tags
-![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
-![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![TypeORM](https://img.shields.io/badge/TypeORM-262627?style=for-the-badge)
-![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
-![PrimeNG](https://img.shields.io/badge/PrimeNG-FF6859?style=for-the-badge&logoColor=white)
+![LSM Banner](https://img.shields.io/badge/LSM-Local%20Service%20Management-blueviolet?style=for-the-badge)
 
-## Features
-Based on the foundational Entity-Relationship constraints, the platform handles end-to-end service orchestration:
-- **Role-Based Workflows**: Discrete interfaces and authorizations traversing Customers and Providers (ISA hierarchy from `USER`).
-- **Provider Fleet & Service Discovery**: Service mappings linked via Categories. Providers can list their explicit pricing per service (`Provider_Service` pivot).
-- **Advanced Bookings**: Full cart and checkout systems mapping Customer addresses, Service details, pricing, and scheduling variables.
-- **Provider Scheduling**: Management of granular time slots and calendar availability.
-- **Payments**: Transaction tracking linking directly to distinct Bookings and calculating accurate localized totals & tax distributions.
-- **Reviews & Ratings**: Post-service feedback looping back to the initial Booking.
-- **Asynchronous Notifications**: Real-time broadcast architectures for keeping Providers and Customers informed on state changes (Unread/Read triggers).
+A comprehensive, full-stack platform designed for orchestrating local services. Connecting customers with service providers seamlessly, managing everything from scheduling and bookings to payments and reviews.
 
-## Interactiveness
-- **Functional Reactivity**: Uses Angular 21+ Signals (`signal`, `computed`) for blazing-fast state hydration without deep observable chains.
-- **Modern Component Shell**: Employs PrimeNG's rich suite to provide complex interfaces (Skeletons, Dialogs, Data Tables, Toast notifications, Tabs, and specialized FileUpload modules).
-- **Responsive Architecture**: Flex-box based layout rendering cleanly across mobile to desktop environments.
-- **Optimistic UI Updates**: Table paginations, dynamic total recalculations, and visual checkout carts that map smoothly directly from nested backend entity relations.
+---
 
-## Setup
+## 🚀 Overview
+
+The **Local Service Management System (LSM)** is built using a modern technology stack to ensure performance, scalability, and an excellent developer and user experience. 
+
+### Key Features
+* **Role-Based Access Control (RBAC):** Secure authentication and authorization using JWTs for Customers, Providers, and Admins.
+* **Service Discovery:** Customers can browse, filter, and search across various service categories.
+* **Booking & Scheduling:** Seamless calendar scheduling, booking management, and availability tracking.
+* **Payments Integration:** Robust payment modules for handling transactions efficiently.
+* **Review & Rating System:** Customers can leave feedback and rate providers ensuring a trusting community.
+* **Live Notifications:** Real-time updates and notifications for booking status changes.
+
+---
+
+## 🛠️ Technology Stack
+
+### Backend (`/backend`)
+Built with **NestJS**, following an enterprise-grade modular architecture.
+- **Framework:** [NestJS](https://nestjs.com/) (v11)
+- **Database ORM:** [TypeORM](https://typeorm.io/)
+- **Database:** MySQL
+- **Authentication:** Passport.js (JWT strategies)
+- **Data Seeding:** Fakel-js for easy development database population
+- **Testing:** Jest & Supertest
+
+### Frontend (`/frontend`)
+Built with **Angular**, featuring a beautiful and responsive UI component library.
+- **Framework:** [Angular](https://angular.dev/) (v21)
+- **UI Components:** [PrimeNG](https://primeng.org/) 
+- **Styling:** CSS & PrimeUI Themes
+- **Data Visualization:** Chart.js & ng2-charts for analytics dashboards
+- **Testing:** Vitest
+
+---
+
+## 📂 Project Structure
+
+```text
+├── backend/                  # NestJS API application
+│   ├── src/
+│   │   ├── common/           # Decorators, Enums, Interfaces, Guards
+│   │   ├── entities/         # TypeORM Database Entities (User, Booking, Payment, etc.)
+│   │   └── modules/          # Feature Modules
+│   │       ├── addresses/    # Handling physical locations
+│   │       ├── auth/         # Authentication & Authorization
+│   │       ├── bookings/     # Booking orchestration
+│   │       ├── categories/   # Service categorization
+│   │       ├── notification/ # In-app notifications
+│   │       ├── payments/     # Transactions processing
+│   │       ├── reviews/      # Customer feedback system
+│   │       ├── schedules/    # Provider availability
+│   │       ├── services/     # Core services listing
+│   │       └── users/        # User profile management
+│   └── test/                 # E2E test suites
+│
+├── frontend/                 # Angular SPA Web application
+│   └── src/
+│       ├── app/
+│       │   ├── core/         # Core singletons, interceptors, and services
+│       │   ├── features/     # Smart components and lazy-loaded modules
+│       │   └── layout/       # Structural UI (Headers, Footers, Sidebars)
+│       └── environments/     # Environment specific configurations
+│
+└── README.md                 # Project documentation
+```
+
+---
+
+## 💻 Getting Started
 
 ### Prerequisites
-- Node.js (v20+)
-- MySQL Database 
-- Angular CLI
+Make sure you have the following installed on your machine:
+* [Node.js](https://nodejs.org/en/) (v18 or higher recommended)
+* [npm](https://www.npmjs.com/)
+* [MySQL](https://www.mysql.com/) server running locally or remotely
 
-### Backend (NestJS)
+### 🔧 1. Backend Setup
+
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure your database connection inside your NestJS environment/ORM configuration files.
+4. (Optional) Run database seeders if you want dummy data to test UI components out of the box.
+5. Start the development server:
+   ```bash
+   npm run start:dev
+   ```
+   *The API will typically be exposed at `http://localhost:3000`.*
+
+### 🎨 2. Frontend Setup
+
+1. Open a new terminal and navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the Angular development server:
+   ```bash
+   npm run start
+   ```
+   *The application will automatically reload if you change any of the source files. Access it at `http://localhost:4200`.*
+
+---
+
+## 🧪 Testing
+
+### Backend tests
 ```bash
 cd backend
-npm install
-# Ensure you have your MySQL database running and configured in a .env file
-npm run start:dev
+npm run test         # Unit tests
+npm run test:e2e     # End-to-end tests
+npm run test:cov     # Coverage report
 ```
 
-### Frontend (Angular)
+### Frontend tests
 ```bash
 cd frontend
-npm install
-npm run start
+npm run test         # Unit testing with Vitest
 ```
 
-## Project Folder Structure
-```text
-lsm/
-├── backend/ # NestJS API System
-│   ├── src/
-│   │   ├── common/         # Enums & Interfaces (e.g. notification types)
-│   │   ├── entities/       # TypeORM Models mirroring ER mapping
-│   │   │   ├── user.entity.ts
-│   │   │   ├── customer.entity.ts
-│   │   │   ├── provider.entity.ts
-│   │   │   ├── service.entity.ts
-│   │   │   ├── booking.entity.ts
-│   │   │   ├── payment.entity.ts
-│   │   │   └── ...
-│   │   ├── modules/        # Domain-driven feature controllers & services
-│   │   │   ├── auth/
-│   │   │   ├── bookings/
-│   │   │   ├── payments/
-│   │   │   ├── schedule/
-│   │   │   └── ...
-│   │   ├── main.ts
-│   │   └── app.module.ts
-│   └── package.json
-└── frontend/ # Angular 21 + PrimeNG Interface
-    ├── src/
-    │   ├── app/
-    │   │   ├── core/       # Singleton services (Auth, Booking, ApiService)
-    │   │   ├── features/   # Page-level components
-    │   │   │   ├── customer/ # Checkout, Dashboard, Settings
-    │   │   │   ├── provider/ # Earnings, Schedule, Reviews
-    │   │   │   ├── auth/     # Login, Signup
-    │   │   │   └── home/
-    │   │   └── layout/     # View Shells (Topbars, Sidebars for roles)
-    │   ├── styles.css      # Core styles & PrimeNG overrides
-    │   └── main.ts
-    ├── angular.json
-    └── package.json
-```
+---
+
+## 📝 License
+
+This project is [UNLICENSED](UNLICENSED). All rights reserved.

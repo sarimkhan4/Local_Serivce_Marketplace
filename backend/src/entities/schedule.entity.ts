@@ -10,7 +10,7 @@ export class Schedule {
   @PrimaryGeneratedColumn({ name: 'schedule_id' })
   scheduleId: number;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'datetime' })
   date: Date;
 
   @Column({ name: 'time_slot', length: 100 })

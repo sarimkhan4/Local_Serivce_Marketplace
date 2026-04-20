@@ -100,19 +100,19 @@
             </ng-template>
           </p-select>
 
-          <div *ngIf="selectedPaymentMethod() === 'Credit Card'" class="p-4 surface-50 border-1 surface-border">
+          <div *ngIf="selectedPaymentMethod() === 'Credit Card'" class="p-4 surface-50 border-1 surface-border mt-4">
             <div class="grid formgrid p-fluid">
               <div class="field col-12">
                 <label for="cc">Card Number</label>
-                <input id="cc" type="text" pInputText placeholder="0000 0000 0000 0000">
+                <input id="cc" type="text" pInputText placeholder="0000 0000 0000 0000" [(ngModel)]="cardNumber">
               </div>
               <div class="field col-6">
                 <label for="exp">Expiry Date</label>
-                <input id="exp" type="text" pInputText placeholder="MM/YY">
+                <input id="exp" type="text" pInputText placeholder="MM/YY" [(ngModel)]="expiryDate">
               </div>
               <div class="field col-6">
                 <label for="cvv">CVV</label>
-                <input id="cvv" type="text" pInputText placeholder="123">
+                <input id="cvv" type="text" pInputText placeholder="123" [(ngModel)]="cvv">
               </div>
             </div>
           </div>

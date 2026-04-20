@@ -24,7 +24,7 @@
 
       <div class="card mb-card">
         <div class="card-title">Your Recent Bookings</div>
-        <p-table [value]="appointments" [paginator]="true" [rows]="7" responsiveLayout="scroll"
+        <p-table [value]="loading() ? [1,2,3,4,5] : appointments" [paginator]="!loading()" [rows]="loading() ? 5 : 7" responsiveLayout="scroll"
           styleClass="app-dashboard-table">
           <ng-template pTemplate="header">
             <tr>
@@ -35,7 +35,7 @@
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-apt>
-            <tr>
+            <tr *ngIf="!loading()">
               <td class="provider-cell">
                 <img [src]="apt.image" class="avatar-circle" width="36" alt="avatar" />
                 <span class="provider-name">{{ apt.provider }}</span>
@@ -51,6 +51,17 @@
                   {{ apt.status }}
                 </span>
               </td>
+            </tr>
+            <tr *ngIf="loading()">
+              <td>
+                <div class="flex align-items-center">
+                    <p-skeleton shape="circle" size="36px" class="mr-2"></p-skeleton>
+                    <p-skeleton width="8rem" height="1.5rem"></p-skeleton>
+                </div>
+              </td>
+              <td><p-skeleton width="6rem" height="1.5rem"></p-skeleton></td>
+              <td><p-skeleton width="4rem" height="1.5rem"></p-skeleton></td>
+              <td><p-skeleton width="5rem" height="2rem" borderRadius="16px"></p-skeleton></td>
             </tr>
           </ng-template>
         </p-table>

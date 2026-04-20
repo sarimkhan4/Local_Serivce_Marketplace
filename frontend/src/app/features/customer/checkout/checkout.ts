@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal } from '@angular/core';
+import { Component, inject, computed, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -27,7 +27,7 @@ import { AuthService } from '../../../core/services/auth';
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })
-export class Checkout {
+export class Checkout implements OnInit {
   public dataService = inject(DataService);
   public bookingService = inject(BookingService);
   private apiService = inject(ApiService);
@@ -46,6 +46,10 @@ export class Checkout {
   processing = signal<boolean>(false);
   success = signal<boolean>(false);
 
+  cardNumber = signal<string>('');
+  expiryDate = signal<string>('');
+  cvv = signal<string>('');
+
   cartItems = computed(() => this.dataService.cart());
   addresses = computed(() => this.bookingService.addresses());
   
@@ -59,6 +63,13 @@ export class Checkout {
 
   constructor() {
     this.titleService.setTitle('Servicio | Checkout');
+  }
+
+  ngOnInit() {
+    const user = this.authService.currentUser();
+    if (user && user.id) {
+      this.bookingService.loadAddresses(String(user.id));
+    }
   }
 
   removeItem(index: number) {

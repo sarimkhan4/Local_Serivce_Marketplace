@@ -15,7 +15,7 @@ export class Booking {
   @Column({ length: 50, default: 'PENDING' })
   status: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'datetime' })
   date: Date;
 
   @Column({ name: 'total_amount', type: 'decimal', precision: 10, scale: 2 })

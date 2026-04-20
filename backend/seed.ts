@@ -23,7 +23,17 @@ async function seed() {
   });
 
   await dataSource.initialize();
-  console.log('Connected.');
+  console.log('Connected. Wiping old data to ensure unique realistic seeds...');
+  await dataSource.query('SET FOREIGN_KEY_CHECKS = 0');
+  await dataSource.query('TRUNCATE TABLE schedules');
+  await dataSource.query('TRUNCATE TABLE bookings');
+  await dataSource.query('TRUNCATE TABLE provider_services');
+  await dataSource.query('TRUNCATE TABLE addresses');
+  await dataSource.query('TRUNCATE TABLE users');
+  await dataSource.query('TRUNCATE TABLE services');
+  await dataSource.query('TRUNCATE TABLE categories');
+  await dataSource.query('SET FOREIGN_KEY_CHECKS = 1');
+  console.log('Old data cleared!');
   
   // 1. Categories
   const categories: Category[] = [];
@@ -42,7 +52,7 @@ async function seed() {
   for (let i = 0; i < 20; i++) {
     const category = categories[Math.floor(Math.random() * categories.length)];
     const s = dataSource.manager.create(Service, {
-      name: faker.commerce.productName(),
+      name: faker.commerce.productName() + ' ' + faker.commerce.productAdjective() + ' Service',
       description: faker.lorem.sentences(2),
       category: category,
     });

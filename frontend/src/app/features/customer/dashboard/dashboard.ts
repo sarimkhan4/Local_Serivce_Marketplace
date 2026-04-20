@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // PrimeNG Modules
@@ -8,13 +8,16 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { ChartModule } from 'primeng/chart'; 
+import { SkeletonModule } from 'primeng/skeleton';
+
 @Component({
   selector: 'app-customer-dashboard',
-  imports: [CommonModule, TableModule, ButtonModule, ChartModule, ProgressBarModule, MenuModule],
+  imports: [CommonModule, TableModule, ButtonModule, ChartModule, ProgressBarModule, MenuModule, SkeletonModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
 export class CustomerDashboard implements OnInit{
+  loading = signal(true);
   chartData: any;
   chartOptions: any;
   menuItems: MenuItem[] = [
@@ -25,6 +28,10 @@ export class CustomerDashboard implements OnInit{
 
   ngOnInit() {
     this.initChart();
+    // Simulate loading for Skeleton feature
+    setTimeout(() => {
+        this.loading.set(false);
+    }, 2000);
   }
 
   initChart() {

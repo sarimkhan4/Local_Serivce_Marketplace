@@ -37,7 +37,7 @@
     <p>Discover thousands of services tailored to your exact needs smoothly.</p>
   </div>
 
-  <div class="mt-4">
+  <div class="mt-4" *ngIf="!loadingCategories()">
     <p-tabs [value]="selectedCategoryId">
       <p-tablist>
         <p-tab *ngFor="let category of categories" [value]="category.id">
@@ -71,6 +71,33 @@
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>
+  </div>
+
+  <div class="mt-4" *ngIf="loadingCategories()">
+    <div class="flex gap-2 mb-4">
+      <p-skeleton width="8rem" height="2.5rem" borderRadius="16px"></p-skeleton>
+      <p-skeleton width="8rem" height="2.5rem" borderRadius="16px"></p-skeleton>
+      <p-skeleton width="8rem" height="2.5rem" borderRadius="16px"></p-skeleton>
+    </div>
+    <div class="services-grid">
+      <p-card *ngFor="let i of [1,2,3,4]" [style]="{ overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%'}">
+        <ng-template #header>
+          <p-skeleton width="100%" height="200px"></p-skeleton>
+        </ng-template>
+        <ng-template #title>
+          <p-skeleton width="70%" height="1.5rem" class="mb-2"></p-skeleton>
+        </ng-template>
+        <ng-template #subtitle>
+          <p-skeleton width="40%" height="1rem" class="mb-2"></p-skeleton>
+        </ng-template>
+        <ng-template #footer>
+          <div class="flex gap-2 w-full mt-2">
+            <p-skeleton width="3rem" height="2.5rem"></p-skeleton>
+            <p-skeleton width="100%" height="2.5rem" class="flex-1"></p-skeleton>
+          </div>
+        </ng-template>
+      </p-card>
+    </div>
   </div>
 </section>
 

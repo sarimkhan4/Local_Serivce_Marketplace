@@ -9,7 +9,6 @@ import { ServicesService } from './services.service';
  * Exposes API endpoints for services and provider pricing.
  */
 @Controller('services')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
@@ -34,6 +33,7 @@ export class ServicesController {
     return this.servicesService.findById(+id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Admin')
   @Post()
   createService(@Body() data: any) {
@@ -42,6 +42,7 @@ export class ServicesController {
 
   // --- ProviderService logic ---
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Provider')
   @Post('provider')
   addProviderService(
@@ -52,6 +53,7 @@ export class ServicesController {
     return this.servicesService.addProviderService(+providerId, body);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Provider')
   @Post('provider/bulk')
   bulkSaveProviderServices(

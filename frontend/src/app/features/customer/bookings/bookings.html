@@ -154,15 +154,15 @@
     </div>
   </ng-template>
 
-  <div *ngIf="reviewTarget" class="review-dialog-body">
+  <div *ngIf="reviewTarget" class="flex flex-column gap-4 pt-2">
 
-    <div class="review-dialog-service">
+    <div class="p-3 border-1 surface-border" style="background:var(--surface-50);">
       <div class="text-400 text-xs mb-1 font-semibold">SERVICE</div>
       <div class="text-900 font-semibold">{{ reviewTarget.serviceName }}</div>
       <div class="text-500 text-sm">by {{ reviewTarget.providerName }}</div>
     </div>
 
-    <div class="review-dialog-field">
+    <div class="flex flex-column gap-2">
       <label class="text-700 font-medium text-sm">Your Rating <span class="text-red-400">*</span></label>
       <p-rating [(ngModel)]="reviewRating"></p-rating>
       <span *ngIf="reviewRating > 0" class="text-500 text-xs">
@@ -170,7 +170,7 @@
       </span>
     </div>
 
-    <div class="review-dialog-field">
+    <div class="flex flex-column gap-2">
       <label class="text-700 font-medium text-sm">Comments (Optional)</label>
       <textarea pTextarea [(ngModel)]="reviewComment" rows="3"
         placeholder="Share your experience with this service..." class="w-full"></textarea>

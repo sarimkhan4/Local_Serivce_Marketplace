@@ -144,30 +144,6 @@
   padding: 1rem;
 }
 
-/* Dark mode */
-.my-app-dark .browse-dataview-shell {
-  border-color: #27272a;
-  background: #18181b;
-}
-
-.my-app-dark .browse-dv-toolbar {
-  border-bottom-color: #27272a;
-  background: #18181b;
-}
-
-.my-app-dark .browse-list-row {
-  border-color: #27272a;
-}
-
-.my-app-dark .svc-grid-card {
-  border-color: #27272a;
-  background: #18181b;
-}
-
-.my-app-dark .svc-grid-wrapper {
-  background: #18181b;
-}
-
 .svc-grid-card:hover {
   border-color: #0d9488;
 }

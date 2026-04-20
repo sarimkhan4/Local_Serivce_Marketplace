@@ -46,7 +46,7 @@ export const databaseProviders = [
           Review,
           Notification,
         ],
-        synchronize: false,
+        synchronize: true,
         logging: false,
       });
 

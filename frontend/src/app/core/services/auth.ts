@@ -67,6 +67,37 @@ export class AuthService {
     }
   }
 
+  async signup(data: any): Promise<void> {
+    try {
+      const response = await lastValueFrom(
+        this.http.post<{access_token: string, userId: string, name: string, role: string}>(
+          `${environment.apiUrl}/auth/signup`,
+          data
+        )
+      );
+
+      const [firstName, ...lastNames] = (response.name || '').split(' ');
+      
+      const user: User = {
+        id: response.userId.toString(),
+        email: data.email,
+        firstName: firstName || 'User',
+        lastName: lastNames.join(' ') || '',
+        role: response.role as any
+      };
+      
+      this.currentUser.set(user);
+      this.isAuthenticated.set(true);
+      
+      localStorage.setItem('access_token', response.access_token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+    } catch (error) {
+      console.error('Signup failed', error);
+      throw error;
+    }
+  }
+
   logout(): void {
     this.currentUser.set(null);
     this.isAuthenticated.set(false);

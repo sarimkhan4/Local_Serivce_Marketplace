@@ -102,29 +102,6 @@
   color: #0f172a !important;
 }
 
-/* Dark mode: override local utility colors that hide text */
-.my-app-dark .app-dash-page .text-900,
-.my-app-dark .app-dash-page .text-700,
-.my-app-dark .app-dash-page .text-600,
-.my-app-dark .app-dash-page .text-500,
-.my-app-dark .app-dash-page .text-400 {
-  color: #e4e4e7 !important;
-}
-
-.my-app-dark .app-dash-page .text-900,
-.my-app-dark .app-dash-page .font-bold {
-  color: #fafafa !important;
-}
-
-.my-app-dark .app-dash-card {
-  background: #18181b !important;
-  border-color: #27272a !important;
-}
-
-.my-app-dark .surface-300 {
-  background-color: #27272a !important;
-}
-
 .text-sm {
   font-size: 0.875rem !important;
 }

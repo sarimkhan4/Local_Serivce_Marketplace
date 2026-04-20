@@ -22,6 +22,35 @@ export class AuthService {
     return user;
   }
 
+  async signup(data: any): Promise<User> {
+    const existing = await this.usersService.findByEmailWithPassword(data.email);
+    if (existing) {
+      throw new UnauthorizedException('Email already in use');
+    }
+
+    const baseData = {
+      email: data.email,
+      password: data.password || 'password123',
+      name: `${data.firstName || ''} ${data.lastName || ''}`.trim(),
+      phone: data.phoneNumber || '0000000000',
+    };
+
+    if (data.role === 'customer' || data.role === 'Customer') {
+      const customer = await this.usersService.createCustomer({
+        ...baseData,
+      });
+      return customer;
+    } else if (data.role === 'provider' || data.role === 'Provider') {
+      const provider = await this.usersService.createProvider({
+        ...baseData,
+        experience: data.experienceYears || 0,
+      });
+      return provider;
+    } else {
+      throw new UnauthorizedException('Invalid role');
+    }
+  }
+
   /**
    * Basic auth handler
    */

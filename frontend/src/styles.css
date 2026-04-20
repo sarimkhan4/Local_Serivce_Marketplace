@@ -12,18 +12,17 @@
 }
 
 .my-app-dark {
-  /* Pure black app background + zinc surfaces */
-  --color-bg-base: #09090b;
-  --color-surface: #18181b;
-  --color-surface-hover: #27272a;
-  --text-main: #fafafa;
-  --text-muted: #a1a1aa;
+  --color-bg-base: #0b0f19;
+  --color-surface: #121826;
+  --color-surface-hover: #1b2435;
+  --text-main: #e5e7eb;
+  --text-muted: #94a3b8;
 }
 
 .my-app-dark body,
 body.my-app-dark {
-  background-color: #09090b;
-  color: #fafafa;
+  background-color: #0b0f19;
+  color: #e5e7eb;
 }
 
 * {
@@ -157,12 +156,12 @@ route-outlet+* {
 }
 
 .my-app-dark .app-shell-nav.p-menu .p-menuitem-link {
-  color: #e4e4e7;
+  color: #cbd5e1;
 }
 
 .my-app-dark .app-shell-nav.p-menu .p-menuitem-link:not(.p-disabled):hover {
-  background-color: #27272a;
-  color: #fafafa;
+  background-color: #1f2937;
+  color: #f8fafc;
 }
 
 .my-app-dark .app-shell-nav.p-menu .p-menuitem-link.router-link-active,
@@ -204,22 +203,22 @@ route-outlet+* {
 .my-app-dark .earnings-filter-bar,
 .my-app-dark .earnings-table-shell,
 .my-app-dark .notif-stat-card {
-  background: #18181b !important;
-  border-color: #27272a !important;
+  background: #121826 !important;
+  border-color: #243043 !important;
 }
 
 .my-app-dark .layout-main,
 .my-app-dark .app-dashboard-page {
-  background: #09090b !important;
+  background: #0b0f19 !important;
 }
 
 .my-app-dark .layout-topbar {
-  background: #18181b !important;
-  border-bottom-color: #27272a !important;
+  background: #0f1625 !important;
+  border-bottom-color: #243043 !important;
 }
 
 .my-app-dark .layout-sidebar {
-  background: #18181b !important;
+  background: #0f1625 !important;
   margin: 0.75rem !important;
 }
 
@@ -229,53 +228,53 @@ route-outlet+* {
 
 .my-app-dark .surface-200,
 .my-app-dark .topbar-icon-btn.surface-200 {
-  background: #27272a !important;
-  color: #fafafa !important;
+  background: #1b2435 !important;
+  color: #e5e7eb !important;
 }
 
 .my-app-dark .topbar-icon-btn.p-button:hover {
-  background: #27272a !important;
+  background: #1f2937 !important;
 }
 
 .my-app-dark .p-menuitem-link,
 .my-app-dark .p-menuitem-text,
 .my-app-dark .p-menuitem-icon {
-  color: #e4e4e7 !important;
+  color: #cbd5e1 !important;
 }
 
 .my-app-dark .p-menu-overlay,
 .my-app-dark .p-menu-list {
-  background: #18181b !important;
-  border-color: #27272a !important;
+  background: #121826 !important;
+  border-color: #243043 !important;
 }
 
 .my-app-dark .notif-item,
 .my-app-dark .notif-unread,
 .my-app-dark .notif-item:hover,
 .my-app-dark .notif-unread:hover {
-  background: #18181b !important;
+  background: #111827 !important;
 }
 
 .my-app-dark .notif-item {
-  border-bottom-color: #27272a !important;
+  border-bottom-color: #243043 !important;
 }
 
 .my-app-dark .text-900,
 .my-app-dark .text-700 {
-  color: #fafafa !important;
+  color: #e5e7eb !important;
 }
 
 .my-app-dark .text-600,
 .my-app-dark .text-500,
 .my-app-dark .text-400 {
-  color: #a1a1aa !important;
+  color: #94a3b8 !important;
 }
 
 .my-app-dark .p-datatable thead th,
 .my-app-dark .p-datatable tbody td {
-  background: #18181b !important;
-  color: #fafafa !important;
-  border-color: #27272a !important;
+  background: #121826 !important;
+  color: #e5e7eb !important;
+  border-color: #243043 !important;
 }
 
 .my-app-dark .p-paginator,
@@ -284,9 +283,9 @@ route-outlet+* {
 .my-app-dark .p-datepicker,
 .my-app-dark .p-dialog,
 .my-app-dark .p-tabs-tablist {
-  background: #18181b !important;
-  border-color: #27272a !important;
-  color: #fafafa !important;
+  background: #121826 !important;
+  border-color: #243043 !important;
+  color: #e5e7eb !important;
 }
 
 .my-app-dark .p-menu,
@@ -294,9 +293,9 @@ route-outlet+* {
 .my-app-dark .p-dialog-content,
 .my-app-dark .p-dialog-header,
 .my-app-dark .p-dialog-footer {
-  background: #18181b !important;
-  color: #fafafa !important;
-  border-color: #27272a !important;
+  background: #121826 !important;
+  color: #e5e7eb !important;
+  border-color: #243043 !important;
 }
 
 .my-app-dark .notif-stat-icon,
@@ -304,8 +303,8 @@ route-outlet+* {
 .my-app-dark .settings-address-icon,
 .my-app-dark .icon-box,
 .my-app-dark .notif-icon-wrap {
-  background: #27272a !important;
-  border: 1px solid #3f3f46 !important;
+  background: #1b2435 !important;
+  border: 1px solid #334155 !important;
 }
 
 .my-app-dark .notif-filter-row,
@@ -313,33 +312,33 @@ route-outlet+* {
 .my-app-dark .date-block,
 .my-app-dark .slot-unavailable,
 .my-app-dark .progress-track {
-  background: #18181b !important;
-  border-color: #27272a !important;
+  background: #101827 !important;
+  border-color: #243043 !important;
 }
 
 .my-app-dark .slot-available,
 .my-app-dark .date-block.date-today,
 .my-app-dark .notif-page-unread {
-  background: #27272a !important;
-  border-color: #3f3f46 !important;
+  background: #1b2435 !important;
+  border-color: #334155 !important;
 }
 
 .my-app-dark .status-completed,
 .my-app-dark .status-confirmed,
 .my-app-dark .status-pending {
-  background: #27272a !important;
-  color: #fafafa !important;
+  background: #1f2937 !important;
+  color: #e5e7eb !important;
 }
 
 .my-app-dark .app-dashboard-page {
-  --surface-card: #18181b;
-  --surface-ground: #09090b;
-  --surface-border: #27272a;
-  --text-primary: #e4e4e7;
-  --text-900: #fafafa;
-  --text-700: #e4e4e7;
-  --text-600: #a1a1aa;
-  --text-500: #a1a1aa;
+  --surface-card: #121826;
+  --surface-ground: #0b0f19;
+  --surface-border: #243043;
+  --text-primary: #cbd5e1;
+  --text-900: #e5e7eb;
+  --text-700: #cbd5e1;
+  --text-600: #94a3b8;
+  --text-500: #94a3b8;
 }
 
 .my-app-dark .bg-blue-tint,
@@ -349,31 +348,31 @@ route-outlet+* {
 .my-app-dark .bg-green-tint,
 .my-app-dark .bg-pink-tint,
 .my-app-dark .bg-teal-tint {
-  background: #27272a !important;
+  background: #1b2435 !important;
 }
 
 .my-app-dark .p-button.p-button-secondary,
 .my-app-dark .p-button.p-button-outlined {
-  color: #e4e4e7 !important;
-  border-color: #3f3f46 !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
 }
 
 .my-app-dark .p-tag,
 .my-app-dark .p-chip {
-  background: #27272a !important;
-  color: #e4e4e7 !important;
-  border-color: #3f3f46 !important;
+  background: #1f2937 !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
 }
 
 .my-app-dark .p-selectbutton .p-button {
-  background: #18181b !important;
-  color: #e4e4e7 !important;
-  border-color: #3f3f46 !important;
+  background: #111827 !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
 }
 
 .my-app-dark .p-selectbutton .p-button.p-highlight {
-  background: #27272a !important;
-  color: #fafafa !important;
+  background: #1f2937 !important;
+  color: #f8fafc !important;
 }
 
 .p-dataview-empty-message,
@@ -416,9 +415,9 @@ route-outlet+* {
 .my-app-dark .app-dashboard-table.p-datatable .p-datatable-thead>tr>th,
 .my-app-dark .app-dashboard-table.p-datatable .p-datatable-tbody>tr>td,
 .my-app-dark .app-dashboard-table.p-datatable .p-paginator {
-  background: #18181b !important;
-  color: #fafafa !important;
-  border-color: #27272a !important;
+  background: #121826 !important;
+  color: #e5e7eb !important;
+  border-color: #243043 !important;
 }
 
 .public-wrapper .custom-menubar.p-menubar {
@@ -561,17 +560,17 @@ route-outlet+* {
 .my-app-dark .schedule-page .chip-today.p-chip,
 .my-app-dark .schedule-page .chip-today-sm.p-chip,
 .my-app-dark .browse-page .chip-active.p-chip {
-  background: #27272a !important;
-  color: #fafafa !important;
+  background: #1f2937 !important;
+  color: #f8fafc !important;
 }
 
 .my-app-dark .browse-page .chip-inactive.p-chip {
-  background: #18181b !important;
-  color: #e4e4e7 !important;
+  background: #111827 !important;
+  color: #cbd5e1 !important;
 }
 
 .my-app-dark .browse-page .chip-inactive.p-chip:hover {
-  background: #27272a !important;
+  background: #1f2937 !important;
 }
 
 .schedule-page .p-dataview .p-dataview-content>div>div:hover {
@@ -600,7 +599,7 @@ route-outlet+* {
 }
 
 .my-app-dark .availability-page .p-datepicker table td>span.p-datepicker-day:hover {
-  background: #27272a !important;
+  background: #1f2937 !important;
 }
 
 .service-detail-page .p-dialog .p-inputtext {

@@ -60,7 +60,19 @@ export class Signup {
 
   async onSubmit() {
     console.log(`Signup attempt for ${this.selectedRole}:`, this.email);
-    await this.authService.login(this.email, this.selectedRole === 'customer' ? 'Customer' : 'Provider');
+    const signupData = {
+      role: this.selectedRole === 'customer' ? 'Customer' : 'Provider',
+      firstName: this.firstName,
+      lastName: this.lastName,
+      email: this.email,
+      password: this.password,
+      phoneNumber: this.phoneNumber,
+      address: this.address,
+      companyName: this.companyName,
+      bio: this.bio,
+      experienceYears: this.experienceYears
+    };
+    await this.authService.signup(signupData);
     
     // Check pending actions only if customer
     if (this.selectedRole === 'customer') {

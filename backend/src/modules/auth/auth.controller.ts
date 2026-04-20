@@ -14,4 +14,10 @@ export class AuthController {
     const user = await this.authService.validateUser(req.email, req.password);
     return this.authService.login(user);
   }
+
+  @Post('signup')
+  async signup(@Body() req: any) {
+    const user = await this.authService.signup(req);
+    return this.authService.login(user);
+  }
 }

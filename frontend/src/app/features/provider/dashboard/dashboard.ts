@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-// PrimeNG Modules
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -9,18 +8,121 @@ import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { ChartModule } from 'primeng/chart';
 
+import { ApiService } from '../../../core/services/api.service';
+import { AuthService } from '../../../core/services/auth';
+import { lastValueFrom } from 'rxjs';
+
 @Component({
   selector: 'app-provider-dashboard',
   imports: [CommonModule, TableModule, ButtonModule, ProgressBarModule, MenuModule, ChartModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class ProviderDashboard {
+export class ProviderDashboard implements OnInit {
   chartData: object = {};
   chartOptions: object = {};
 
+  menuItems: MenuItem[] = [
+    { label: 'View Details', icon: 'pi pi-search' },
+    { label: 'Update', icon: 'pi pi-refresh' },
+    { label: 'Delete', icon: 'pi pi-trash' }
+  ];
+
+  stats: any[] = [];
+  appointments: any[] = [];
+  popularServices: any[] = [];
+  notifications: any[] = [];
+
+  private apiService = inject(ApiService);
+  private authService = inject(AuthService);
+
   constructor() {
     this.initChart();
+  }
+
+  async ngOnInit() {
+    await this.loadDashboardData();
+  }
+
+  async loadDashboardData() {
+    const userId = this.authService.currentUser()?.id;
+    if (!userId) return;
+
+    try {
+      const [bookingsRaw, notifsRaw]: any = await Promise.all([
+        lastValueFrom(this.apiService.getProviderBookings(userId)),
+        lastValueFrom(this.apiService.getUserNotifications(userId))
+      ]);
+      
+      const bookings = bookingsRaw || [];
+      const notifs = notifsRaw || [];
+
+      // APPOINTMENTS (Latest 5 jobs)
+      this.appointments = bookings
+        .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 5)
+        .map((b: any) => ({
+          id: b.bookingId,
+          client: b.customer?.name || 'Unknown Client',
+          service: b.services?.length ? b.services[0].name : 'General Service',
+          amount: '$' + Number(b.totalAmount).toFixed(2),
+          image: ''
+        }));
+
+      // STATS
+      const pendingBookings = bookings.filter((b: any) => b.status === 'PENDING' || b.status === 'CONFIRMED');
+      const completedBookings = bookings.filter((b: any) => b.status === 'COMPLETED');
+      const totalRevenue = completedBookings.reduce((sum: number, b: any) => sum + Number(b.totalAmount), 0);
+      const uniqueClients = new Set(bookings.map((b: any) => b.customer?.userId)).size;
+
+      this.stats = [
+        { label: 'Pending Jobs', value: pendingBookings.length.toString(), icon: 'pi pi-shopping-cart', color: 'blue', detailValue: 'Active', detailText: 'remaining' },
+        { label: 'Revenue', value: '$' + totalRevenue.toFixed(0), icon: 'pi pi-dollar', color: 'orange', detailValue: 'Earned', detailText: 'past completed' },
+        { label: 'Total Clients', value: uniqueClients.toString(), icon: 'pi pi-users', color: 'cyan', detailValue: 'Met', detailText: 'unique individuals' },
+        { label: 'Jobs Done', value: completedBookings.length.toString(), icon: 'pi pi-check', color: 'purple', detailValue: 'Past', detailText: 'successful jobs' }
+      ];
+
+      // POPULAR SERVICES (Count frequencies)
+      const serviceMap: { [key: string]: { category: string, count: number } } = {};
+      completedBookings.forEach((b: any) => {
+         const srv = b.services?.length ? b.services[0] : null;
+         if (srv) {
+           serviceMap[srv.name] = { 
+             category: srv.category ? srv.category.categoryName : 'General',
+             count: (serviceMap[srv.name]?.count || 0) + 1 
+           };
+         }
+      });
+      
+      const totalSrvs = Math.max(1, completedBookings.length);
+      const sortedSrvs = Object.entries(serviceMap).sort((a,b) => b[1].count - a[1].count).slice(0, 6);
+      const colors = ['orange', 'cyan', 'pink', 'green', 'purple', 'teal'];
+      
+      this.popularServices = sortedSrvs.map((s, i) => ({
+        name: s[0],
+        category: s[1].category,
+        revenue: '%' + Math.round((s[1].count/totalSrvs)*100),
+        progress: Math.round((s[1].count/totalSrvs)*100),
+        color: colors[i % colors.length]
+      }));
+
+      // NOTIFICATIONS
+      if (notifs.length > 0) {
+        this.notifications = notifs.slice(0, 4).map((n: any) => {
+           let icon = 'pi-bell';
+           let color = 'blue';
+           if (n.type === 'booking_created') { icon = 'pi-check'; color = 'green'; }
+           if (n.type === 'payment_success') { icon = 'pi-dollar'; color = 'orange'; }
+           
+           return { text: n.title, amount: n.message, icon, color };
+        });
+      } else {
+        this.notifications = [];
+      }
+
+    } catch (e) {
+      console.error('Failed to load dashboard data', e);
+    }
   }
 
   initChart(): void {
@@ -55,68 +157,14 @@ export class ProviderDashboard {
       plugins: {
         legend: {
           position: 'bottom',
-          labels: {
-            color: '#64748b',
-            boxWidth: 12,
-            boxHeight: 12,
-            padding: 16,
-          },
+          labels: { color: '#64748b', boxWidth: 12, boxHeight: 12, padding: 16 },
         },
       },
       scales: {
-        x: {
-          ticks: { color: '#64748b' },
-          grid: { display: false },
-        },
-        y: {
-          ticks: { color: '#64748b' },
-          grid: { color: '#e2e8f0' },
-          beginAtZero: true,
-        },
-        y1: {
-          ticks: { color: '#94a3b8' },
-          grid: { display: false },
-          position: 'right',
-          beginAtZero: true,
-        },
+        x: { ticks: { color: '#64748b' }, grid: { display: false } },
+        y: { ticks: { color: '#64748b' }, grid: { color: '#e2e8f0' }, beginAtZero: true },
+        y1: { ticks: { color: '#94a3b8' }, grid: { display: false }, position: 'right', beginAtZero: true },
       },
     };
   }
-
-  menuItems: MenuItem[] = [
-    { label: 'View Details', icon: 'pi pi-search' },
-    { label: 'Update', icon: 'pi pi-refresh' },
-    { label: 'Delete', icon: 'pi pi-trash' }
-  ];
-
-  stats = [
-    { label: 'Pending Jobs', value: '152', icon: 'pi pi-shopping-cart', color: 'blue', detailValue: '24 new', detailText: 'since last visit' },
-    { label: 'Revenue', value: '$2,100', icon: 'pi pi-dollar', color: 'orange', detailValue: '%52+', detailText: 'since last week' },
-    { label: 'Total Clients', value: '28441', icon: 'pi pi-users', color: 'cyan', detailValue: '520', detailText: 'newly registered' },
-    { label: 'Reviews', value: '152 Unread', icon: 'pi pi-comment', color: 'purple', detailValue: '85', detailText: 'responded' }
-  ];
-
-  appointments = [
-    { id: '1', client: 'Michael R.', service: 'TV Mounting', amount: '$65.00', image: 'https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png' },
-    { id: '2', client: 'Sarah Jenkins', service: 'Home Theater Setup', amount: '$72.00', image: 'https://primefaces.org/cdn/primeng/images/demo/avatar/asiyajavayant.png' },
-    { id: '3', client: 'David Chen', service: 'Shelf Installation', amount: '$79.00', image: 'https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png' },
-    { id: '4', client: 'Emma Croft', service: 'Desk Assembly', amount: '$29.00', image: 'https://primefaces.org/cdn/primeng/images/demo/avatar/ionibowcher.png' },
-    { id: '5', client: 'Olivia Harper', service: 'Mirror Mounting', amount: '$15.00', image: 'https://primefaces.org/cdn/primeng/images/demo/avatar/xuxuefeng.png' }
-  ];
-
-  popularServices = [
-    { name: 'TV Mounting', category: 'Accessories', revenue: '%50', progress: 50, color: 'orange' },
-    { name: 'Shelf Installation', category: 'Accessories', revenue: '%16', progress: 16, color: 'cyan' },
-    { name: 'Home Theater Setup', category: 'Accessories', revenue: '%67', progress: 67, color: 'pink' },
-    { name: 'Yard Cleanup', category: 'Office', revenue: '%35', progress: 35, color: 'green' },
-    { name: 'Drywall Repair', category: 'Accessories', revenue: '%75', progress: 75, color: 'purple' },
-    { name: 'Basic Plumbing', category: 'Clothing', revenue: '%40', progress: 40, color: 'teal' }
-  ];
-  
-  notifications = [
-    { text: 'Richard Jones has purchased a TV Mounting for', amount: '$79.00', icon: 'pi-dollar', color: 'blue' },
-    { text: 'Your request for withdrawal of', amount: '$2500.00', suffix: 'has been initiated.', icon: 'pi-download', color: 'orange' },
-    { text: 'Keyser Wick has purchased a Shelf Installation for', amount: '$59.00', icon: 'pi-dollar', color: 'blue' },
-    { text: 'Jane Davis has posted a new review about your service.', amount: '', icon: 'pi-question', color: 'pink' }
-  ]
 }

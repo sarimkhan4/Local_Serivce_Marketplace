@@ -1,7 +1,9 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -17,6 +19,8 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
 import { BookingService } from '../../../core/services/booking.service';
+import { ApiService } from '../../../core/services/api.service';
+import { AuthService } from '../../../core/services/auth';
 import type { TagSeverity } from '../../../core/types/ui.types';
 
 type BookingStatus = 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled';
@@ -49,9 +53,11 @@ interface CustomerBooking {
   templateUrl: './bookings.html',
   styleUrl: './bookings.css'
 })
-export class Bookings {
+export class Bookings implements OnInit {
   private titleService = inject(Title);
   public bookingService = inject(BookingService);
+  private apiService = inject(ApiService);
+  private authService = inject(AuthService);
   private messageService = inject(MessageService);
 
   statusFilter = signal<BookingStatus | 'All'>('All');
@@ -63,24 +69,17 @@ export class Bookings {
     { label: 'Cancelled', value: 'Cancelled' }
   ];
 
-  bookings = signal<CustomerBooking[]>([
-    { id: '1', serviceName: 'Full Home Deep Clean', providerName: 'Pro Cleaning Services', providerInitials: 'PC', providerColor: '#14b8a6', date: '2026-05-12', time: '09:00', price: 150, status: 'Completed', address: 'House 12, Gulshan, Karachi', serviceId: 's1', providerId: 'p1' },
-    { id: '2', serviceName: 'Pipe Leak Repair', providerName: 'Mario Bros Plumbing', providerInitials: 'MB', providerColor: '#6366f1', date: '2026-04-28', time: '11:00', price: 85, status: 'Completed', address: 'House 12, Gulshan, Karachi', serviceId: 's2', providerId: 'p2' },
-    { id: '3', serviceName: 'Electrical Panel Upgrade', providerName: 'Volt Masters', providerInitials: 'VM', providerColor: '#f59e0b', date: '2026-04-20', time: '10:00', price: 200, status: 'Confirmed', address: 'House 12, Gulshan, Karachi', serviceId: 's3', providerId: 'p3' },
-    { id: '4', serviceName: 'Window Washing', providerName: 'Crystal Clear', providerInitials: 'CC', providerColor: '#ef4444', date: '2026-04-10', time: '14:00', price: 75, status: 'Cancelled', address: 'House 12, Gulshan, Karachi', serviceId: 's4', providerId: 'p4' },
-    { id: '5', serviceName: 'Post-Construction Cleanup', providerName: 'Build Clean Co.', providerInitials: 'BC', providerColor: '#8b5cf6', date: '2026-03-30', time: '08:00', price: 320, status: 'Completed', address: 'House 12, Gulshan, Karachi', serviceId: 's5', providerId: 'p5' },
-    { id: '6', serviceName: 'Lawn Mowing & Edging', providerName: 'Green Thumb', providerInitials: 'GT', providerColor: '#22c55e', date: '2026-04-25', time: '09:00', price: 60, status: 'Pending', address: 'House 12, Gulshan, Karachi', serviceId: 's6', providerId: 'p6' },
-  ]);
+  bookings = signal<CustomerBooking[]>([]);
 
   filteredBookings = computed(() => {
     const sf = this.statusFilter();
-    return sf === 'All' ? this.bookings() : this.bookings().filter(b => b.status === sf);
+    return sf === 'All' ? this.bookings() : this.bookings().filter(b => b.status.toLowerCase() === sf.toLowerCase());
   });
 
   // ── Counts ──
-  completedCount = computed(() => this.bookings().filter(b => b.status === 'Completed').length);
-  pendingCount   = computed(() => this.bookings().filter(b => b.status === 'Pending').length);
-  totalSpent     = computed(() => this.bookings().filter(b => b.status === 'Completed').reduce((s, b) => s + b.price, 0));
+  completedCount = computed(() => this.bookings().filter(b => b.status.toLowerCase() === 'completed').length);
+  pendingCount   = computed(() => this.bookings().filter(b => b.status.toLowerCase() === 'pending').length);
+  totalSpent     = computed(() => this.bookings().filter(b => b.status.toLowerCase() === 'completed').reduce((s, b) => s + b.price, 0));
 
   // ── Review Dialog ──
   showReviewDialog = false;
@@ -92,14 +91,54 @@ export class Bookings {
     this.titleService.setTitle('Servicio | My Bookings');
   }
 
+  async ngOnInit() {
+    await this.loadBookings();
+  }
+
+  async loadBookings() {
+    const userId = this.authService.currentUser()?.id;
+    if (!userId) return;
+
+    try {
+      const response: any = await lastValueFrom(this.apiService.getCustomerBookings(userId));
+      const mappedBookings = response.map((b: any) => ({
+        id: b.bookingId.toString(),
+        serviceName: b.services?.length ? b.services[0].name : 'General Service',
+        providerName: b.provider?.name || 'Unknown Provider',
+        providerInitials: this.getInitials(b.provider?.name || 'UP'),
+        providerColor: this.getRandomColor(b.provider?.name),
+        date: new Date(b.date).toISOString().split('T')[0],
+        time: new Date(b.date).toISOString().split('T')[1].substring(0, 5),
+        price: Number(b.totalAmount),
+        status: b.status.charAt(0).toUpperCase() + b.status.slice(1).toLowerCase(), // e.g. Pending, Completed
+        address: b.address?.street ? `${b.address.street}, ${b.address.city}` : 'No Address',
+        serviceId: b.services?.length ? b.services[0].id : '',
+        providerId: b.provider?.userId?.toString() || ''
+      }));
+      this.bookings.set(mappedBookings);
+    } catch (e) {
+      console.error('Failed to load bookings', e);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Could not load bookings' });
+    }
+  }
+
+  getInitials(name: string): string {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  }
+  
+  getRandomColor(name: string = ''): string {
+    const colors = ['#14b8a6', '#6366f1', '#f59e0b', '#ef4444', '#8b5cf6', '#22c55e', '#ec4899'];
+    const index = name.length > 0 ? name.charCodeAt(0) % colors.length : 0;
+    return colors[index];
+  }
+
   getStatusSeverity(status: BookingStatus): TagSeverity {
-    const map: Record<BookingStatus, TagSeverity> = {
-      Confirmed: 'success',
-      Pending: 'warn',
-      Completed: 'info',
-      Cancelled: 'danger',
-    };
-    return map[status];
+    const s = status.toLowerCase();
+    if (s === 'confirmed') return 'success';
+    if (s === 'pending') return 'warn';
+    if (s === 'completed') return 'info';
+    if (s === 'cancelled') return 'danger';
+    return 'info';
   }
 
   formatDate(d: string): string {
@@ -113,7 +152,7 @@ export class Bookings {
   }
 
   canReview(booking: CustomerBooking): boolean {
-    return booking.status === 'Completed' && !this.bookingService.hasReview(booking.id);
+    return booking.status.toLowerCase() === 'completed' && !this.bookingService.hasReview(booking.id);
   }
 
   openReview(booking: CustomerBooking) {
@@ -123,27 +162,19 @@ export class Bookings {
     this.showReviewDialog = true;
   }
 
-  submitReview() {
+  async submitReview() {
     if (!this.reviewTarget || this.reviewRating === 0) {
       this.messageService.add({ severity: 'warn', summary: 'Please select a rating', life: 3000 });
       return;
     }
-    this.bookingService.addReview(this.reviewTarget.id, {
-      bookingId: this.reviewTarget.id,
-      serviceId: this.reviewTarget.serviceId,
-      providerId: this.reviewTarget.providerId,
-      customerId: 'c1',
-      customerName: 'Guest User',
-      customerInitials: 'GU',
-      customerColor: '#f97316',
-      rating: this.reviewRating,
-      comment: this.reviewComment,
-      serviceName: this.reviewTarget.serviceName,
-      providerName: this.reviewTarget.providerName,
-      providerInitials: this.reviewTarget.providerInitials,
-      providerColor: this.reviewTarget.providerColor
-    });
-    this.messageService.add({ severity: 'success', summary: 'Review Submitted!', detail: 'Thank you for your feedback.', life: 3000 });
-    this.showReviewDialog = false;
+
+    try {
+      await lastValueFrom(this.apiService.createReview(this.reviewTarget.id, this.reviewRating, this.reviewComment));
+      this.messageService.add({ severity: 'success', summary: 'Review Submitted!', detail: 'Thank you for your feedback.', life: 3000 });
+      this.showReviewDialog = false;
+      //
+    } catch (e) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Could not submit review' });
+    }
   }
 }

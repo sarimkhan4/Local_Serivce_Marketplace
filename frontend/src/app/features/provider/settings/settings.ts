@@ -27,12 +27,15 @@ export class ProviderSettings {
   providerName = `${this.authService.currentUser()?.firstName || ''} ${this.authService.currentUser()?.lastName || ''}`.trim() || 'Provider Name';
   providerEmail = this.authService.currentUser()?.email || 'provider@example.com';
   photoUrl: string | null = null;
-  companyName = "Jane's Elite Cleaning";
-  experience = 5;
-  description = "Providing top-tier home and commercial cleaning services since 2019.";
+  companyName = "My Business";
+  experience = 1;
+  description = "A reliable local service provider.";
 
   constructor() {
     this.titleService.setTitle('Local Service Management System | Edit Provider Profile');
+    
+    // Load existing config if applicable, but for now we set default DB fallbacks
+    // If backend profile APIs exist, you would query them here
   }
 
   onBasicUploadAuto(event: any) {

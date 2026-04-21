@@ -13,7 +13,8 @@ export const routes: Routes = [
     children: [
       { path: '', loadComponent: () => import('./features/home/home').then(m => m.Home) },
       { path: 'login', canActivate: [guestGuard], loadComponent: () => import('./features/auth/login/login').then(m => m.Login) },
-      { path: 'signup', canActivate: [guestGuard], loadComponent: () => import('./features/auth/signup/signup').then(m => m.Signup) }
+      { path: 'signup', canActivate: [guestGuard], loadComponent: () => import('./features/auth/signup/signup').then(m => m.Signup) },
+      { path: 'unauthorized', loadComponent: () => import('./layout/unauthorized/unauthorized').then(m => m.Unauthorized), title: 'Access Denied' }
     ]
   },
   {

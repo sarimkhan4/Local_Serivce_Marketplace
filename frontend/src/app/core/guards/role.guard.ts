@@ -15,14 +15,8 @@ export const roleGuard: CanMatchFn = (route: Route, segments: UrlSegment[]) => {
       return true;
     }
 
-    // Role mismatch, redirect to appropriate dashboard based on actual role
-    if (userRole === 'Provider') {
-      return router.parseUrl('/provider');
-    } else if (userRole === 'Customer') {
-      return router.parseUrl('/customer');
-    }
-    
-    return router.parseUrl('/');
+    // Role mismatch, redirect to unauthorized
+    return router.parseUrl('/unauthorized');
   }
 
   return router.parseUrl('/login');

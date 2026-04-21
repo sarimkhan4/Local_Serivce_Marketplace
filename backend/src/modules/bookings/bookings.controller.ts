@@ -1,10 +1,14 @@
-import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch , UseGuards} from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { ResourceOwnerGuard } from '../../common/guards/resource-owner.guard';
 import { BookingsService } from './bookings.service';
 
 /**
  * BookingsController
  * API endpoints for managing the lifecycle of a booking.
  */
+@UseGuards(JwtAuthGuard, RolesGuard, ResourceOwnerGuard)
 @Controller('bookings')
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}

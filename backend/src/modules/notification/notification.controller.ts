@@ -1,4 +1,6 @@
-import { Controller, Get, Post, Patch, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param , UseGuards} from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
 import { NotificationService } from './notification.service';
 import { NotificationType } from '../../common/enums/notification_type.enum';
 
@@ -6,6 +8,7 @@ import { NotificationType } from '../../common/enums/notification_type.enum';
  * NotificationController
  * API endpoints for managing notifications.
  */
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('notifications')
 export class NotificationController {
     constructor(private readonly notificationService: NotificationService) { }

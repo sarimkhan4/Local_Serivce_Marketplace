@@ -2,6 +2,9 @@ import { Routes } from '@angular/router';
 import { PublicLayout } from './layout/public-layout/public-layout';
 import { CustomerLayout } from './layout/customer-layout/customer-layout';
 import { ProviderLayout } from './layout/provider-layout/provider-layout';
+import { authGuard } from './core/guards/auth.guard';
+import { guestGuard } from './core/guards/guest.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -9,13 +12,16 @@ export const routes: Routes = [
     component: PublicLayout,
     children: [
       { path: '', loadComponent: () => import('./features/home/home').then(m => m.Home) },
-      { path: 'login', loadComponent: () => import('./features/auth/login/login').then(m => m.Login) },
-      { path: 'signup', loadComponent: () => import('./features/auth/signup/signup').then(m => m.Signup) }
+      { path: 'login', canActivate: [guestGuard], loadComponent: () => import('./features/auth/login/login').then(m => m.Login) },
+      { path: 'signup', canActivate: [guestGuard], loadComponent: () => import('./features/auth/signup/signup').then(m => m.Signup) }
     ]
   },
   {
     path: 'app/customer',
     component: CustomerLayout,
+    canActivate: [authGuard],
+    canMatch: [roleGuard],
+    data: { roles: ['Customer'] },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', loadComponent: () => import('./features/customer/dashboard/dashboard').then(m => m.CustomerDashboard) },
@@ -31,6 +37,9 @@ export const routes: Routes = [
   {
     path: 'app/provider',
     component: ProviderLayout,
+    canActivate: [authGuard],
+    canMatch: [roleGuard],
+    data: { roles: ['Provider'] },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', loadComponent: () => import('./features/provider/dashboard/dashboard').then(m => m.ProviderDashboard) },

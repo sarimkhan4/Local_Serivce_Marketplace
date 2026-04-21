@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param , UseGuards} from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
 import { SchedulesService } from './schedules.service';
 
 /**
  * SchedulesController
  * Exposes API endpoints for managing provider schedules.
  */
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('schedules')
 export class SchedulesController {
   constructor(private readonly schedulesService: SchedulesService) {}

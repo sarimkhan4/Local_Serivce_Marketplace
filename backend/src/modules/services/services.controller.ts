@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
+import { IsPublic } from '../../common/decorators/public.decorator';
 import { Roles } from '../auth/roles.decorator';
 import { ServicesService } from './services.service';
 
@@ -8,25 +9,30 @@ import { ServicesService } from './services.service';
  * ServicesController
  * Exposes API endpoints for services and provider pricing.
  */
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
+  @IsPublic()
   @Get()
   getAllServices() {
     return this.servicesService.findAll();
   }
 
+  @IsPublic()
   @Get('listings')
   getAllProviderServices() {
     return this.servicesService.getAllProviderServices();
   }
 
+  @IsPublic()
   @Get('provider/:providerId')
   getServicesByProvider(@Param('providerId') providerId: string) {
     return this.servicesService.getServicesByProvider(+providerId);
   }
 
+  @IsPublic()
   @Get(':id')
   getService(@Param('id') id: string) {
     if (isNaN(+id)) return null; // Simple guard

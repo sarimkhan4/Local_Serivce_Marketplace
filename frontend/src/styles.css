@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
+html {
+  scroll-behavior: smooth; /* Helps sync with GSAP scrub */
+  overscroll-behavior-y: none; /* Prevents bounce-back vibration */
+}
+
 :root {
   --color-primary: #4f46e5;
   --color-primary-hover: #4338ca;

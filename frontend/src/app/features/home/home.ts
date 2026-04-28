@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, signal, inject, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -60,9 +60,14 @@ interface Testimonial {
   styleUrl: './home.css',
 })
 export class Home implements OnInit, AfterViewInit {
+  @ViewChild('heroVideo') heroVideo!: ElementRef<HTMLVideoElement>;
   selectedCategoryId: string = '';
   loadingCategories = signal(true);
   categories: any[] = [];
+
+  // --- Testimonial Carousel State ---
+  currentTestimonialIndex = 0;
+  readonly totalTestimonials = 4;
 
   apiService = inject(ApiService);
 
@@ -95,6 +100,139 @@ export class Home implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+
+    const tl = gsap.timeline();
+
+    // Assembly: Move K, D down and O, A up into the center line
+    tl.to(".letter", {
+      y: 0,
+      opacity: 1,
+      duration: 2.5,
+      stagger: 0.3,
+      ease: "expo.inOut",
+    })
+
+      // The Hold
+      .to({}, { duration: 1 })
+
+      // Curtain Reveal
+      .to(".reveal-curtain", {
+        yPercent: -100,
+        duration: 2,
+        ease: "power4.inOut",
+      })
+
+      .from(".hero-content", {
+        opacity: 0,
+        y: 40,
+        duration: 1.5,
+        ease: "power3.out"
+      }, "-=1.2");
+
+
+    // // Cinematic Deep Parallax
+    // gsap.to(".hero-video-bg", {
+    //   yPercent: 80, // High value = much slower background movement
+    //   ease: "none",
+    //   scrollTrigger: {
+    //     trigger: ".hero-section",
+    //     start: "top top",
+    //     end: "bottom top",
+    //     scrub: true, // Tied 1:1 with the scrollbar
+    //   }
+    // });
+
+    // Shrink effect on the content for added depth
+    gsap.to(".hero-content", {
+      scale: 0.8,
+      opacity: 0,
+      y: -200, // Moves up faster to get out of the way
+      scrollTrigger: {
+        trigger: ".hero-section",
+        start: "top top",
+        end: "70% top",
+        scrub: true
+      }
+    });
+
+    if (this.heroVideo && this.heroVideo.nativeElement) {
+      this.heroVideo.nativeElement.muted = true;
+      this.heroVideo.nativeElement.play().catch(e => console.error('Video play error:', e));
+    }
+
+    const cursor = document.querySelector('.custom-cursor');
+    const section = document.querySelector('.testimonials-editorial');
+
+    window.addEventListener('mousemove', (e) => {
+      gsap.to(cursor, {
+        x: e.clientX - 14, // Offset by half width
+        y: e.clientY - 14, // Offset by half height
+        duration: 0.1,    // Tiny delay for that 'fluid' follow feel
+        ease: "power2.out"
+      });
+
+      // 2. Directional Logic
+      const target = e.target as Element;
+      const hoveredCard = target && target.closest ? target.closest('.editorial-card') : null;
+      if (hoveredCard) {
+        const rect = hoveredCard.getBoundingClientRect();
+        const cardCenter = rect.left + rect.width / 2;
+
+        if (e.clientX < cardCenter) {
+          gsap.set(cursor, { scaleX: -1 });
+        } else {
+          gsap.set(cursor, { scaleX: 1 });
+        }
+      } else if (section) {
+        const rect = section.getBoundingClientRect();
+        const sectionCenter = rect.left + rect.width / 2;
+        if (e.clientX < sectionCenter) {
+          gsap.set(cursor, { scaleX: -1 });
+        } else {
+          gsap.set(cursor, { scaleX: 1 });
+        }
+      }
+    });
+
+    // 2. Show/Hide on hover
+    section?.addEventListener('mouseenter', () => {
+      gsap.to(cursor, { opacity: 1, scale: 1 });
+    });
+
+    section?.addEventListener('mouseleave', () => {
+      gsap.to(cursor, { opacity: 0, scale: 0 });
+    });
+
+    // home.ts inside ngAfterViewInit
+    setTimeout(() => {
+      gsap.fromTo(
+        ".testimonial-content-wrapper",
+        {
+          scale: 0.5,      // Start even smaller for a more dramatic growth
+          y: 150           // More vertical travel makes the timing feel longer
+        },
+        {
+          scale: 1,
+          opacity: 1,
+          y: 0,
+          ease: "none", // A slight ease-out makes the final landing smoother
+          scrollTrigger: {
+            trigger: ".testimonials-editorial",
+            // Start: When the top of the section enters the bottom of the screen
+            start: "top bottom",
+            // End: Exactly when the top of the section reaches the center of the screen
+            end: "center center",
+            /* Increasing scrub to 1.5 or 2 makes the animation 'lag' behind the scroll slightly,
+               creating the illusion of a much longer, smoother transition.
+            */
+            scrub: 3,
+            invalidateOnRefresh: true,
+            // markers: true // Highly recommend turning this on to see the 'end' line at the center
+          }
+        }
+      );
+    }, 100);
+
     setTimeout(() => {
       gsap.fromTo(
         ".main-gallery-heading",
@@ -145,6 +283,53 @@ export class Home implements OnInit, AfterViewInit {
       localStorage.setItem('pendingAction', JSON.stringify({ type: 'book', service }));
       this.router.navigate(['/login']);
     }
+  }
+
+  onCardClick(event: MouseEvent) {
+    const target = event.target as Element;
+    const card = target && target.closest ? target.closest('.editorial-card') : null;
+    if (card) {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
+
+      if (event.clientX < cardCenter) {
+        this.prevTestimonial();
+      } else {
+        this.nextTestimonial();
+      }
+    }
+  }
+
+  // --- Testimonial Carousel Methods ---
+  nextTestimonial() {
+    this.currentTestimonialIndex =
+      (this.currentTestimonialIndex + 1) % this.totalTestimonials;
+    this.animateToSlide(this.currentTestimonialIndex);
+  }
+
+  prevTestimonial() {
+    this.currentTestimonialIndex =
+      (this.currentTestimonialIndex - 1 + this.totalTestimonials) % this.totalTestimonials;
+    this.animateToSlide(this.currentTestimonialIndex);
+  }
+
+  private animateToSlide(index: number) {
+    const track = document.querySelector('.testimonial-track') as HTMLElement;
+    if (!track) return;
+
+    const firstCard = track.firstElementChild as HTMLElement;
+    if (!firstCard) return;
+
+    // getBoundingClientRect().width is reliable regardless of min-width/vw units
+    // offsetWidth can return 0 when min-width is set in vw under certain render timings
+    const slideWidth = firstCard.getBoundingClientRect().width
+      || window.innerWidth * 0.9; // fallback: matches the 90vw CSS
+
+    gsap.to(track, {
+      x: -(index * slideWidth),
+      duration: 0.7,
+      ease: 'power3.inOut'
+    });
   }
 
   trustedBrands = [

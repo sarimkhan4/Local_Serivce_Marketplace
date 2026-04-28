@@ -8,86 +8,113 @@
   min-height: 65vh;
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
-/* Scatter them across different quadrants */
-.tool-hammer {
-  top: 10%;
-  left: 5%;
-  --initial-rotation: -20deg;
-  animation-duration: 5s;
-}
-
-.tool-wrench {
-  top: 65%;
-  left: 10%;
-  --initial-rotation: 30deg;
-  animation-duration: 7s;
-  animation-delay: 1s;
-}
-
-.tool-roller {
-  top: 15%;
-  right: 8%;
-  --initial-rotation: 15deg;
-  animation-duration: 6s;
-  animation-delay: 0.5s;
-}
-
-.tool-lightbulb {
-  top: 50%;
-  right: 5%;
-  --initial-rotation: -10deg;
-  animation-duration: 5.5s;
-  animation-delay: 2s;
-}
-
-.tool-bolt {
-  top: 75%;
-  right: 15%;
-  --initial-rotation: 10deg;
-  animation-duration: 4.5s;
-}
-
-.tool-drill {
-  top: 40%;
-  left: 15%;
-  --initial-rotation: -15deg;
-  animation-duration: 8s;
-  animation-delay: 1.5s;
-}
-
-.tool-spray {
-  bottom: 5%;
-  right: 40%;
-  --initial-rotation: 5deg;
-  animation-duration: 6.5s;
-}
-
-/* Make them subtle so they don't overpower your text */
-.bg-tool {
-  position: absolute;
-  width: 70px;
-  height: 70px;
-  color: #000000;
-  /* Adjust this to make them more or less visible */
+/* home.css */
+.reveal-curtain {
+  position: fixed;
+  inset: 0;
+  background-color: white; /* The solid color of your curtain */
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
-  filter: grayscale(1);
-  animation: float 6s ease-in-out infinite;
+  /* Mix-blend-mode screen makes white stay white and black become transparent */
+  mix-blend-mode: screen; 
+  will-change: transform;
 }
 
-@keyframes float {
-  0% {
-    transform: translateY(0px) rotate(var(--initial-rotation));
-  }
+.lenis-assembly-container {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  justify-content: center;
+}
 
-  50% {
-    transform: translateY(-20px) rotate(var(--initial-rotation));
-  }
+.letter {
+  font-size: 30rem;
+  font-weight: 900;
+  line-height: 1;
+  /* Black text becomes transparent when the parent has mix-blend-mode: screen */
+  color: black; 
+  display: inline-block;
+  will-change: transform;
+}
 
-  100% {
-    transform: translateY(0px) rotate(var(--initial-rotation));
-  }
+
+/* K and D start higher than the center */
+.start-high {
+  transform: translateY(-400px);
+  opacity: 0;
+}
+
+/* O and A start lower than the center */
+.start-low {
+  transform: translateY(400px);
+  opacity: 0;
+}
+
+.hero-section.video-hero {
+  position: relative;
+  height: 100vh;
+  /* Full viewport height */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0;
+  background-color: #000;
+  /* Fallback color */
+}
+
+.hero-video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  /* Adjust opacity to make text readable */
+  z-index: 2;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+  /* Sit above video and overlay */
+  text-align: center;
+  color: #fff;
+  width: 90%;
+  max-width: 800px;
+}
+
+.hero-title {
+  color: #fff;
+  /* Ensure title is white for contrast */
+  font-size: 5rem;
+  /* Slightly larger for the full-screen look */
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure the search box is clearly visible over the video */
+.search-input-container {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  /* Modern frosted glass effect */
+  border: none;
 }
 
 .infinite-carousel-section {
@@ -95,6 +122,7 @@
   overflow: hidden;
   /* Hide the overflow of the track */
   background: #f4f4f4;
+  z-index: 2;
 }
 
 .marquee-container {
@@ -150,6 +178,13 @@
   font-size: 0.95rem;
 }
 
+.hero-video-bg,
+.testimonial-content-wrapper,
+.main-gallery-heading {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
 .hero-content {
   width: 100%;
   max-width: 800px;
@@ -200,7 +235,7 @@
   display: block;
   /* No hover effects as per instruction */
   filter: grayscale(100%) brightness(0.7);
-  
+
   /* 2. Smooth transition between B&W and Color */
   transition: filter 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -214,7 +249,7 @@
   top: 0;
   z-index: 20;
   background-color: #fff;
-  /* Fixed height helps prevent layout shifts as the text shrinks */ 
+  /* Fixed height helps prevent layout shifts as the text shrinks */
   display: flex;
   align-items: center;
 }
@@ -227,7 +262,7 @@
   margin: 0;
   width: 100%;
   /* Force hardware acceleration for smooth text scaling */
-  will-change: font-size; 
+  will-change: font-size;
 }
 
 /* Sophisticated outline effect for the second word */
@@ -445,67 +480,169 @@
   font-weight: 700;
 }
 
-.testimonials-section {
-  padding: 6rem 5%;
-  background: white;
-  border-top: 1px solid #e2e8f0;
+.testimonial-content-wrapper {
+  overflow: hidden;
+  width: 100%;
+  transform: translateZ(0);
+  will-change: transform, opacity;
 }
 
-.carousel-container {
-  max-width: 1200px;
-  margin: 0 auto;
+.testimonial-track {
+  display: flex;
+  flex-wrap: nowrap;
 }
 
-.testimonial-card {
-  padding: 2.5rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  margin: 0.5rem;
+.testimonials-editorial {
+  position: relative;
+  padding: 10rem 5% 15rem 5%;
+  /* Deep red base */
+  overflow: hidden;
+}
+
+/* Header Styling */
+.testimonial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 3rem;
+  color: #fff;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 12px;
+  margin-bottom: 1rem;
+}
+
+.editorial-title {
+  font-size: 4rem;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+/* The Card Styling */
+.editorial-card {
+  display: flex;
+  background: #f4f1ee;
+  /* Warm beige */
+  flex: 0 0 100%;
+  box-sizing: border-box;
+  height: 700px;
+  padding: 30px;
+  gap: 40px;
+  flex-shrink: 0;
+}
+
+.card-image {
+  flex: 0 0 30%;
   height: 100%;
 }
 
-.test-rating {
-  color: #fbbf24;
-  font-size: 1.1rem;
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-text {
+  flex: 1;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 20px 0;
+  color: #1a1a1a;
+}
+
+.quote-header {
+  font-size: 0.9rem;
+  font-weight: 700;
+  opacity: 0.6;
   margin-bottom: 1.5rem;
 }
 
-.test-comment {
-  font-size: 1.125rem;
-  color: var(--text-main);
-  font-style: italic;
-  margin-bottom: 2rem;
-  line-height: 1.6;
+.quote-body {
+  font-size: 2.2rem;
+  line-height: 1.2;
+  font-weight: 400;
+  letter-spacing: -0.02em;
 }
 
-.test-customer {
+.quote-footer {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  padding-top: 2rem;
+  margin-top: auto;
 }
 
-.test-avatar {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-  color: white;
+.author-name {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.author-handle {
+  font-size: 0.85rem;
+  opacity: 0.5;
+}
+
+/* 1. Hide the default cursor when over the testimonial section */
+.testimonials-editorial {
+  cursor: none;
+}
+
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  /* High width as requested */
+  height: auto;
+  color: black;
+  pointer-events: none;
+  /* Critical: allows clicking through the cursor */
+  z-index: 9999;
+  opacity: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 1.25rem;
+  transition: opacity 0.3s ease;
 }
 
-.test-info h4 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text-main);
-  margin-bottom: 0.25rem;
+.custom-cursor svg {
+  width: 100%;
+  height: auto;
+  /* Removed scaleX(1.5) - it was making the arrow look bloated */
+  transform: none;
+  /* Slightly thicker stroke makes it look better at small sizes */
+  stroke-width: 2;
 }
 
-.test-service {
-  font-size: 0.875rem;
-  color: var(--text-muted);
+
+/* Nav Arrows */
+.nav-arrows {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.nav-btn:hover {
+  background: #fff;
+  color: #7d2a1e;
 }
 
 .cta-section {

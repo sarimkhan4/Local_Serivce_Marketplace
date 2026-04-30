@@ -33,6 +33,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
   ],
   templateUrl: './signup.html',
   styleUrl: './signup.css',
+  host: { 'class': 'auth-page' }
 })
 export class Signup {
   selectedRole: string = 'customer';

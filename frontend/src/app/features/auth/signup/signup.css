@@ -1,70 +1,234 @@
-.auth-container {
+/* ===== SPLIT CONTAINER ===== */
+.auth-split-container {
+  display: flex;
   min-height: 100vh;
   width: 100vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  overflow: hidden;
-  background-color: #f1f5f9;
-  /* background-image:
-    radial-gradient(circle at 15% 50%, rgba(200, 180, 255, 0.4), transparent 50%),
-    radial-gradient(circle at 85% 30%, rgba(255, 180, 220, 0.4), transparent 50%),
-    radial-gradient(circle at 50% 80%, rgba(20, 184, 166, 0.2), transparent 50%); */
+  background-color: #ffffff;
 }
 
+/* ===== IMAGE SIDE ===== */
+.auth-image-side {
+  flex: 1;
+  display: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-image-side img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+@media (min-width: 992px) {
+  .auth-image-side {
+    display: block;
+    flex: 1.15;
+  }
+}
+
+/* ===== FORM SIDE ===== */
+.auth-form-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+}
+
+.auth-card-inner {
+  width: 100%;
+  max-width: 420px;
+  background: transparent;
+}
+
+.auth-card-inner-wide {
+  max-width: 520px;
+}
+
+/* ===== HEADER ===== */
 .auth-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: 2rem;
 }
 
 .auth-header h2 {
-  font-size: 1.875rem;
-  font-weight: 500;
-  color: var(--text-main);
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.02em;
 }
 
 .auth-header p {
-  color: var(--text-muted);
-  font-weight: 500;
+  color: #94a3b8;
+  font-weight: 400;
+  font-size: 0.95rem;
   margin-bottom: 0;
 }
 
+/* ===== ROLE SELECTOR ===== */
+.role-selector {
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+/* ===== FORM ===== */
 .auth-form {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
+/* ===== FORM GROUPS ===== */
 .form-group,
 .field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
   width: 100%;
 }
 
 .form-group label,
 .field label {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: var(--text-main);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   display: block;
 }
 
+/* ===== PrimeNG Input Overrides for Transparent Look ===== */
+:host ::ng-deep .p-inputtext,
+:host ::ng-deep input[pInputText] {
+  border: none;
+  border-bottom: 1.5px solid #e2e8f0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.65rem 0 0.65rem 0.25rem;
+  font-size: 0.95rem;
+  color: #0f172a;
+  box-shadow: none;
+  transition: border-color 0.2s ease;
+}
+
+:host ::ng-deep .p-inputtext:focus,
+:host ::ng-deep input[pInputText]:focus {
+  border-bottom-color: #0f172a;
+  box-shadow: none;
+}
+
+:host ::ng-deep .p-inputtext::placeholder,
+:host ::ng-deep input[pInputText]::placeholder {
+  color: #cbd5e1;
+}
+
+/* Icon field adjustments */
+:host ::ng-deep .p-iconfield {
+  position: relative;
+}
+
+:host ::ng-deep .p-iconfield .p-inputicon {
+  color: #94a3b8;
+}
+
+/* Password field */
+:host ::ng-deep .p-password-input {
+  border: none;
+  border-bottom: 1.5px solid #e2e8f0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.65rem 2rem 0.65rem 0.25rem;
+  font-size: 0.95rem;
+  color: #0f172a;
+  box-shadow: none;
+}
+
+:host ::ng-deep .p-password-input:focus {
+  border-bottom-color: #0f172a;
+  box-shadow: none;
+}
+
+/* InputNumber */
+:host ::ng-deep .p-inputnumber-input {
+  border: none;
+  border-bottom: 1.5px solid #e2e8f0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.65rem 0 0.65rem 0.25rem;
+  font-size: 0.95rem;
+  color: #0f172a;
+  box-shadow: none;
+}
+
+:host ::ng-deep .p-inputnumber-input:focus {
+  border-bottom-color: #0f172a;
+  box-shadow: none;
+}
+
+/* SelectButton override for role toggle */
+:host ::ng-deep .p-selectbutton .p-button {
+  background: transparent;
+  border: 1.5px solid #e2e8f0;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: all 0.2s ease;
+}
+
+:host ::ng-deep .p-selectbutton .p-button.p-highlight,
+:host ::ng-deep .p-selectbutton .p-button.p-highlight:hover {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #ffffff;
+}
+
+/* ===== TRANSPARENT SUBMIT BUTTON (PrimeNG override) ===== */
+:host ::ng-deep .p-button {
+  background: transparent;
+  border: 1.5px solid #0f172a;
+  color: #0f172a;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.5rem;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  box-shadow: none;
+}
+
+:host ::ng-deep .p-button:hover {
+  background-color: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+:host ::ng-deep .p-button:focus {
+  box-shadow: none;
+}
+
+/* ===== FOOTER ===== */
 .auth-footer {
-  margin-top: 2rem;
+  margin-top: 2.5rem;
   text-align: center;
 }
 
 .auth-footer p {
   margin: 0;
+  font-size: 0.9rem;
+  color: #94a3b8;
 }
 
 .auth-footer a {
-  color: var(--color-primary);
+  color: #0f172a;
   text-decoration: none;
+  font-weight: 600;
 }
 
 .auth-footer a:hover {

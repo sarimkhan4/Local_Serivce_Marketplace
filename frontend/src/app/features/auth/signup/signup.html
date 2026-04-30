@@ -1,6 +1,12 @@
-<div class="auth-container auth-panel">
-  <div class="auth-card-frame auth-card-frame-wide">
-    <div class="auth-card-inner">
+<div class="auth-split-container">
+  <!-- Left Side: Image Container -->
+  <div class="auth-image-side">
+    <img [src]="selectedRole === 'provider' ? 'images/rooftop.jpg' : 'images/electrician.jpg'" alt="Professional service">
+  </div>
+
+  <!-- Right Side: Form Container -->
+  <div class="auth-form-side">
+    <div class="auth-card-inner auth-card-inner-wide">
       
       <div class="auth-header text-center">
         <h2>Create Your Account</h2>
@@ -78,11 +84,7 @@
         <p-button type="submit" [label]="selectedRole === 'customer' ? 'Create Customer Profile' : 'Register Provider Account'" styleClass="w-full" size="large"></p-button>
       </form>
 
-      <div class="auth-footer">
-        <p class="text-sm text-gray-600">
-          Already have an account? <a routerLink="/login" class="font-semibold text-primary">Sign In</a>
-        </p>
-      </div>
+
 
     </div>
   </div>

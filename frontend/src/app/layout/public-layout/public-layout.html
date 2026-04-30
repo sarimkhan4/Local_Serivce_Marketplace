@@ -1,6 +1,6 @@
 <div class="public-wrapper">
   <!-- PrimeNG Menubar -->
-  <nav class="custom-navbar">
+  <nav class="custom-navbar" *ngIf="!isAuthPage">
     <div class="nav-brand-centered" routerLink="/" tabindex="0">
       <span class="logo-text">LSM</span>
     </div>
@@ -40,7 +40,7 @@
     <router-outlet></router-outlet>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer" *ngIf="!isAuthPage">
     <div class="footer-hero">
       <h1 class="hero-text">LSM</h1>
     </div>

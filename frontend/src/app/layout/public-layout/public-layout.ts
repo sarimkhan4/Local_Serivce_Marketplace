@@ -1,4 +1,6 @@
 import { Component, AfterViewInit, NgZone } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
@@ -6,15 +8,24 @@ import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-public-layout',
-  imports: [RouterOutlet, RouterModule, MenubarModule, ButtonModule],
+  imports: [CommonModule, RouterOutlet, RouterModule, MenubarModule, ButtonModule],
   templateUrl: './public-layout.html',
   styleUrl: './public-layout.css',
 })
 export class PublicLayout implements AfterViewInit {
   menuOpen = false;
   menuTimeline: gsap.core.Timeline | null = null;
+  isAuthPage = false;
 
-  constructor(private ngZone: NgZone) {}
+  constructor(private ngZone: NgZone, private router: Router) {
+    // Detect navigation to auth routes to hide navbar/footer
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        const url = event.urlAfterRedirects || event.url;
+        this.isAuthPage = url.startsWith('/login') || url.startsWith('/signup');
+      }
+    });
+  }
 
   ngAfterViewInit() {
     this.ngZone.runOutsideAngular(() => {

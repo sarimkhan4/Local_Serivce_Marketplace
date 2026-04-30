@@ -31,6 +31,7 @@ import { CheckboxModule } from 'primeng/checkbox';
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
+  host: { 'class': 'auth-page' }
 })
 export class Login {
   email = '';

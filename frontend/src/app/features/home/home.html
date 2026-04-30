@@ -15,9 +15,18 @@
     </video>
 
     <h1 class="hero-heading">
-      <span class="line-one">YOUR LOCAL EXPERTS.</span>
-      <span class="line-two">SEAMLESSLY CONNECTED.</span>
+      <span class="line-one">Welcome to</span>
+      <span class="line-two">Local Service Marketplace.</span>
     </h1>
+
+    <!-- <div class="developer-credits">
+      Developed by <span class="dev-name">Sarim</span>
+    </div> -->
+
+    <div class="scroll-indicator">
+      <span class="scroll-text">Scroll For More</span>
+      <div class="vertical-line"></div>
+    </div>
   </section>
 
   <section class="infinite-carousel-section">
@@ -291,20 +300,17 @@
 
     <div class="testimonial-header">
       <div>
-        <span class="eyebrow">What people say</span>
-        <p class="editorial-title">Real Stories.<br><em>Real Results.</em></p>
-      </div>
-      <div class="nav-arrows">
-        <button class="nav-btn" (click)="prevTestimonial()" aria-label="Previous testimonial">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
-        <button class="nav-btn" (click)="nextTestimonial()" aria-label="Next testimonial">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="9 6 15 12 9 18"></polyline>
-          </svg>
-        </button>
+        <span class="reveal-wrapper">
+          <span class="eyebrow">What people say</span>
+        </span>
+        <p class="editorial-title">
+          <span class="reveal-wrapper">
+            <span>Real Stories.</span>
+          </span>
+          <span class="reveal-wrapper">
+            <em>Real Results.</em>
+          </span>
+        </p>
       </div>
     </div>
 
@@ -361,44 +367,6 @@
                 class="author-handle">@pure_minimalism</span></div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 
-  <section class="testimonials-section">
-    <div class="section-header text-center">
-      <h2>Real Experiences, Real Trust</h2>
-      <p>See why thousands of users trust our platform for local service management.</p>
-    </div>
-
-    <div class="carousel-container testimonials-carousel">
-      <p-carousel [value]="testimonials" [numVisible]="2" [numScroll]="1" [circular]="true" [autoplayInterval]="5000">
-        <ng-template let-test #item>
-          <div class="testimonial-card">
-            <div class="test-rating">
-              <i class="pi pi-star-fill" *ngFor="let i of [1,2,3,4,5]"></i>
-            </div>
-            <p class="test-comment">"{{ test.comment }}"</p>
-            <div class="test-customer">
-              <div class="test-avatar">{{ test.avatarInitials }}</div>
-              <div class="test-info">
-                <h4>{{ test.customerName }}</h4>
-                <span class="test-service">Booked: {{ test.serviceReceived }}</span>
-              </div>
-            </div>
-          </div>
-        </ng-template>
-      </p-carousel>
-    </div>
-  </section> -->
-
-  <section class="cta-section">
-    <div class="cta-card">
-      <h2>Ready to grow your local business?</h2>
-      <p>Join thousands of providers scaling their services with our intelligent booking and management tools.</p>
-      <div class="mt-4">
-        <p-button label="Become a Provider Today" size="large"></p-button>
       </div>
     </div>
   </section>

@@ -2,9 +2,8 @@
   display: flex;
   align-items: center;
   background-color: #f4f4f4;
-  justify-content: center;
   text-align: center;
-  padding: 4rem 5%;
+  padding: 4rem 2rem;
   min-height: 65vh;
   position: relative;
   overflow: hidden;
@@ -64,9 +63,12 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* Vertically centers the content */
+  justify-content: flex-start;
+  /* Aligns content to the left */
   overflow: hidden;
-  padding: 0;
+  padding: 0 30px;
+  /* Adds a little padding so text isn't glued to the edge */
   background-color: #000;
   /* Fallback color */
 }
@@ -252,9 +254,12 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* Vertically centers the content */
+  justify-content: flex-start;
+  /* Aligns content to the left */
   overflow: hidden;
-  padding: 0;
+  padding: 0 5%;
+  /* Adds a little padding so text isn't glued to the edge */
   background-color: #000;
   /* Fallback color */
 }
@@ -375,22 +380,75 @@
 }
 
 .hero-heading {
-  font-size: 6rem;
-  /* Massive, bold look */
-  font-weight: 900;
-  line-height: 1.1;
-  text-transform: uppercase;
-  color: #1a1a1a;
+  position: relative;
+  font-size: 1.5rem;
+  line-height: 1.3;
+  margin-left: 0;
+  /* Tighter line height for the massive font */
+  color: #ffffff;
+  /* Contrast against the video background */
   display: flex;
   flex-direction: column;
-  /* Forces the two-line stack perfectly */
-  z-index: 9090909;
+  font-style: italic;
+  text-align: left;
+  /* Ensure text alignment is left */
+  z-index: 10;
+  /* Lowered from your high value for standard stacking */
 }
 
-/* Optional: Make the second line a slightly different color or weight */
+.scroll-indicator {
+  position: absolute;
+  bottom: 0px;
+  /* Distance from the bottom of the screen */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 11px;
+  /* Space between text and line */
+  z-index: 10;
+  color: white;
+  /* Adjust based on your video brightness */
+}
+
+.scroll-text {
+  font-family: 'Inter', sans-serif;
+  /* Use your project's font */
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.vertical-line {
+  width: 0.02rem;
+  height: 50px;
+  /* Adjust length of the line */
+  background-color: white;
+  /* Semi-transparent white */
+}
+
+/* Ensure individual lines inherit the alignment */
+.line-one,
 .line-two {
+  display: block;
+  width: fit-content;
+}
+
+.developer-credits {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  color: #ffffff;
+  z-index: 10;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.dev-name {
+  display: inline-block;
   color: #a78bfa;
-  /* Your purple accent color */
+  font-weight: 700;
+  min-width: 80px;
 }
 
 .full-width-gallery {
@@ -715,6 +773,7 @@
   background: rgba(255, 255, 255, 0.1);
   padding: 4px 12px;
   margin-bottom: 1rem;
+  color: #000;
 }
 
 .editorial-title {
@@ -722,6 +781,7 @@
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.03em;
+  color: #000;
 }
 
 /* The Card Styling */
@@ -877,12 +937,6 @@
 
 .mt-4 {
   margin-top: 1.5rem;
-}
-
-/* Optional: Make the second line a slightly different color or weight */
-.line-two {
-  color: #a78bfa;
-  /* Your purple accent color */
 }
 
 .hero-content {
@@ -1378,4 +1432,10 @@
 
 .mt-4 {
   margin-top: 1.5rem;
+}
+
+/* Clips the text so it 'appears' from the bottom */
+.reveal-wrapper {
+  overflow: hidden;
+  display: block;
 }

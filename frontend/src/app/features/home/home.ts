@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, signal, inject, AfterViewInit, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -25,6 +25,12 @@ interface ServiceItem {
   name: string;
   startingPrice: number;
   image: string
+}
+
+interface FeatureItem {
+  image: string;
+  title: string;
+  description: string;
 }
 
 interface Category {
@@ -71,45 +77,86 @@ export class Home implements OnInit, AfterViewInit {
 
   apiService = inject(ApiService);
 
-  constructor(private authService: AuthService, private router: Router, private dataService: DataService) { }
+  constructor(private authService: AuthService, private router: Router, private dataService: DataService, private ngZone: NgZone) { }
 
 
   ngOnInit() {
+    const testimonialHeader = document.querySelector('.testimonial-header') as HTMLElement;
+    if (testimonialHeader) testimonialHeader.style.opacity = '0';
+    const scrollInd = document.querySelector('.scroll-indicator') as HTMLElement;
+    if (scrollInd) scrollInd.style.opacity = '0';
     const navbar = document.querySelector('.custom-navbar') as HTMLElement;
-    if (navbar) {
-      navbar.style.opacity = '0';
-    }
+    if (navbar) navbar.style.opacity = '0';
 
-    this.apiService.getCategories().subscribe((cats: any) => {
-      this.apiService.getServices().subscribe((srvs: any) => {
-        const dynamicCategories = cats.map((cat: any) => {
-          return {
-            id: cat.categoryId,
-            name: cat.categoryName,
-            icon: 'pi-cog',
-            services: srvs.filter((s: any) => s.category.categoryId === cat.categoryId).map((s: any) => ({
-              id: s.serviceId,
-              name: s.name,
-              startingPrice: 50,
-              image: 'https://primefaces.org/cdn/primeng/images/card-ng.jpg'
-            }))
+    const heroHeading = document.querySelector('.hero-heading') as HTMLElement;
+    if (heroHeading) heroHeading.style.opacity = '0';
+
+    const devCredits = document.querySelector('.developer-credits') as HTMLElement;
+    if (devCredits) devCredits.style.opacity = '0';
+
+    this.apiService.getCategories().subscribe({
+      next: (cats: any) => {
+        this.apiService.getServices().subscribe({
+          next: (srvs: any) => {
+            const dynamicCategories = cats.map((cat: any) => {
+              return {
+                id: cat.categoryId,
+                name: cat.categoryName,
+                icon: 'pi-cog',
+                services: srvs.filter((s: any) => s.category.categoryId === cat.categoryId).map((s: any) => ({
+                  id: s.serviceId,
+                  name: s.name,
+                  startingPrice: 50,
+                  image: 'https://primefaces.org/cdn/primeng/images/card-ng.jpg'
+                }))
+              }
+            });
+            this.categories = dynamicCategories;
+            if (this.categories.length > 0) {
+              this.selectedCategoryId = this.categories[0].id;
+            }
+            this.loadingCategories.set(false);
+          },
+          error: (err) => {
+            console.error('Failed to load services', err);
+            this.loadingCategories.set(false);
           }
         });
-        this.categories = dynamicCategories;
-        if (this.categories.length > 0) {
-          this.selectedCategoryId = this.categories[0].id;
-        }
+      },
+      error: (err) => {
+        console.error('Failed to load categories', err);
         this.loadingCategories.set(false);
-      });
+      }
     });
   }
 
   ngAfterViewInit() {
+    this.ngZone.runOutsideAngular(() => {
 
-    const tl = gsap.timeline();
+    setTimeout(() => {
+      const tlHeader = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".testimonial-header",
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      });
+
+      tlHeader.from(".testimonial-header .reveal-wrapper > *", {
+        y: "100%",            // Moves from completely below the 'window'
+        opacity: 0,
+        duration: 1.0,        // Time for each line to rise
+        ease: "power4.out",
+        // By setting stagger to 0.8 or 1.0, the next line 
+        // only begins once the previous one is nearly finished.
+        stagger: 0.8
+      });
+    }, 100);
+
+    const assemblyTl = gsap.timeline();
 
     // Assembly: Move K, D down and O, A up into the center line
-    tl.to(".letter", {
+    assemblyTl.to(".letter", {
       y: 0,
       opacity: 1,
       duration: 2.5,
@@ -118,28 +165,30 @@ export class Home implements OnInit, AfterViewInit {
     })
 
       // The Hold
-      .to({}, { duration: 0.6})
+      .to({}, { duration: 0.8 })
 
-      // Curtain Reveal
-      .to(".reveal-curtain", {
-        yPercent: -100,
-        duration: 2,
-        ease: "power4.inOut",
-      })
-      
-
-      .from(".hero-content", {
-        opacity: 0,
-        y: 40,
-        duration: 1.5,
-        ease: "power3.out"
-      }, "-=1.2")
-      .to('.custom-navbar', {
-        opacity: 1,
-        duration: 1.5,
-        ease: "power2.out"
-      }, "-=0.5");
-
+    // Curtain Reveal
+    assemblyTl.to(".reveal-curtain", {
+      yPercent: -100,
+      duration: 2,
+      ease: "power4.inOut",
+    })
+      .add("revealContent", "-=0.5") // Create a timestamp label here
+      .fromTo(".hero-heading", { opacity: 0 }, { opacity: 1, duration: 2.5 }, "revealContent")
+      .to('.custom-navbar', { opacity: 1, duration: 2.5 }, "revealContent") // Starts at the same time
+      .fromTo(".developer-credits", { opacity: 0 }, { opacity: 1, duration: 2.5 }, "revealContent+=0.2") // Starts slightly after
+      .fromTo(".scroll-indicator",
+        {
+          opacity: 0,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 2.5,
+          ease: "power2.out"
+        },
+        "revealContent+=0.3" // Starts a tiny bit after the heading for a staggered look
+      );
 
     // // Cinematic Deep Parallax
     // gsap.to(".hero-video-bg", {
@@ -169,6 +218,25 @@ export class Home implements OnInit, AfterViewInit {
     if (this.heroVideo && this.heroVideo.nativeElement) {
       this.heroVideo.nativeElement.muted = true;
       this.heroVideo.nativeElement.play().catch(e => console.error('Video play error:', e));
+    }
+
+    // Developer Names Animation Loop
+    const names = ["Sarim", "Hunain", "Umer", "Maaz"];
+    let currentIndex = 0;
+    const devNameElement = document.querySelector('.dev-name');
+    if (devNameElement) {
+      setInterval(() => {
+        gsap.to(devNameElement, {
+          y: -10, opacity: 0, duration: 0.4, ease: "power2.in", onComplete: () => {
+            currentIndex = (currentIndex + 1) % names.length;
+            devNameElement.textContent = names[currentIndex];
+            gsap.fromTo(devNameElement,
+              { y: 10, opacity: 0 },
+              { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" }
+            );
+          }
+        });
+      }, 3000);
     }
 
     const cursor = document.querySelector('.custom-cursor');
@@ -265,7 +333,15 @@ export class Home implements OnInit, AfterViewInit {
         }
       );
     }, 100);
+
+    // Force ScrollTrigger to recalculate after potential image loading
+    // to prevent sudden jumps from incorrect pin-spacer heights
+    setTimeout(() => ScrollTrigger.refresh(), 500);
+    setTimeout(() => ScrollTrigger.refresh(), 1500);
+    });
   }
+
+
 
   onSaveService(service: any, categoryName: string) {
     if (this.authService.isAuthenticated()) {

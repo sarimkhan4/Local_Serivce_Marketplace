@@ -93,6 +93,9 @@ export class Bookings implements OnInit {
 
   async ngOnInit() {
     await this.loadBookings();
+    // Load reviews for all bookings
+    const bookingIds = this.bookings().map(b => b.id);
+    await this.bookingService.loadReviewsForBookings(bookingIds);
   }
 
   async loadBookings() {
@@ -169,10 +172,31 @@ export class Bookings implements OnInit {
     }
 
     try {
-      await lastValueFrom(this.apiService.createReview(this.reviewTarget.id, this.reviewRating, this.reviewComment));
+      const currentUser = this.authService.currentUser();
+      const customerName = currentUser ? `${currentUser.firstName} ${currentUser.lastName}`.trim() : 'Anonymous';
+      const reviewData = {
+        bookingId: this.reviewTarget.id,
+        serviceId: this.reviewTarget.serviceId,
+        providerId: this.reviewTarget.providerId,
+        customerId: currentUser?.id || '',
+        customerName: customerName,
+        customerInitials: this.getInitials(customerName),
+        customerColor: this.getRandomColor(customerName),
+        rating: this.reviewRating,
+        comment: this.reviewComment,
+        serviceName: this.reviewTarget.serviceName,
+        providerName: this.reviewTarget.providerName,
+        providerInitials: this.reviewTarget.providerInitials,
+        providerColor: this.reviewTarget.providerColor
+      };
+
+      await this.bookingService.addReview(this.reviewTarget.id, reviewData);
       this.messageService.add({ severity: 'success', summary: 'Review Submitted!', detail: 'Thank you for your feedback.', life: 3000 });
       this.showReviewDialog = false;
-      //
+
+      // Refresh reviews list
+      const bookingIds = this.bookings().map(b => b.id);
+      await this.bookingService.loadReviewsForBookings(bookingIds);
     } catch (e) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Could not submit review' });
     }

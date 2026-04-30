@@ -76,6 +76,10 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/reviews/booking/${bookingId}`);
   }
 
+  getProviderReviews(providerId: string) {
+    return this.http.get(`${this.baseUrl}/reviews/provider/${providerId}`);
+  }
+
   createReview(bookingId: string, rating: number, comment: string) {
     return this.http.post(`${this.baseUrl}/reviews/booking/${bookingId}`, { rating, comment });
   }

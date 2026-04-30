@@ -139,26 +139,103 @@ export class BookingService {
   private _reviews = signal<Review[]>([]);
   reviews = this._reviews.asReadonly();
 
-  /** Load reviews for a set of bookings (stub — extend when backend exposes route) */
-  async loadReviews(_bookingIds: string[]) {
-    this._reviews.set([]);
+  /** Load reviews for a customer by fetching reviews for their bookings */
+  async loadReviewsForBookings(bookingIds: string[]) {
+    if (!bookingIds.length) {
+      this._reviews.set([]);
+      return;
+    }
+    try {
+      const reviewPromises = bookingIds.map(id =>
+        lastValueFrom(this.apiService.getBookingReview(id)).catch(() => null)
+      );
+      const results = await Promise.all(reviewPromises);
+      const validReviews = results
+        .filter((r: any): r is any => r && r.reviewId)
+        .map((r: any) => ({
+          id: r.reviewId.toString(),
+          bookingId: r.booking?.bookingId?.toString() || '',
+          serviceId: r.booking?.services?.[0]?.id?.toString(),
+          providerId: r.provider?.userId?.toString(),
+          customerId: r.customer?.userId?.toString(),
+          customerName: r.customer?.name || 'Anonymous',
+          customerInitials: this.getInitials(r.customer?.name || 'AN'),
+          customerColor: this.getRandomColor(r.customer?.name),
+          rating: r.rating,
+          comment: r.comment || '',
+          createdAt: new Date(r.createdAt),
+          serviceName: r.booking?.services?.[0]?.name || 'Service',
+          providerName: r.provider?.name || 'Provider',
+          providerInitials: this.getInitials(r.provider?.name || 'PR'),
+          providerColor: this.getRandomColor(r.provider?.name)
+        }));
+      this._reviews.set(validReviews);
+    } catch (e) {
+      console.error('[BookingService] Failed to load reviews', e);
+      this._reviews.set([]);
+    }
+  }
+
+  /** Load all reviews for a specific provider */
+  async loadProviderReviews(providerId: string) {
+    try {
+      const response: any = await lastValueFrom(this.apiService.getProviderReviews(providerId));
+      const reviews = (response || []).map((r: any) => ({
+        id: r.reviewId?.toString() || Math.random().toString(36).substring(2, 9),
+        bookingId: r.booking?.bookingId?.toString() || '',
+        serviceId: r.booking?.services?.[0]?.id?.toString(),
+        providerId: r.provider?.userId?.toString() || providerId,
+        customerId: r.customer?.userId?.toString(),
+        customerName: r.customer?.name || 'Anonymous',
+        customerInitials: this.getInitials(r.customer?.name || 'AN'),
+        customerColor: this.getRandomColor(r.customer?.name),
+        rating: r.rating,
+        comment: r.comment || '',
+        createdAt: new Date(r.createdAt || Date.now()),
+        serviceName: r.booking?.services?.[0]?.name || 'Service',
+        providerName: r.provider?.name || 'Provider',
+        providerInitials: this.getInitials(r.provider?.name || 'PR'),
+        providerColor: this.getRandomColor(r.provider?.name)
+      }));
+      this._reviews.update(current => {
+        const existingIds = new Set(current.map(r => r.id));
+        const newReviews = reviews.filter((r: Review) => !existingIds.has(r.id));
+        return [...current, ...newReviews];
+      });
+    } catch (e) {
+      console.error('[BookingService] Failed to load provider reviews', e);
+    }
   }
 
   async addReview(bookingId: string, review: Omit<Review, 'id' | 'createdAt'>) {
     try {
-      await lastValueFrom(this.apiService.createReview(bookingId, review.rating, review.comment));
+      const response: any = await lastValueFrom(this.apiService.createReview(bookingId, review.rating, review.comment));
       // Optimistically add the review to local state
       const newReview: Review = {
         ...review,
-        id: Math.random().toString(36).substring(2, 9),
+        id: response?.reviewId?.toString() || Math.random().toString(36).substring(2, 9),
         createdAt: new Date()
       };
       this._reviews.update(list => [...list, newReview]);
-    } catch (e) { console.error('[BookingService] addReview failed', e); }
+      return newReview;
+    } catch (e) {
+      console.error('[BookingService] addReview failed', e);
+      throw e;
+    }
   }
 
   hasReview(bookingId: string): boolean {
     return this._reviews().some(r => r.bookingId === bookingId);
+  }
+
+  private getInitials(name: string): string {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  }
+
+  private getRandomColor(name: string = ''): string {
+    const colors = ['#14b8a6', '#6366f1', '#f59e0b', '#ef4444', '#8b5cf6', '#22c55e', '#ec4899'];
+    const index = name.length > 0 ? name.charCodeAt(0) % colors.length : 0;
+    return colors[index];
   }
 
   // ─────────────────────────────────────────

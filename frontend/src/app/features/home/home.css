@@ -381,15 +381,15 @@
 
 .hero-heading {
   position: relative;
-  font-size: 1.5rem;
-  line-height: 1.3;
+  font-size: 3rem;
+  font-family: 'Junge';
+  line-height: 1.1;
   margin-left: 0;
   /* Tighter line height for the massive font */
   color: #ffffff;
   /* Contrast against the video background */
   display: flex;
   flex-direction: column;
-  font-style: italic;
   text-align: left;
   /* Ensure text alignment is left */
   z-index: 10;
@@ -413,10 +413,11 @@
 }
 
 .scroll-text {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Fira Sans', sans-serif;
   /* Use your project's font */
   font-size: 0.7rem;
   text-transform: uppercase;
+  letter-spacing: 0.07rem;
 }
 
 .vertical-line {

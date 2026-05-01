@@ -360,6 +360,12 @@ export class Bookings implements OnInit {
         errorMessage = 'Server error occurred. Please try again later.';
       }
       
+      // Handle specific case where error message indicates duplicate review
+      if (error.error?.message?.includes('already exists') || 
+          error.error?.message?.includes('Review already exists')) {
+        errorMessage = 'You have already submitted a review for this booking.';
+      }
+      
       this.messageService.add({
         severity: 'error',
         summary: 'Review Submission Failed',

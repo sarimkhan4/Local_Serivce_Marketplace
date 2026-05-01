@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { User } from './user.entity';
 
 /**
@@ -21,6 +21,9 @@ export class Address {
 
   @Column({ name: 'zip_code', length: 20 })
   zipCode: string;
+
+  @Column({ name: 'user_id', type: 'int' })
+  userId: number;
 
   // An address belongs to a single user (M:1 relationship)
   @ManyToOne(() => User, { onDelete: 'CASCADE' })

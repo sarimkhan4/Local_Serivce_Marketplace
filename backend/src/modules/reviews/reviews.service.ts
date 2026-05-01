@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, ConflictException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Review } from '../../entities/review.entity';
 
@@ -21,15 +21,15 @@ export class ReviewsService {
     try {
       // Check if review already exists for this booking
       const existingReview = await this.reviewRepository.findOne({
-        where: { booking: { bookingId } as any }
+        where: { bookingId }
       });
       
       if (existingReview) {
-        throw new Error('Review already exists for this booking');
+        throw new ConflictException('Review already exists for this booking');
       }
       
       const review = this.reviewRepository.create({
-        booking: { bookingId } as any,
+        bookingId,
         rating,
         comment
       });
@@ -45,7 +45,7 @@ export class ReviewsService {
    * Get a review by booking ID
    */
   async getReviewByBooking(bookingId: number): Promise<Review | null> {
-    return this.reviewRepository.findOneBy({ booking: { bookingId } as any });
+    return this.reviewRepository.findOneBy({ bookingId });
   }
 
   /**

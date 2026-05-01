@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, BadRequestException , UseGuards} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, BadRequestException, ConflictException, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { ReviewsService } from './reviews.service';
@@ -31,7 +31,14 @@ export class ReviewsController {
       return await this.reviewsService.leaveReview(id, rating, comment);
     } catch (error) {
       console.error('Error in leaveReview controller:', error);
-      throw error;
+      
+      // Re-throw NestJS HTTP exceptions as-is
+      if (error instanceof BadRequestException || error instanceof ConflictException) {
+        throw error;
+      }
+      
+      // Handle other unexpected errors
+      throw new BadRequestException('Failed to submit review. Please try again.');
     }
   }
 

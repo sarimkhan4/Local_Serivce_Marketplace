@@ -1,0 +1,353 @@
+.categories-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 1rem;
+}
+
+/* Header Section */
+.categories-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  color: white;
+}
+
+.header-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.page-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+/* Search Bar */
+.search-container {
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem 3rem 1rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.search-icon {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+/* Categories Grid */
+.categories-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* Category Cards */
+.category-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  height: 100%;
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+
+.category-card :host(.p-card) .p-card-body {
+  padding: 2rem;
+  height: 100%;
+}
+
+.category-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.category-icon-container {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.category-icon-container i {
+  font-size: 1.8rem;
+  color: white;
+}
+
+.category-card:hover .category-icon-container {
+  transform: scale(1.1);
+}
+
+/* Category Icon Colors */
+.bg-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.bg-cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.bg-yellow { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.bg-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+.bg-green { background: linear-gradient(135deg, #10b981, #059669); }
+.bg-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.bg-gray { background: linear-gradient(135deg, #6b7280, #4b5563); }
+.bg-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.bg-pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+.bg-teal { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+.bg-brown { background: linear-gradient(135deg, #92400e, #78350f); }
+
+.category-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.category-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.category-description {
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.category-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.service-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.browse-action {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #3b82f6;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.category-card:hover .browse-action {
+  color: #1d4ed8;
+  transform: translateX(4px);
+}
+
+/* Skeleton Loading */
+.skeleton-card {
+  pointer-events: none;
+}
+
+.skeleton-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.skeleton-icon {
+  margin-bottom: 1.5rem;
+}
+
+.skeleton-title {
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-desc {
+  margin-bottom: 0.5rem;
+  width: 100% !important;
+}
+
+.skeleton-desc:last-child {
+  width: 60% !important;
+}
+
+/* No Results */
+.no-results {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: white;
+}
+
+.no-results-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.no-results h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.no-results p {
+  opacity: 0.8;
+}
+
+/* Pagination */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.pagination-container ::ng-deep .p-paginator {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-container ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  margin: 0 0.25rem;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.pagination-container ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page:hover {
+  background: #f3f4f6;
+  color: #3b82f6;
+}
+
+.pagination-container ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page.p-paginator-page-selected {
+  background: #3b82f6;
+  color: white;
+}
+
+.pagination-container ::ng-deep .p-paginator .p-paginator-first,
+.pagination-container ::ng-deep .p-paginator .p-paginator-prev,
+.pagination-container ::ng-deep .p-paginator .p-paginator-next,
+.pagination-container ::ng-deep .p-paginator .p-paginator-last {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  margin: 0 0.25rem;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  transition: all 0.3s ease;
+}
+
+.pagination-container ::ng-deep .p-paginator .p-paginator-first:hover,
+.pagination-container ::ng-deep .p-paginator .p-paginator-prev:hover,
+.pagination-container ::ng-deep .p-paginator .p-paginator-next:hover,
+.pagination-container ::ng-deep .p-paginator .p-paginator-last:hover {
+  background: #f3f4f6;
+  color: #3b82f6;
+}
+
+.pagination-container ::ng-deep .p-paginator .p-paginator-current-report {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .categories-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .page-subtitle {
+    font-size: 1rem;
+  }
+  
+  .categories-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .category-card :host(.p-card) .p-card-body {
+    padding: 1.5rem;
+  }
+  
+  .category-name {
+    font-size: 1.25rem;
+  }
+  
+  .category-description {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    max-width: 100%;
+  }
+  
+  .search-input {
+    padding: 0.875rem 2.5rem 0.875rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .search-icon {
+    right: 1rem;
+  }
+}

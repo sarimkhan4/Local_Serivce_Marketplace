@@ -1,0 +1,93 @@
+<div class="categories-container">
+  <!-- Header Section -->
+  <div class="categories-header">
+    <div class="header-content">
+      <h1 class="page-title">Browse Service Categories</h1>
+      <p class="page-subtitle">Explore our wide range of professional services</p>
+      
+      <!-- Search Bar -->
+      <div class="search-container">
+        <input 
+          type="text" 
+          pInputText 
+          placeholder="Search categories..." 
+          class="search-input"
+          (input)="onSearch($event)"
+          [value]="searchTerm()"
+        />
+        <i class="pi pi-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categories Grid -->
+  <div class="categories-content">
+    @if (loading()) {
+      <!-- Loading Skeletons -->
+      <div class="categories-grid">
+        @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; track i) {
+          <p-card class="category-card skeleton-card">
+            <div class="skeleton-content">
+              <p-skeleton width="3rem" height="3rem" shape="circle" class="skeleton-icon"></p-skeleton>
+              <p-skeleton width="80%" height="1.5rem" class="skeleton-title"></p-skeleton>
+              <p-skeleton width="100%" height="1rem" class="skeleton-desc"></p-skeleton>
+              <p-skeleton width="60%" height="1rem" class="skeleton-desc"></p-skeleton>
+            </div>
+          </p-card>
+        }
+      </div>
+    } @else {
+      @if (paginatedCategories().length === 0) {
+        <div class="no-results">
+          <i class="pi pi-search no-results-icon"></i>
+          <h3>No categories found</h3>
+          <p>Try adjusting your search terms</p>
+        </div>
+      } @else {
+        <div class="categories-grid">
+          @for (category of paginatedCategories(); track category.categoryId) {
+            <p-card class="category-card" (click)="viewCategory(category)">
+              <div class="category-content">
+                <div class="category-icon-container" [class]="'bg-' + getCategoryColor(category.categoryName)">
+                  <i class="pi" [class]="getCategoryIcon(category.categoryName)"></i>
+                </div>
+                
+                <div class="category-info">
+                  <h3 class="category-name">{{ category.categoryName }}</h3>
+                  <p class="category-description">{{ category.description }}</p>
+                  <div class="category-footer">
+                    <span class="service-count">
+                      <i class="pi pi-briefcase"></i>
+                      Available Services
+                    </span>
+                    <span class="browse-action">
+                      Browse <i class="pi pi-arrow-right"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </p-card>
+          }
+        </div>
+
+        <!-- Pagination -->
+        @if (totalRecords > rows) {
+          <div class="pagination-container">
+            <p-paginator 
+              [first]="first"
+              [rows]="rows"
+              [totalRecords]="totalRecords"
+              [rowsPerPageOptions]="[12, 24, 36]"
+              (onPageChange)="onPageChange($event)"
+              template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+            >
+              <ng-template pTemplate="CurrentPageReport">
+                Showing {{ first + 1 }} to {{ Math.min(first + rows, totalRecords) }} of {{ totalRecords }} categories
+              </ng-template>
+            </p-paginator>
+          </div>
+        }
+      }
+    }
+  </div>
+</div>

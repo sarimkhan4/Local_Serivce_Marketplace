@@ -101,6 +101,64 @@ function getRandomPakistaniAddress(): {street: string, city: string, state: stri
   };
 }
 
+// Realistic Review Comments
+const realisticReviewComments = [
+  "Excellent service! Very professional and punctual.",
+  "Great work quality. Will definitely hire again.",
+  "Very satisfied with the service. Highly recommended!",
+  "Professional and efficient. Got the job done perfectly.",
+  "Outstanding service provider. Very skilled and reliable.",
+  "Good value for money. Work completed on time.",
+  "Very polite and professional. Great attention to detail.",
+  "Exceeded my expectations. Will use their services again.",
+  "Reliable and trustworthy. Excellent communication throughout.",
+  "Highly professional service. Very pleased with the results.",
+  "Great experience from start to finish. Thank you!",
+  "Prompt service and great work ethics. Very impressed.",
+  "Skilled professional who knows their job well.",
+  "Excellent workmanship and very reasonable prices.",
+  "Very happy with the service quality. Highly recommend!",
+  "Professional approach and great customer service.",
+  "Delivered exactly what was promised. Very satisfied.",
+  "Great attention to detail and very punctual.",
+  "Exceptional service! Will definitely recommend to others.",
+  "Very professional and courteous. Excellent work!",
+  "Reliable service provider with great skills.",
+  "Outstanding quality and very reasonable rates.",
+  "Very pleased with the entire experience.",
+  "Professional and efficient. Great value for money.",
+  "Excellent communication and service delivery.",
+  "Highly skilled and very professional.",
+  "Great work! Exceeded all my expectations.",
+  "Very satisfied with the quality and service.",
+  "Professional, punctual, and reasonably priced.",
+  "Excellent service provider. Will hire again!",
+  "Great work ethics and amazing results.",
+  "Very professional and knowledgeable.",
+  "Outstanding service quality. Highly recommended!",
+  "Pleased with the work and professional attitude.",
+  "Great experience. Reliable and skilled professional.",
+  "Excellent service from start to finish.",
+  "Very professional and reasonably priced.",
+  "Great work quality and excellent customer service.",
+  "Highly recommend their services. Very satisfied!",
+  "Professional, efficient, and great results.",
+  "Excellent workmanship and very professional.",
+  "Very happy with the service. Will use again!",
+  "Great service provider. Punctual and skilled.",
+  "Outstanding work! Very pleased with the results.",
+  "Professional service with great attention to detail.",
+  "Excellent value and high quality work.",
+  "Very professional and reliable service.",
+  "Great experience! Highly recommend to everyone.",
+  "Skilled professional with excellent work ethics.",
+  "Outstanding service quality. Very satisfied!"
+];
+
+function getRandomReviewComment(): string {
+  return realisticReviewComments[Math.floor(Math.random() * realisticReviewComments.length)];
+}
+
 async function seed() {
   const dataSource = new DataSource({
     type: 'mysql',
@@ -117,7 +175,18 @@ async function seed() {
   
   // 1. Categories
   const categories: Category[] = [];
-  const catNames = ['Cleaning', 'Plumbing', 'Electrical', 'Painting', 'Landscaping', 'Pest Control', 'Roofing', 'HVAC', 'Moving', 'Appliance Repair'];
+  const catNames = [
+    'Cleaning', 'Plumbing', 'Electrical', 'Painting', 'Landscaping', 'Pest Control', 
+    'Roofing', 'HVAC', 'Moving', 'Appliance Repair', 'Carpentry', 'Masonry', 'Flooring',
+    'Insulation', 'Windows & Doors', 'Gutter Cleaning', 'Pressure Washing', 'Junk Removal',
+    'Pool Maintenance', 'Tree Service', 'Snow Removal', 'Home Security', 'Solar Installation',
+    'Generator Service', 'Water Treatment', 'Sewer Cleaning', 'Foundation Repair', 'Drywall',
+    'Tiling', 'Countertops', 'Cabinet Installation', 'Lighting', 'Ceiling Fans', 'Smart Home',
+    'Home Theater', 'Furniture Assembly', 'Garage Door', 'Fencing', 'Deck Building',
+    'Patio Construction', 'Concrete Work', 'Asphalt Repair', 'Interior Design', 'Home Organization',
+    'Event Planning', 'Catering', 'Photography', 'Videography', 'DJ Services', 'Live Entertainment',
+    'Party Rentals', 'Wedding Services', 'Event Security'
+  ];
   for (const name of catNames) {
     let cat = await dataSource.manager.findOne(Category, { where: { categoryName: name } });
     if (!cat) {
@@ -160,31 +229,39 @@ async function seed() {
   const customers: Customer[] = [];
   for (let i = 0; i < 350; i++) {
     const name = getRandomPakistaniName();
-    const c = dataSource.manager.create(Customer, {
-      name: name,
-      email: getRandomPakistaniEmail(name),
-      phone: getRandomPakistaniPhone(),
-      password: 'password123',
-      role: 'customer'
-    });
-    await dataSource.manager.save(c);
-    customers.push(c);
+    const email = getRandomPakistaniEmail(name);
+    let existingCustomer = await dataSource.manager.findOne(Customer, { where: { email: email } });
+    if (!existingCustomer) {
+      const c = dataSource.manager.create(Customer, {
+        name: name,
+        email: email,
+        phone: getRandomPakistaniPhone(),
+        password: 'password123',
+        role: 'customer'
+      });
+      await dataSource.manager.save(c);
+      customers.push(c);
+    }
   }
 
   // 4. Providers (Pakistani Data)
   const providers: Provider[] = [];
   for (let i = 0; i < 50; i++) {
     const name = getRandomPakistaniName();
-    const p = dataSource.manager.create(Provider, {
-      name: name,
-      email: getRandomPakistaniEmail(name),
-      phone: getRandomPakistaniPhone(),
-      password: 'password123',
-      role: 'provider',
-      experience: faker.number.int({ min: 1, max: 20 }),
-    });
-    await dataSource.manager.save(p);
-    providers.push(p);
+    const email = getRandomPakistaniEmail(name);
+    let existingProvider = await dataSource.manager.findOne(Provider, { where: { email: email } });
+    if (!existingProvider) {
+      const p = dataSource.manager.create(Provider, {
+        name: name,
+        email: email,
+        phone: getRandomPakistaniPhone(),
+        password: 'password123',
+        role: 'provider',
+        experience: faker.number.int({ min: 1, max: 20 }),
+      });
+      await dataSource.manager.save(p);
+      providers.push(p);
+    }
   }
 
   // 5. Provider Services
@@ -290,7 +367,7 @@ async function seed() {
        const review = dataSource.manager.create(Review, {
          booking: b,
          rating: faker.number.int({ min: 3, max: 5 }),
-         comment: faker.lorem.sentence()
+         comment: getRandomReviewComment()
        });
        await dataSource.manager.save(review);
     }

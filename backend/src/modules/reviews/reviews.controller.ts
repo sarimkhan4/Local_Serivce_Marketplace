@@ -13,16 +13,26 @@ export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   @Post('booking/:bookingId')
-  leaveReview(
+  async leaveReview(
     @Param('bookingId') bookingId: string,
     @Body('rating') rating: number,
     @Body('comment') comment: string
   ) {
-    const id = +bookingId;
-    if (isNaN(id)) {
-      throw new BadRequestException('bookingId must be a valid number');
+    try {
+      const id = +bookingId;
+      if (isNaN(id)) {
+        throw new BadRequestException('bookingId must be a valid number');
+      }
+      
+      if (!rating || rating < 1 || rating > 5) {
+        throw new BadRequestException('Rating must be between 1 and 5');
+      }
+      
+      return await this.reviewsService.leaveReview(id, rating, comment);
+    } catch (error) {
+      console.error('Error in leaveReview controller:', error);
+      throw error;
     }
-    return this.reviewsService.leaveReview(id, rating, comment);
   }
 
   @Get('booking/:bookingId')

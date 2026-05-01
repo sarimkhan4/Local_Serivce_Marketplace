@@ -295,7 +295,12 @@ export class Bookings implements OnInit {
 
   async submitReview() {
     if (!this.validateReview()) {
-      this.errorHandler.showWarning('Please fix the validation errors before submitting.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation Error',
+        detail: 'Please fix the validation errors before submitting.',
+        life: 4000
+      });
       return;
     }
 
@@ -330,14 +335,37 @@ export class Bookings implements OnInit {
         'Provider'
       );
       
-      this.errorHandler.showSuccess('Thank you for your feedback! Your review has been submitted successfully.');
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Review Submitted!',
+        detail: 'Thank you for your feedback! Your review has been submitted successfully.',
+        life: 4000
+      });
+      
       this.showReviewDialog = false;
 
       // Refresh reviews list
       const bookingIds = this.bookings().map(b => b.id);
       await this.bookingService.loadReviewsForBookings(bookingIds);
     } catch (error: any) {
-      this.errorHandler.handleHttpError(error, 'Failed to submit your review. Please try again.');
+      console.error('Review submission error:', error);
+      
+      let errorMessage = 'Failed to submit your review. Please try again.';
+      
+      if (error.status === 400) {
+        errorMessage = error.error?.message || 'Invalid review data provided.';
+      } else if (error.status === 409) {
+        errorMessage = 'You have already submitted a review for this booking.';
+      } else if (error.status === 500) {
+        errorMessage = 'Server error occurred. Please try again later.';
+      }
+      
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Review Submission Failed',
+        detail: errorMessage,
+        life: 5000
+      });
     }
   }
 }

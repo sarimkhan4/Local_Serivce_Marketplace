@@ -18,12 +18,27 @@ export class ReviewsService {
    * Leave a review for a booking
    */
   async leaveReview(bookingId: number, rating: number, comment: string): Promise<Review> {
-    const review = this.reviewRepository.create({
-      booking: { bookingId } as any,
-      rating,
-      comment
-    });
-    return this.reviewRepository.save(review);
+    try {
+      // Check if review already exists for this booking
+      const existingReview = await this.reviewRepository.findOne({
+        where: { booking: { bookingId } as any }
+      });
+      
+      if (existingReview) {
+        throw new Error('Review already exists for this booking');
+      }
+      
+      const review = this.reviewRepository.create({
+        booking: { bookingId } as any,
+        rating,
+        comment
+      });
+      
+      return this.reviewRepository.save(review);
+    } catch (error) {
+      console.error('Error creating review:', error);
+      throw error;
+    }
   }
 
   /**

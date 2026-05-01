@@ -153,10 +153,10 @@
 
   /* --- THE GLASS EFFECT --- */
   /* 1. A semi-transparent white background (Adjust the 0.7 for more/less transparency) */
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.4);
 
   /* 2. The actual blur applied to everything BEHIND this div */
-  backdrop-filter: blur(25px);
+  backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(25px);
   /* Crucial for WebKit/Safari engines */
 
@@ -201,22 +201,26 @@
 .menu-links {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 10px 10px;
   text-align: center;
   width: 100%;
+
+
 }
 
 .menu-links li {
   margin: 4rem 0;
   overflow: hidden;
+  border-bottom: 1px solid black;
 
 }
 
 .menu-links a {
   color: #000;
+  font-family: 'Junge';
+
   text-decoration: none;
   font-size: 5rem;
-  font-weight: 800;
   text-transform: uppercase;
   transition: color 0.3s;
   display: block;
@@ -236,30 +240,33 @@
 }
 
 .site-footer {
-  background-color: #ffffff;
   color: #000000;
   padding: 0rem 0rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Fira Sans', sans-serif;
   overflow: hidden;
   position: relative;
-  min-height: 100px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  height: 40vh;
 }
 
 
 .hero-text {
   font-size: 40rem;
   /* Massive scaling text */
-  font-weight: 900;
   margin: 0;
   line-height: 0.8;
   letter-spacing: 0.9rem;
   text-transform: uppercase;
   text-align: center;
   transform: translateY(30%);
+  font-family: 'Fira Sans';
+  font-weight: 200;
+  letter-spacing: 0.1rem;
+
 }
+
 
 .footer-grid {
   display: grid;

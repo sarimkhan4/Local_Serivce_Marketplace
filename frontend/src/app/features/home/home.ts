@@ -133,19 +133,19 @@ export class Home implements OnInit, AfterViewInit {
       const tlHeader = gsap.timeline({
         scrollTrigger: {
           trigger: ".testimonial-header",
-          start: "top 85%",
+          start: "top 40%",
           toggleActions: "play none none none"
         }
       });
 
       tlHeader.from(".testimonial-header .reveal-wrapper > *", {
-        y: "100%",            // Moves from completely below the 'window'
+        y: "0",            // Moves from completely below the 'window'
         opacity: 0,
         duration: 1.0,        // Time for each line to rise
         ease: "power4.out",
         // By setting stagger to 0.8 or 1.0, the next line 
         // only begins once the previous one is nearly finished.
-        stagger: 0.8
+        stagger: 0.4
       });
     }, 100);
 

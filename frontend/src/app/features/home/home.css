@@ -28,14 +28,15 @@
 
 .lenis-assembly-container {
   display: flex;
-  gap: 3rem;
+  gap: 4rem;
   align-items: center;
   justify-content: center;
 }
 
 .letter {
   font-size: 30rem;
-  font-weight: 900;
+  font-family: 'Laro';
+  letter-spacing: 0.2rem;
   line-height: 1;
   /* Black text becomes transparent when the parent has mix-blend-mode: screen */
   color: black;
@@ -172,13 +173,17 @@
 }
 
 .tool-card h3 {
-  font-weight: 800;
+  font-family: 'Junge';
+  font-size: 20px;
+  font-weight: 300;
   margin-bottom: 0.5rem;
 }
 
 .tool-card p {
   color: #64748b;
   font-size: 0.95rem;
+  font-weight: 200;
+  font-family: 'Fira Sans';
 }
 
 .hero-video-bg,
@@ -381,9 +386,10 @@
 
 .hero-heading {
   position: relative;
-  font-size: 3rem;
+  font-size: 2rem;
   font-family: 'Junge';
-  line-height: 1.1;
+  line-height: 1.3;
+  font-weight: 100;
   margin-left: 0;
   /* Tighter line height for the massive font */
   color: #ffffff;
@@ -415,7 +421,7 @@
 .scroll-text {
   font-family: 'Fira Sans', sans-serif;
   /* Use your project's font */
-  font-size: 0.7rem;
+  font-size: 0.83rem;
   text-transform: uppercase;
   letter-spacing: 0.07rem;
 }
@@ -510,6 +516,7 @@
   /* Fixed height helps prevent layout shifts as the text shrinks */
   display: flex;
   align-items: center;
+  
 }
 
 .main-gallery-heading {
@@ -521,6 +528,7 @@
   width: 100%;
   /* Force hardware acceleration for smooth text scaling */
   will-change: font-size;
+ 
 }
 
 /* Sophisticated outline effect for the second word */
@@ -553,17 +561,18 @@
 
 .category-title {
   font-size: 1.1rem;
-  font-weight: 800;
+  font-family: 'Junge';
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
   margin-bottom: 0.25rem;
   color: #000;
 }
 
 .category-tagline {
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: #666;
   text-transform: lowercase;
+  letter-spacing: 0.07rem;
   font-style: italic;
   /* Ensures exactly 3 words as per instruction */
 }
@@ -821,8 +830,8 @@
 
 .quote-header {
   font-size: 0.9rem;
-  font-weight: 700;
   opacity: 0.6;
+  font-weight: 300;
   margin-bottom: 1.5rem;
 }
 
@@ -1018,6 +1027,10 @@
   width: 100%;
   /* Force hardware acceleration for smooth text scaling */
   will-change: font-size;
+   font-family: 'Junge';
+  font-weight: 100;
+  margin-bottom: 50px;
+  letter-spacing: 0.09rem;
 }
 
 /* Sophisticated outline effect for the second word */
@@ -1238,6 +1251,7 @@
 .testimonial-content-wrapper {
   overflow: hidden;
   width: 100%;
+  min-height: 20px;
   transform: translateZ(0);
   will-change: transform, opacity;
 }
@@ -1315,17 +1329,17 @@
 }
 
 .quote-header {
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 1.2rem;
   opacity: 0.6;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .quote-body {
-  font-size: 2.2rem;
-  line-height: 1.2;
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  font-size: 2.3rem;
+  line-height: 1.4;
+  font-weight: 200;
+  font-family: 'Fira Sans';
+  letter-spacing: 0.2rem;
 }
 
 .quote-footer {
@@ -1336,13 +1350,17 @@
 }
 
 .author-name {
-  font-weight: 700;
+  font-weight: 500;
   font-size: 1rem;
+  font-family: 'Halant';
+  padding-bottom: 5px;
 }
 
 .author-handle {
   font-size: 0.85rem;
   opacity: 0.5;
+  font-family: 'Fira Sans';
+  letter-spacing: 0.07rem;
 }
 
 /* 1. Hide the default cursor when over the testimonial section */

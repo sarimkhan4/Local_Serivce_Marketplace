@@ -186,17 +186,17 @@ export class Home implements OnInit, AfterViewInit {
         "revealContent+=0.3" // Starts a tiny bit after the heading for a staggered look
       );
 
-    // // Cinematic Deep Parallax
-    // gsap.to(".hero-video-bg", {
-    //   yPercent: 80, // High value = much slower background movement
-    //   ease: "none",
-    //   scrollTrigger: {
-    //     trigger: ".hero-section",
-    //     start: "top top",
-    //     end: "bottom top",
-    //     scrub: true, // Tied 1:1 with the scrollbar
-    //   }
-    // });
+    // Cinematic Deep Parallax
+    gsap.to(".hero-video-bg", {
+      yPercent: 80, // High value = much slower background movement
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".hero-section",
+        start: "top top",
+        end: "bottom top",
+        scrub: true, // Tied 1:1 with the scrollbar
+      }
+    });
 
     // Shrink effect on the content for added depth
     gsap.to(".hero-content", {

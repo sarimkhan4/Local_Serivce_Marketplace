@@ -9,6 +9,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageModule } from 'primeng/message';
 import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
 
 import { BookingService } from '../../../core/services/booking.service';
 import { AuthService } from '../../../core/services/auth';
@@ -23,7 +24,7 @@ export interface RatingBreakdownRow {
 @Component({
   selector: 'app-provider-reviews',
   standalone: true,
-  imports: [CommonModule, FormsModule, RatingModule, AvatarModule, ProgressBarModule, ProgressSpinnerModule, MessageModule, ButtonModule],
+  imports: [CommonModule, FormsModule, RatingModule, AvatarModule, ProgressBarModule, ProgressSpinnerModule, MessageModule, ButtonModule, ToastModule],
   templateUrl: './reviews.html',
   styleUrl: './reviews.css',
   providers: [MessageService]
@@ -40,12 +41,7 @@ export class Reviews implements OnInit {
   // Get current provider ID from auth
   currentProviderId = computed(() => this.authService.currentUser()?.id);
 
-  // Filter reviews for the current provider
-  myReviews = computed(() => {
-    const providerId = this.currentProviderId();
-    console.log(`[Reviews] Filtering reviews for provider ID: ${providerId}, total reviews: ${this.bookingService.reviews().length}`);
-    return this.bookingService.reviews().filter(r => r.providerId === providerId);
-  });
+  myReviews = computed(() => this.bookingService.providerReviews());
 
   averageRating = computed(() => {
     const list = this.myReviews();

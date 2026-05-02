@@ -24,7 +24,11 @@ import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/services/auth';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { validateRating, validateReviewComment } from '../../../core/utils/validation.utils';
+import {
+  validateRating,
+  validateReviewComment,
+  describeHttpApiError,
+} from '../../../core/utils/validation.utils';
 import type { TagSeverity } from '../../../core/types/ui.types';
 
 type BookingStatus = 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled';
@@ -127,9 +131,14 @@ export class Bookings implements OnInit {
       let mappedBookings: CustomerBooking[] = [];
       
       if (response && Array.isArray(response) && response.length > 0) {
-        mappedBookings = response.map((b: any) => ({
+        mappedBookings = response.map((b: any) => {
+          const j = b.services?.[0];
+          const svc = j?.service ?? j;
+          const svcName = svc?.name ?? 'General Service';
+          const svcId = (svc?.serviceId ?? svc?.id ?? '').toString();
+          return {
           id: b.bookingId?.toString() || Math.random().toString(36).substr(2, 9),
-          serviceName: b.services?.length ? b.services[0].name : 'General Service',
+          serviceName: svcName,
           providerName: b.provider?.name || 'Unknown Provider',
           providerInitials: this.getInitials(b.provider?.name || 'UP'),
           providerColor: this.getRandomColor(b.provider?.name),
@@ -138,9 +147,10 @@ export class Bookings implements OnInit {
           price: Number(b.totalAmount) || 0,
           status: b.status ? b.status.charAt(0).toUpperCase() + b.status.slice(1).toLowerCase() : 'Pending',
           address: b.address?.street ? `${b.address.street}, ${b.address.city}` : 'No Address',
-          serviceId: b.services?.length ? b.services[0].id : '',
+          serviceId: svcId,
           providerId: b.provider?.userId?.toString() || ''
-        }));
+        };
+        });
       }
       
       console.log('Mapped bookings:', mappedBookings); // Debug logging
@@ -258,10 +268,8 @@ export class Bookings implements OnInit {
 
   async completeBooking(booking: CustomerBooking) {
     try {
-      // Update booking status to completed
-      await this.apiService.updateBookingStatus(booking.id, 'Completed');
+      await this.apiService.updateBookingStatus(booking.id, 'COMPLETED');
       
-      // Update local booking status
       this.bookings.update(bookings => 
         bookings.map(b => 
           b.id === booking.id 
@@ -277,10 +285,10 @@ export class Bookings implements OnInit {
         life: 4000
       });
       
-      // Show review dialog after completion
       setTimeout(() => {
-        this.openReview(booking);
-      }, 1000);
+        const fresh = this.bookings().find(b => b.id === booking.id) ?? booking;
+        this.openReview({ ...fresh, status: 'Completed' });
+      }, 600);
       
     } catch (error: any) {
       console.error('Failed to complete booking:', error);
@@ -307,6 +315,13 @@ export class Bookings implements OnInit {
     if (!this.reviewTarget) return;
 
     try {
+      // Ensure DB reflects COMPLETED before POST /reviews (handles PATCH races / missed updates).
+      try {
+        await lastValueFrom(this.apiService.updateBookingStatus(this.reviewTarget.id, 'COMPLETED'));
+      } catch (syncErr) {
+        console.warn('[Bookings] Pre-review status sync failed:', syncErr);
+      }
+
       const currentUser = this.authService.currentUser();
       const customerName = currentUser ? `${currentUser.firstName} ${currentUser.lastName}`.trim() : 'Anonymous';
       const reviewData = {
@@ -369,12 +384,11 @@ export class Bookings implements OnInit {
         return;
       }
       
-      let errorMessage = 'Failed to submit your review. Please try again.';
-      
-      if (error.status === 400) {
-        errorMessage = error.error?.message || 'Invalid review data provided.';
-      } else if (error.status === 500) {
-        errorMessage = 'Server error occurred. Please try again later.';
+      let errorMessage =
+        describeHttpApiError(error, 'Failed to submit your review. Please try again.') || '';
+      if (error.status === 500) {
+        errorMessage =
+          describeHttpApiError(error, 'Server error. Please try again later.') ?? errorMessage;
       }
       
       this.messageService.add({

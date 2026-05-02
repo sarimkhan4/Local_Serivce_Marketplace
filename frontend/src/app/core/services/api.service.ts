@@ -92,6 +92,14 @@ export class ApiService {
   getBookingPayment(bookingId: string) {
     return this.http.get(`${this.baseUrl}/payments/booking/${bookingId}`);
   }
+
+  getCustomerPayments(customerId: string) {
+    return this.http.get(`${this.baseUrl}/payments/customer/${customerId}`);
+  }
+
+  getProviderPaymentsList(providerId: string) {
+    return this.http.get(`${this.baseUrl}/payments/provider/${providerId}`);
+  }
   
   createPayment(bookingId: string, data: any) {
     return this.http.post(`${this.baseUrl}/payments/booking/${bookingId}`, data);

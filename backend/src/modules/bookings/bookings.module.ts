@@ -13,6 +13,6 @@ import { ResourceOwnerGuard } from '../../common/guards/resource-owner.guard';
     BookingsService,
     ResourceOwnerGuard
   ],
-  exports: [BookingsService]
+  exports: [BookingsService, ResourceOwnerGuard, ...bookingsProviders],
 })
 export class BookingsModule {}

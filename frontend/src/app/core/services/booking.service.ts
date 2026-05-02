@@ -127,22 +127,32 @@ export class BookingService {
     this._payments().filter(p => p.status === 'Completed').reduce((s, p) => s + p.amount, 0)
   );
 
-  /** Placeholder — backend should expose /payments/customer/:id */
-  async loadPayments(_bookingIds: string[]) {
-    this._payments.set([]);
+  /** Load payments for a customer */
+  async loadPaymentsForCustomer(customerId: string) {
+    try {
+      const rows: any = await lastValueFrom(this.apiService.getCustomerPayments(customerId));
+      const list = (rows || []).map((p: any) => this.mapPaymentFromApi(p));
+      this._payments.set(list);
+    } catch (e) {
+      console.error('[BookingService] Failed to load customer payments', e);
+      this._payments.set([]);
+    }
   }
 
   // ─────────────────────────────────────────
-  // Customer Reviews
+  // Customer vs provider reviews (separate signals — no cross-role clobbering)
   // ─────────────────────────────────────────
 
-  private _reviews = signal<Review[]>([]);
-  reviews = this._reviews.asReadonly();
+  private _customerReviews = signal<Review[]>([]);
+  customerReviews = this._customerReviews.asReadonly();
+
+  private _providerReviews = signal<Review[]>([]);
+  providerReviews = this._providerReviews.asReadonly();
 
   /** Load reviews for a customer by fetching reviews for their bookings */
   async loadReviewsForBookings(bookingIds: string[]) {
     if (!bookingIds.length) {
-      this._reviews.set([]);
+      this._customerReviews.set([]);
       return;
     }
     try {
@@ -151,82 +161,30 @@ export class BookingService {
       );
       const results = await Promise.all(reviewPromises);
       const validReviews = results
-        .filter((r: any): r is any => r && r.reviewId)
-        .map((r: any) => {
-          const customerName = r.booking?.customer?.name || r.customer?.name || 'Anonymous';
-          const providerName = r.booking?.provider?.name || r.provider?.name || 'Provider';
-          
-          return {
-            id: r.reviewId.toString(),
-            bookingId: r.booking?.bookingId?.toString() || r.bookingId?.toString() || '',
-            serviceId: r.booking?.services?.[0]?.id?.toString(),
-            providerId: r.booking?.provider?.userId?.toString() || r.provider?.userId?.toString(),
-            customerId: r.booking?.customer?.userId?.toString() || r.customer?.userId?.toString(),
-            customerName: customerName,
-            customerInitials: this.getInitials(customerName),
-            customerColor: this.getRandomColor(customerName),
-            rating: r.rating,
-            comment: r.comment || '',
-            createdAt: new Date(r.createdAt),
-            serviceName: r.booking?.services?.[0]?.name || 'Service',
-            providerName: providerName,
-            providerInitials: this.getInitials(providerName),
-            providerColor: this.getRandomColor(providerName)
-          };
-        });
-      this._reviews.set(validReviews);
+        .map((r: any) =>
+          r?.reviewId != null || r?.review_id != null ? this.mapReviewFromApi(r) : null
+        )
+        .filter((r: Review | null): r is Review => r != null);
+      this._customerReviews.set(validReviews);
     } catch (e) {
       console.error('[BookingService] Failed to load reviews', e);
-      this._reviews.set([]);
+      this._customerReviews.set([]);
     }
   }
 
-  /** Load all reviews for a specific provider */
+  /** Load all reviews for a specific provider (replaces provider-side cache only). */
   async loadProviderReviews(providerId: string) {
     try {
-      console.log(`[BookingService] Loading reviews for provider ID: ${providerId}`);
-      const response: any = await lastValueFrom(this.apiService.getProviderReviews(providerId));
-      console.log(`[BookingService] Raw API response:`, response);
-      
-      const reviews = (response || []).map((r: any) => {
-        // Extract provider ID from nested booking.provider structure
-        const mappedProviderId = r.booking?.provider?.userId?.toString() || 
-                                r.provider?.userId?.toString() || 
-                                providerId;
-        
-        // Customer data is nested under booking.customer
-        const customerName = r.booking?.customer?.name || r.customer?.name || 'Anonymous';
-        const providerName = r.booking?.provider?.name || r.provider?.name || 'Provider';
-        
-        return {
-          id: r.reviewId?.toString() || Math.random().toString(36).substring(2, 9),
-          bookingId: r.booking?.bookingId?.toString() || r.bookingId?.toString() || '',
-          serviceId: r.booking?.services?.[0]?.id?.toString(),
-          providerId: mappedProviderId,
-          customerId: r.booking?.customer?.userId?.toString() || r.customer?.userId?.toString(),
-          customerName: customerName,
-          customerInitials: this.getInitials(customerName),
-          customerColor: this.getRandomColor(customerName),
-          rating: r.rating,
-          comment: r.comment || '',
-          createdAt: new Date(r.createdAt || Date.now()),
-          serviceName: r.booking?.services?.[0]?.name || 'Service',
-          providerName: providerName,
-          providerInitials: this.getInitials(providerName),
-          providerColor: this.getRandomColor(providerName)
-        };
-      });
-      
-      // Sort reviews by date (newest first)
+      const response: unknown = await lastValueFrom(this.apiService.getProviderReviews(providerId));
+      const rows = Array.isArray(response) ? response : [];
+
+      const reviews = rows
+        .map((r: any) => this.mapReviewFromApi(r, providerId))
+        .filter((r: Review | null): r is Review => r != null);
+
       reviews.sort((a: Review, b: Review) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      
-      this._reviews.update(current => {
-        const existingIds = new Set(current.map(r => r.id));
-        const newReviews = reviews.filter((r: Review) => !existingIds.has(r.id));
-        return [...current, ...newReviews];
-      });
-      
-      console.log(`[BookingService] Successfully loaded ${reviews.length} reviews for provider ${providerId}`);
+
+      this._providerReviews.set(reviews);
     } catch (e) {
       console.error('[BookingService] Failed to load provider reviews:', e);
       throw e;
@@ -236,13 +194,15 @@ export class BookingService {
   async addReview(bookingId: string, review: Omit<Review, 'id' | 'createdAt'>) {
     try {
       const response: any = await lastValueFrom(this.apiService.createReview(bookingId, review.rating, review.comment));
-      // Optimistically add the review to local state
-      const newReview: Review = {
-        ...review,
-        id: response?.reviewId?.toString() || Math.random().toString(36).substring(2, 9),
-        createdAt: new Date()
-      };
-      this._reviews.update(list => [...list, newReview]);
+      const mapped = response?.reviewId ? this.mapReviewFromApi(response) : null;
+      const newReview: Review =
+        mapped ??
+        ({
+          ...review,
+          id: response?.reviewId?.toString() || Math.random().toString(36).substring(2, 9),
+          createdAt: new Date(response?.createdAt ?? Date.now()),
+        } as Review);
+      this._customerReviews.update(list => [...list, newReview]);
       return newReview;
     } catch (e) {
       console.error('[BookingService] addReview failed', e);
@@ -251,7 +211,67 @@ export class BookingService {
   }
 
   hasReview(bookingId: string): boolean {
-    return this._reviews().some(r => r.bookingId === bookingId);
+    return this._customerReviews().some(r => r.bookingId === bookingId);
+  }
+
+  private mapReviewFromApi(r: any, fallbackProviderId?: string): Review | null {
+    const rid = r?.reviewId ?? r?.review_id;
+    if (rid === undefined || rid === null) return null;
+    const customerName = r.booking?.customer?.name || r.customer?.name || 'Anonymous';
+    const providerName = r.booking?.provider?.name || r.provider?.name || 'Provider';
+    const mappedProviderId =
+      r.booking?.provider?.userId?.toString() || r.provider?.userId?.toString() || fallbackProviderId || '';
+
+    return {
+      id: String(rid),
+      bookingId: r.booking?.bookingId?.toString() || r.bookingId?.toString() || '',
+      serviceId: r.booking?.services?.[0]?.id?.toString(),
+      providerId: mappedProviderId,
+      customerId: r.booking?.customer?.userId?.toString() || r.customer?.userId?.toString(),
+      customerName,
+      customerInitials: this.getInitials(customerName),
+      customerColor: this.getRandomColor(customerName),
+      rating: r.rating,
+      comment: r.comment || '',
+      createdAt: new Date(r.createdAt ?? Date.now()),
+      serviceName: r.booking?.services?.[0]?.name || 'Service',
+      providerName,
+      providerInitials: this.getInitials(providerName),
+      providerColor: this.getRandomColor(providerName),
+    };
+  }
+
+  private mapPaymentFromApi(p: any): Payment {
+    const rawStatus = (p.paymentStatus ?? '').toString().toUpperCase();
+    let status: PaymentStatus = 'Pending';
+    if (rawStatus === 'PAID' || rawStatus === 'COMPLETED') status = 'Completed';
+    else if (rawStatus === 'FAILED') status = 'Failed';
+    else if (rawStatus === 'REFUNDED') status = 'Refunded';
+
+    const allowed: PaymentMethod[] = [
+      'Credit Card',
+      'Debit Card',
+      'Cash',
+      'Bank Transfer',
+      'JazzCash',
+      'EasyPaisa',
+    ];
+    const methodRaw = (p.method ?? 'Cash').toString();
+    const method = (allowed.includes(methodRaw as PaymentMethod) ? methodRaw : 'Cash') as PaymentMethod;
+
+    const svc = p.booking?.services?.[0];
+
+    return {
+      id: p.paymentId?.toString() ?? '',
+      bookingId: p.booking?.bookingId?.toString() ?? '',
+      amount: Number(p.amount) || 0,
+      method,
+      status,
+      date: new Date(p.date ?? Date.now()),
+      serviceName: svc?.name,
+      providerName: p.booking?.provider?.name,
+      customerName: p.booking?.customer?.name,
+    };
   }
 
   private getInitials(name: string): string {
@@ -334,8 +354,14 @@ export class BookingService {
     this._providerPayments().filter(p => p.status === 'Pending').reduce((s, p) => s + p.amount, 0)
   );
 
-  /** Placeholder — backend should expose /payments/provider/:id */
-  async loadProviderPayments(_providerId: string) {
-    this._providerPayments.set([]);
+  async loadProviderPayments(providerId: string) {
+    try {
+      const rows: any = await lastValueFrom(this.apiService.getProviderPaymentsList(providerId));
+      const list = (rows || []).map((p: any) => this.mapPaymentFromApi(p));
+      this._providerPayments.set(list);
+    } catch (e) {
+      console.error('[BookingService] Failed to load provider payments', e);
+      this._providerPayments.set([]);
+    }
   }
 }

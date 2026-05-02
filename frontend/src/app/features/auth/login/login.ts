@@ -5,9 +5,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth';
 import { DataService } from '../../../core/services/data.service';
-import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 import { RouterModule } from '@angular/router';
-import { validateEmail, validateRequired, FormValidator } from '../../../core/utils/validation.utils';
+import { describeHttpApiError } from '../../../core/utils/validation.utils';
 
 // PrimeNG Modules
 import { CardModule } from 'primeng/card';
@@ -44,7 +43,6 @@ export class Login {
   private authService = inject(AuthService);
   private router = inject(Router);
   private dataService = inject(DataService);
-  private errorHandler = inject(ErrorHandlerService);
   private messageService = inject(MessageService);
   private fb = inject(FormBuilder);
 
@@ -57,12 +55,20 @@ export class Login {
   }
 
   async onSubmit() {
+    this.loginForm.markAllAsTouched();
     if (this.loginForm.invalid) {
+      const e = this.loginForm.get('email')?.errors;
+      const p = this.loginForm.get('password')?.errors;
+      const parts: string[] = [];
+      if (e?.['required']) parts.push('Email is required.');
+      if (e?.['email']) parts.push('Enter a valid email address.');
+      if (p?.['required']) parts.push('Password is required.');
+      if (p?.['minlength']) parts.push('Password must be at least 6 characters.');
       this.messageService.add({
         severity: 'warn',
-        summary: 'Validation Error',
-        detail: 'Please fill out all required fields correctly.',
-        life: 4000
+        summary: 'Cannot sign in yet',
+        detail: parts.length ? parts.join(' ') : 'Please fix the highlighted fields.',
+        life: 5000,
       });
       return;
     }
@@ -113,23 +119,23 @@ export class Login {
       } else {
         this.router.navigate(['/app/customer/dashboard']);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login failed:', error);
-      let errorMessage = 'Login failed. Please check your credentials and try again.';
-      
-      const backendMessage = error.error?.message;
-      
-      if (error.status === 401) {
-        errorMessage = 'Invalid credentials. Please check your email and password.';
-      } else if (backendMessage) {
-        errorMessage = backendMessage;
+      const err = error as { status?: number };
+      let errorMessage =
+        err.status === 401
+          ? 'Invalid email or password. Please try again or reset your password.'
+          : describeHttpApiError(error, 'Unable to reach the server. Check your connection and try again.');
+      const raw = describeHttpApiError(error, '');
+      if (/locked|suspend|disabled/i.test(raw)) {
+        errorMessage = raw;
       }
       
       this.messageService.add({
         severity: 'error',
         summary: 'Login Failed',
         detail: errorMessage,
-        life: 5000
+        life: 6500,
       });
     } finally {
       this.isLoading = false;

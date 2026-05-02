@@ -379,3 +379,33 @@ export class FormValidator {
     return result;
   }
 }
+
+/** NestJS default error body: `{ message: string | string[], statusCode: number }` */
+export function describeHttpApiError(error: unknown, fallback = 'Something went wrong. Please try again.'): string {
+  if (!error || typeof error !== 'object') {
+    return fallback;
+  }
+  const err = error as {
+    status?: number;
+    message?: string;
+    error?: string | Record<string, unknown>;
+  };
+
+  const bodyRaw = err.error;
+  const body =
+    typeof bodyRaw === 'object' && bodyRaw !== null ? (bodyRaw as Record<string, unknown>) : undefined;
+  const msgDirect = typeof bodyRaw === 'string' ? bodyRaw.trim() : '';
+
+  if (msgDirect) {
+    return msgDirect;
+  }
+
+  const m = body?.['message'];
+  if (typeof m === 'string' && m.trim()) return m.trim();
+  if (Array.isArray(m) && m.length) return m.map(String).join('. ');
+
+  if (typeof err.message === 'string' && err.message.trim()) {
+    return err.message.trim();
+  }
+  return fallback;
+}

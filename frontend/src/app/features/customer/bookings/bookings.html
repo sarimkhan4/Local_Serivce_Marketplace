@@ -151,10 +151,10 @@
     </p-dataview>
   </div>
 
-  <section *ngIf="bookingService.reviews().length > 0" class="reviews-section">
+  <section *ngIf="bookingService.customerReviews().length > 0" class="reviews-section">
     <h2 class="text-900 m-0">My Reviews</h2>
     <div class="reviews-section-inner">
-      <div *ngFor="let r of bookingService.reviews()" class="review-card">
+      <div *ngFor="let r of bookingService.customerReviews()" class="review-card">
         <p-avatar
           [label]="r.providerInitials"
           shape="square"

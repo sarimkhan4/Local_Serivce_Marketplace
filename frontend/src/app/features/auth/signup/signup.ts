@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { DataService } from '../../../core/services/data.service';
 import { AuthService } from '../../../core/services/auth';
 import { BookingService } from '../../../core/services/booking.service';
@@ -19,6 +19,21 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+
+import { describeHttpApiError } from '../../../core/utils/validation.utils';
+
+function phoneFlexibleValidator(): ValidatorFn {
+  return (ctrl: AbstractControl): ValidationErrors | null => {
+    const raw = ctrl.value;
+    if (raw === null || raw === undefined || String(raw).trim() === '') return null;
+    const digits = String(raw).replace(/\D/g, '');
+    if (digits.length < 10 || digits.length > 15) return { phoneLength: true };
+    return null;
+  };
+}
+
+/** US ZIP/ZIP+4 style or alphanumeric international postal codes */
+const POSTAL_REGEX = /^(\d{5}(-\d{4})?|[A-Za-z\d][A-Za-z\d\s\-]{2,14})$/;
 
 @Component({
   selector: 'app-signup',
@@ -71,13 +86,13 @@ export class Signup implements OnInit {
       lastName: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-Z\s]+$/)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^[+]?[0-9]{10,15}$/)]],
+      phoneNumber: ['', [Validators.required, phoneFlexibleValidator()]],
       
       // Customer-specific fields
       street: ['', Validators.required],
       city: ['', Validators.required],
       state: ['', Validators.required],
-      zipCode: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
+      zipCode: ['', [Validators.required, Validators.pattern(POSTAL_REGEX)]],
 
       // Provider-specific fields
       companyName: ['', Validators.required],
@@ -100,7 +115,7 @@ export class Signup implements OnInit {
       customerFields.forEach(field => {
         this.signupForm.get(field)?.setValidators([Validators.required]);
         if (field === 'zipCode') {
-           this.signupForm.get(field)?.setValidators([Validators.required, Validators.pattern(/^[0-9]{5}$/)]);
+           this.signupForm.get(field)?.setValidators([Validators.required, Validators.pattern(POSTAL_REGEX)]);
         }
       });
       providerFields.forEach(field => this.signupForm.get(field)?.clearValidators());
@@ -125,27 +140,21 @@ export class Signup implements OnInit {
     this.signupForm.markAllAsTouched();
 
     if (this.signupForm.invalid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Form Invalid',
-        detail: 'Please fill in all required fields correctly.',
-        life: 3000
-      });
+      this.showSignupValidationSummary();
       return;
     }
 
     this.isLoading = true;
     const formValues = this.signupForm.value;
-    
-    console.log(`Signup attempt for ${this.selectedRole}:`, formValues.email);
+    const normalizedPhoneDigits = String(formValues.phoneNumber ?? '').replace(/\D/g, '').slice(0, 15);
     
     const signupData = {
       role: this.selectedRole === 'customer' ? 'Customer' : 'Provider',
       firstName: formValues.firstName,
       lastName: formValues.lastName,
-      email: formValues.email,
+      email: formValues.email.trim(),
       password: formValues.password,
-      phoneNumber: formValues.phoneNumber,
+      phoneNumber: normalizedPhoneDigits.length >= 10 ? normalizedPhoneDigits : formValues.phoneNumber,
       street: formValues.street,
       city: formValues.city,
       state: formValues.state,
@@ -156,19 +165,20 @@ export class Signup implements OnInit {
     };
     
     try {
-      const user = await this.authService.signup(signupData) as any;
-      
+      await this.authService.signup(signupData);
+
+      const newUserId = this.authService.currentUser()?.id;
+
       this.messageService.add({
         severity: 'success',
         summary: 'Registration Successful',
         detail: 'Account created successfully! Redirecting...',
         life: 3000
       });
-      
-      // Save address for customer after successful signup
-      if (this.selectedRole === 'customer' && user?.id && (formValues.street && formValues.city)) {
+
+      if (this.selectedRole === 'customer' && newUserId && formValues.street && formValues.city) {
         try {
-          await this.bookingService.addAddress(user.id, {
+          await this.bookingService.addAddress(newUserId, {
             street: formValues.street,
             city: formValues.city,
             state: formValues.state,
@@ -211,27 +221,60 @@ export class Signup implements OnInit {
       } else {
          this.router.navigate(['/app/provider/dashboard']);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Signup failed:', error);
-      let errorMessage = 'An error occurred during registration. Please try again.';
-      
-      const backendMessage = error.error?.message;
-      
-      if (error.status === 409 || (error.status === 400 && backendMessage === 'Email already in use')) {
-        errorMessage = 'Email already in use';
-      } else if (backendMessage) {
-        errorMessage = backendMessage;
+
+      const err = error as { status?: number };
+      let detail = describeHttpApiError(error, 'Registration could not be completed. Please try again.');
+
+      if (err.status === 409 || /already\s+(in\s+)?use|duplicate|exists/i.test(detail)) {
+        detail = 'This email is already registered. Please sign in or use a different email address.';
       }
-      
+
+      if (err.status === 400 && detail.length < 3) {
+        detail = describeHttpApiError(error, 'Please check your information and try again.');
+      }
+
       this.messageService.add({
         severity: 'error',
         summary: 'Registration Failed',
-        detail: errorMessage,
-        life: 5000
+        detail,
+        life: 6000,
       });
     } finally {
       this.isLoading = false;
     }
+  }
+
+  private showSignupValidationSummary(): void {
+    const f = this.signupForm;
+    const msgs: string[] = [];
+
+    if (f.get('email')?.errors?.['required']) msgs.push('Email is required.');
+    if (f.get('email')?.errors?.['email']) msgs.push('Email format is invalid.');
+
+    if (f.get('phoneNumber')?.errors?.['required']) msgs.push('Phone number is required.');
+    if (f.get('phoneNumber')?.errors?.['phoneLength']) msgs.push('Phone number needs 10–15 digits.');
+
+    const zipErr = f.get('zipCode')?.errors;
+    if (this.selectedRole === 'customer' && (zipErr?.['required'] || zipErr?.['pattern'])) {
+      msgs.push('Postal / ZIP code is invalid (e.g. 12345 or 12345-6789, or an international postal code).');
+    }
+
+    if (f.get('password')?.errors?.['pattern']) {
+      msgs.push('Password needs upper & lower case, a number, and a special character (@$!%*?&).');
+    }
+
+    if (msgs.length === 0) {
+      msgs.push('Please fix the highlighted fields and try again.');
+    }
+
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Check your information',
+      detail: msgs.join(' '),
+      life: 8000,
+    });
   }
 }
 

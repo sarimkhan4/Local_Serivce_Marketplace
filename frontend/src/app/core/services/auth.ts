@@ -103,11 +103,16 @@ export class AuthService {
     }
   }
 
-  logout(): void {
+  /** Clear auth everywhere (signals + storage). Caller may navigate. */
+  clearSession(): void {
     this.currentUser.set(null);
     this.isAuthenticated.set(false);
     localStorage.removeItem('access_token');
     localStorage.removeItem('user');
-    this.router.navigate(['/login']);
+  }
+
+  logout(): void {
+    this.clearSession();
+    void this.router.navigate(['/login'], { replaceUrl: true });
   }
 }

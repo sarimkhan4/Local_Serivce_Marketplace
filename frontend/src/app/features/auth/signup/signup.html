@@ -51,7 +51,7 @@
             <input type="text" pInputText id="phoneNumber" formControlName="phoneNumber" placeholder="+1 234 567 8900" class="w-full" />
           </p-iconfield>
           <small *ngIf="signupForm.get('phoneNumber')?.errors?.['required'] && signupForm.get('phoneNumber')?.touched" class="p-error">Phone is required</small>
-          <small *ngIf="signupForm.get('phoneNumber')?.errors?.['pattern'] && signupForm.get('phoneNumber')?.touched" class="p-error">Invalid phone number</small>
+          <small *ngIf="signupForm.get('phoneNumber')?.errors?.['phoneLength'] && signupForm.get('phoneNumber')?.touched" class="p-error">Use 10–15 digits (spaces or + are okay)</small>
         </div>
 
         <ng-container *ngIf="selectedRole === 'customer'">
@@ -81,7 +81,7 @@
             <label for="zipCode">Postal Code</label>
             <input type="text" pInputText id="zipCode" formControlName="zipCode" placeholder="74200" class="w-full" />
             <small *ngIf="signupForm.get('zipCode')?.errors?.['required'] && signupForm.get('zipCode')?.touched" class="p-error">Postal code is required</small>
-            <small *ngIf="signupForm.get('zipCode')?.errors?.['pattern'] && signupForm.get('zipCode')?.touched" class="p-error">Must be 5 digits</small>
+            <small *ngIf="signupForm.get('zipCode')?.errors?.['pattern'] && signupForm.get('zipCode')?.touched" class="p-error">Valid ZIP/postal required (e.g. 74200, 12345, 12345-6789)</small>
           </div>
         </ng-container>
 

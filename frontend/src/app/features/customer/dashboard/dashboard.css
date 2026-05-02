@@ -176,6 +176,11 @@
   color: #92400e;
 }
 
+.status-cancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
 /* Widget Headers */
 .widget-header {
   display: flex;

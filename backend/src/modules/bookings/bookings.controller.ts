@@ -30,6 +30,17 @@ export class BookingsController {
     return this.bookingsService.createBooking(customerId, providerId, addressId, date, totalAmount);
   }
 
+  /** Static path segments must be registered before the generic `:bookingId` route. */
+  @Get('customer/:customerId')
+  getBookingsByCustomer(@Param('customerId') customerId: string) {
+    return this.bookingsService.getBookingsByCustomer(+customerId);
+  }
+
+  @Get('provider/:providerId')
+  getBookingsByProvider(@Param('providerId') providerId: string) {
+    return this.bookingsService.getBookingsByProvider(+providerId);
+  }
+
   @Post(':bookingId/services')
   addServiceToBooking(
     @Param('bookingId') bookingId: string,
@@ -38,26 +49,16 @@ export class BookingsController {
     return this.bookingsService.addServiceToBooking(+bookingId, serviceId);
   }
 
-  @Get(':bookingId')
-  getBookingDetails(@Param('bookingId') bookingId: string) {
-    return this.bookingsService.getBookingDetails(+bookingId);
-  }
-
-  @Get('provider/:providerId')
-  getBookingsByProvider(@Param('providerId') providerId: string) {
-    return this.bookingsService.getBookingsByProvider(+providerId);
-  }
-
-  @Get('customer/:customerId')
-  getBookingsByCustomer(@Param('customerId') customerId: string) {
-    return this.bookingsService.getBookingsByCustomer(+customerId);
-  }
-
   @Patch(':bookingId/status')
   updateStatus(
     @Param('bookingId') bookingId: string,
     @Body('status') status: string
   ) {
     return this.bookingsService.updateStatus(+bookingId, status);
+  }
+
+  @Get(':bookingId')
+  getBookingDetails(@Param('bookingId') bookingId: string) {
+    return this.bookingsService.getBookingDetails(+bookingId);
   }
 }

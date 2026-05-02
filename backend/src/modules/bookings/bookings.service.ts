@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Booking } from '../../entities/booking.entity';
 import { BookingService } from '../../entities/booking-service.entity';
@@ -111,10 +111,34 @@ export class BookingsService {
   }
 
   /**
-   * Update booking status
+   * Update booking status (normalized to uppercase canonical values)
    */
   async updateStatus(bookingId: number, status: string): Promise<Booking> {
-    await this.bookingRepository.update(bookingId, { status });
-    return this.bookingRepository.findOneBy({ bookingId }) as Promise<Booking>;
+    const normalized = this.normalizeBookingStatus(status);
+    const booking = await this.bookingRepository.findOne({ where: { bookingId } });
+    if (!booking) {
+      throw new NotFoundException(`Booking ${bookingId} not found`);
+    }
+    booking.status = normalized;
+    return this.bookingRepository.save(booking);
+  }
+
+  /** Map common UI / client labels to persisted status strings */
+  private normalizeBookingStatus(raw: string): string {
+    const s = (raw ?? '').trim().toUpperCase().replace(/[\s-]+/g, '_');
+    const aliases: Record<string, string> = {
+      COMPLETE: 'COMPLETED',
+      DONE: 'COMPLETED',
+      COMPLETED: 'COMPLETED',
+      PENDING: 'PENDING',
+      CONFIRM: 'CONFIRMED',
+      CONFIRMED: 'CONFIRMED',
+      CANCELLED: 'CANCELLED',
+      CANCELED: 'CANCELLED',
+      IN_PROGRESS: 'IN_PROGRESS',
+      INPROGRESS: 'IN_PROGRESS',
+    };
+    if (!s) return 'PENDING';
+    return aliases[s] ?? s;
   }
 }

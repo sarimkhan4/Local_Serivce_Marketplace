@@ -56,8 +56,9 @@
                   <td>
                     <span class="status-badge" [ngClass]="{
                         'status-completed': apt.status === 'Completed',
-                        'status-confirmed': apt.status === 'Confirmed',
-                        'status-pending':   apt.status === 'Pending'
+                        'status-confirmed': apt.status === 'Confirmed' || apt.status === 'In Progress',
+                        'status-pending': apt.status === 'Pending',
+                        'status-cancelled': apt.status === 'Cancelled'
                       }">
                       {{ apt.status }}
                     </span>

@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -13,6 +13,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
 import { BookingService, Payment, PaymentMethod, PaymentStatus } from '../../../core/services/booking.service';
+import { AuthService } from '../../../core/services/auth';
 import type { TagSeverity } from '../../../core/types/ui.types';
 
 @Component({
@@ -27,9 +28,10 @@ import type { TagSeverity } from '../../../core/types/ui.types';
   templateUrl: './earnings.html',
   styleUrl: './earnings.css',
 })
-export class Earnings {
+export class Earnings implements OnInit {
   private titleService = inject(Title);
   public bookingService = inject(BookingService);
+  private authService = inject(AuthService);
 
   statusFilter = signal<PaymentStatus | 'All'>('All');
   statusOptions = [
@@ -51,6 +53,13 @@ export class Earnings {
 
   constructor() {
     this.titleService.setTitle('Servicio PRO | Earnings');
+  }
+
+  async ngOnInit() {
+    const id = this.authService.currentUser()?.id;
+    if (id) {
+      await this.bookingService.loadProviderPayments(id);
+    }
   }
 
   getStatusSeverity(status: PaymentStatus): TagSeverity {

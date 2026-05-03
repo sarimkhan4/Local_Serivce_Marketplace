@@ -16,7 +16,6 @@
   z-index: 10000;
   /* Lower than the curtain's 9999 */
   pointer-events: none;
-  mix-blend-mode: difference;
   /* Allows clicks to pass through to the loader if needed */
 }
 

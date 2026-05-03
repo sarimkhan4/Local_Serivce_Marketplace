@@ -1,0 +1,10 @@
+--- frontend/src/app/layout/public-layout/public-layout.css
++++ frontend/src/app/layout/public-layout/public-layout.css
+@@ -10,6 +10,7 @@
+   padding: 0 2rem;
+   z-index: 10000;
+   /* Lower than the curtain's 9999 */
+   pointer-events: none;
++  mix-blend-mode: difference;
+   /* Allows clicks to pass through to the loader if needed */
+ }

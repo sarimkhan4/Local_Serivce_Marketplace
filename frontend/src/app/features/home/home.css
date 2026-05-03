@@ -1461,3 +1461,241 @@
   overflow: hidden;
   display: block;
 }
+
+/* FAQ Section */
+.faq-section {
+  background-color: #f4f4f4;
+  padding: 6rem 5%;
+  display: flex;
+  justify-content: center;
+}
+
+.faq-container {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.faq-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1rem;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.faq-heading {
+  font-size: 2.5rem;
+  font-family: 'Junge';
+  font-weight: 300;
+  margin: 0;
+}
+
+.faq-contact {
+  font-size: 0.9rem;
+  color: #64748b;
+  text-decoration: none;
+  font-family: 'Fira Sans';
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.faq-contact:hover {
+  color: #000;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-item {
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.faq-question-row {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 0;
+  transition: background-color 0.3s ease;
+}
+
+.faq-question-row:hover {
+  background-color: rgba(0,0,0,0.02);
+}
+
+.faq-number {
+  font-size: 1rem;
+  font-family: 'Fira Sans';
+  color: #64748b;
+  width: 3rem;
+}
+
+.faq-question {
+  flex: 1;
+  font-size: 1.1rem;
+  font-family: 'Fira Sans';
+  font-weight: 400;
+  color: #000;
+  text-align: left;
+}
+
+.faq-answer-wrapper {
+  max-height: 0;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.faq-answer-wrapper.open {
+  max-height: 500px;
+  opacity: 1;
+  padding-bottom: 1.5rem;
+}
+
+.faq-answer {
+  font-family: 'Fira Sans';
+  font-size: 1rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 3rem;
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .faq-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+/* Footer Section */
+.app-footer {
+  background-color: #fafafa;
+  padding: 6rem 5% 4rem;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid #eee;
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto 6rem auto;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 4rem;
+}
+
+.footer-brand {
+  font-family: 'Junge';
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: #111;
+  margin: 0;
+  flex: 1;
+}
+
+.footer-tagline {
+  font-family: 'Fira Sans';
+  font-size: 1.25rem;
+  color: #444;
+  margin: 0;
+  flex: 1;
+  text-align: right;
+  font-weight: 300;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.footer-copyright {
+  font-family: 'Fira Sans';
+  font-size: 0.85rem;
+  color: #888;
+  max-width: 300px;
+}
+
+.footer-links-grid {
+  display: flex;
+  gap: 4rem;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.footer-col h4 {
+  font-family: 'Fira Sans';
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+  color: #111;
+}
+
+.footer-col a {
+  font-family: 'Fira Sans';
+  font-size: 0.9rem;
+  color: #666;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-col a:hover {
+  color: #000;
+}
+
+.footer-branding-shadow {
+  position: absolute;
+  bottom: -4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Fira Sans';
+  font-size: 10vw;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.03);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .footer-top {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .footer-tagline {
+    text-align: left;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3rem;
+  }
+  .footer-links-grid {
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+  .footer-branding-shadow {
+    font-size: 15vw;
+    bottom: -2rem;
+  }
+}
+

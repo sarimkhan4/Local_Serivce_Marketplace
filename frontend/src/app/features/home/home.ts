@@ -14,6 +14,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TabsModule } from 'primeng/tabs';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
+import { RouterModule } from '@angular/router';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -56,7 +57,8 @@ interface Testimonial {
     InputTextModule,
     TabsModule,
     CardModule,
-    SkeletonModule
+    SkeletonModule,
+    RouterModule
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',
@@ -70,6 +72,19 @@ export class Home implements OnInit, AfterViewInit {
   // --- Testimonial Carousel State ---
   currentTestimonialIndex = 0;
   readonly totalTestimonials = 4;
+
+  activeIndex: number | null = null;
+  faqs = [
+    { question: 'What is Local Service Marketplace?', answer: 'Local Service Marketplace is a platform connecting customers with vetted local service providers for plumbing, cleaning, electrical work, and more.' },
+    { question: 'How do I book a service?', answer: 'Simply browse our categories, select a service, and click "Book". You can choose your preferred date and provider during checkout.' },
+    { question: 'Are the service providers verified?', answer: 'Yes, all our providers undergo a thorough background check and vetting process to ensure high-quality and safe service.' },
+    { question: 'How does pricing work?', answer: 'Each service has a starting price. The final price may vary based on your specific requirements and the provider you choose.' },
+    { question: 'What if I need to cancel my booking?', answer: 'You can cancel or reschedule your booking up to 24 hours before the scheduled service time without any penalty.' }
+  ];
+
+  toggleFaq(index: number) {
+    this.activeIndex = this.activeIndex === index ? null : index;
+  }
 
   apiService = inject(ApiService);
 
@@ -329,6 +344,24 @@ export class Home implements OnInit, AfterViewInit {
         }
       );
     }, 100);
+
+    setTimeout(() => {
+      gsap.fromTo(".faq-header", 
+        { opacity: 0, y: 20 },
+        { 
+          opacity: 1, y: 0, duration: 1, ease: "power3.out",
+          scrollTrigger: { trigger: ".faq-section", start: "top 80%" }
+        }
+      );
+      
+      gsap.fromTo(".faq-item", 
+        { opacity: 0, y: 20 },
+        { 
+          opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: "power3.out",
+          scrollTrigger: { trigger: ".faq-list", start: "top 85%" }
+        }
+      );
+    }, 150);
 
     // Force ScrollTrigger to recalculate after potential image loading
     // to prevent sudden jumps from incorrect pin-spacer heights

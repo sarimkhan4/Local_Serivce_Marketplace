@@ -1,48 +1,39 @@
-<div class="service-detail-page flex flex-column gap-4">
+<div class="service-detail-page">
 
   <!-- ════ SERVICE FOUND ════ -->
   <ng-container *ngIf="service">
 
     <!-- Back link -->
-    <div>
-      <button
-        class="flex align-items-center gap-2 p-2 border-none bg-transparent text-700 font-semibold cursor-pointer hover:surface-100 border-round transition-colors"
-        (click)="goBack()">
+    <div class="sd-back-row">
+      <button class="sd-back-btn" (click)="goBack()">
         <i class="pi pi-arrow-left"></i>
         Back to Services
       </button>
     </div>
 
     <!-- ── Service Header Card ── -->
-    <div class="surface-card border-1 surface-border border-round-2xl p-5 shadow-1">
-      <div class="flex flex-column sm:flex-row sm:align-items-start gap-4">
+    <div class="sd-header-card">
+      <div class="sd-header-inner">
 
-        <!-- Hero icon -->
-        <div class="flex align-items-center justify-content-center border-round-xl flex-shrink-0"
-          style="width:88px;height:88px;background:linear-gradient(135deg,#ccfbf1,#a7f3d0);">
-          <i class="pi pi-sparkles text-4xl" style="color:#0d9488;"></i>
-        </div>
-
-        <div class="flex flex-column gap-2 flex-1">
-          <span class="bg-green-100 text-green-700 px-3 py-1 border-round-2xl text-sm font-semibold w-fit">
+        <div class="sd-header-content">
+          <span class="sd-category-tag">
             {{service.categoryName}}
           </span>
-          <h1 class="text-3xl font-bold text-900 m-0">{{service.title}}</h1>
-          <p class="text-500 text-base m-0 line-height-3">{{service.description}}</p>
+          <h1 class="sd-title">{{service.title}}</h1>
+          <p class="sd-description">{{service.description}}</p>
 
           <!-- Meta chips -->
-          <div class="flex flex-wrap gap-2 mt-2">
-            <div class="flex align-items-center gap-2 bg-surface-100 px-3 py-2 border-round-2xl text-700 text-sm">
+          <div class="sd-meta-chips">
+            <div class="sd-chip">
               <i class="pi pi-dollar"></i> From ${{ service.basePrice }}
             </div>
-            <div class="flex align-items-center gap-2 bg-surface-100 px-3 py-2 border-round-2xl text-700 text-sm">
-              <i class="pi pi-users"></i> {{ service.providers.length }} provider{{ service.providers.length > 1 ? 's' :
-              '' }}
+            <div class="sd-chip">
+              <i class="pi pi-users"></i> {{ service.providers.length }} provider{{ service.providers.length > 1 ? 's' : '' }}
             </div>
-            <div class="flex align-items-center gap-2 bg-surface-100 px-3 py-2 border-round-2xl text-700 text-sm">
+            <div class="sd-chip">
               <i class="pi pi-verified"></i> Verified Professionals
             </div>
-            <div class="flex align-items-center gap-2 bg-surface-100 px-3 py-2 border-round-2xl text-700 text-sm">
+            <div class="sd-chip">
               <i class="pi pi-bolt"></i> Instant Booking
             </div>
           </div>
@@ -51,85 +42,79 @@
     </div>
 
     <!-- ── Providers Section ── -->
-    <div>
-      <h2 class="text-xl font-semibold text-900 m-0 mb-1">Available Providers</h2>
-      <p class="text-500 text-sm m-0 mb-4">Compare providers, check ratings, and book the one that fits your needs.</p>
+    <div class="sd-providers-section">
+      <h2 class="sd-providers-heading">Available Providers</h2>
+      <p class="sd-providers-subtext">Compare providers, check ratings, and book the one that fits your needs.</p>
 
-      <!-- SKELETON LOADING STATE (Using pure CSS/PrimeFlex) -->
-      <div class="grid" *ngIf="loadingProviders()">
-        <div *ngFor="let i of [0,1,2]" class="col-12 md:col-6 lg:col-4">
-          <div class="surface-card border-1 surface-border border-round-xl p-4 flex flex-column gap-3">
-            <div class="flex align-items-center gap-3">
-              <div class="border-circle bg-surface-200" style="width: 3rem; height: 3rem;"></div>
-              <div class="flex-1">
-                <div class="bg-surface-200 h-1rem w-8 border-round mb-2"></div>
-                <div class="bg-surface-200 h-1rem w-4 border-round"></div>
-              </div>
+      <!-- SKELETON LOADING STATE -->
+      <div class="sd-grid" *ngIf="loadingProviders()">
+        <div *ngFor="let i of [0,1,2]" class="sd-card sd-skeleton-card">
+          <div class="sd-skel-header">
+            <div class="sd-skel-avatar"></div>
+            <div class="sd-skel-lines">
+              <div class="sd-skel-line sd-skel-line--lg"></div>
+              <div class="sd-skel-line sd-skel-line--sm"></div>
             </div>
-            <div class="bg-surface-200 h-3rem w-full border-round"></div>
-            <div class="bg-surface-200 h-2rem w-full border-round mt-2"></div>
           </div>
+          <div class="sd-skel-body"></div>
+          <div class="sd-skel-footer"></div>
         </div>
       </div>
 
       <!-- ACTUAL CONTENT -->
-      <div class="grid" *ngIf="!loadingProviders()">
-        <div *ngFor="let provider of service.providers" class="col-12 md:col-6 lg:col-4">
-          <div
-            class="provider-card surface-card border-1 surface-border border-round-xl p-4 h-full flex flex-column gap-3 shadow-hover transition-all">
+      <div class="sd-grid" *ngIf="!loadingProviders()">
+        <div *ngFor="let provider of service.providers" class="sd-card">
 
-            <div class="flex align-items-center gap-3">
-              <div class="flex align-items-center justify-content-center border-circle flex-shrink-0"
-                [style]="{'background':'linear-gradient(135deg,#14b8a6,#0891b2)', 'color':'#fff', 'font-weight':'700', 'width':'48px', 'height':'48px'}">
-                {{getInitials(provider.name)}}
-              </div>
-              <div class="flex flex-column gap-1 flex-1 min-w-0">
-                <span class="text-900 font-semibold text-base">{{provider.name}}</span>
-                <span class="text-400 text-sm">{{provider.companyName}}</span>
-              </div>
-              <div class="text-right flex-shrink-0">
-                <span class="text-300 text-xs block">Price</span>
-                <span class="text-2xl font-bold" style="color:#0d9488;">${{provider.price}}</span>
-              </div>
+          <!-- Card Header: Avatar + Name + Price -->
+          <div class="sd-card-header">
+            <div class="sd-card-avatar">
+              {{getInitials(provider.name)}}
             </div>
-
-            <hr class="border-none border-top-1 surface-border my-0">
-
-            <p class="text-500 text-sm m-0 line-height-3 flex-1">{{provider.bio}}</p>
-
-            <div class="flex flex-wrap gap-2">
-              <div class="bg-surface-100 flex align-items-center gap-2 py-1 px-2 border-round text-sm">
-                <span class="text-900 font-medium">{{provider.rating}}</span>
-                <i class="pi pi-star-fill text-yellow-500" style="font-size:.75rem;"></i>
-              </div>
-              <div class="bg-surface-100 flex align-items-center gap-2 py-1 px-2 border-round text-sm">
-                <i class="pi pi-comments"></i> {{provider.reviews}} reviews
-              </div>
-              <div class="bg-surface-100 flex align-items-center gap-2 py-1 px-2 border-round text-sm">
-                <i class="pi pi-briefcase"></i> {{provider.yearsExperience}} yrs exp
-              </div>
+            <div class="sd-card-info">
+              <span class="sd-card-name">{{provider.name}}</span>
+              <span class="sd-card-company">{{provider.companyName}}</span>
             </div>
-
-            <div class="flex gap-2">
-              <button
-                class="flex-1 p-3 border-none border-round text-white font-bold cursor-pointer flex align-items-center justify-content-center gap-2 transition-transform active:scale-95"
-                style="background:#0d9488;" (click)="openBooking(provider)">
-                <i class="pi pi-calendar-plus"></i>
-                Book This Provider
-              </button>
-              <button
-                class="p-3 border-1 border-green-500 text-green-500 bg-transparent border-round cursor-pointer hover:bg-green-50 transition-colors"
-                (click)="addToCart(provider)" 
-                [attr.aria-label]="'Add ' + provider.name + ' to cart'">
-                <i class="pi pi-shopping-cart"></i>
-              </button>
-              <button
-                class="p-3 border-1 border-red-500 text-red-500 bg-transparent border-round cursor-pointer hover:bg-red-50 transition-colors"
-                (click)="saveProvider(provider)" 
-                [attr.aria-label]="'Save ' + provider.name">
-                <i class="pi pi-heart"></i>
-              </button>
+            <div class="sd-card-price">
+              <span class="sd-card-price-value">${{provider.price}}</span>
             </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="sd-card-divider"></div>
+
+          <!-- Bio -->
+          <p class="sd-card-bio">{{provider.bio}}</p>
+
+          <!-- Stats -->
+          <div class="sd-card-stats">
+            <div class="sd-stat-badge sd-stat-rating">
+              <i class="pi pi-star-fill"></i>
+              <span>{{provider.rating}}</span>
+            </div>
+            <div class="sd-stat-badge">
+              <i class="pi pi-comments"></i>
+              <span>{{provider.reviews}} reviews</span>
+            </div>
+            <div class="sd-stat-badge">
+              <i class="pi pi-briefcase"></i>
+              <span>{{provider.yearsExperience}} yrs exp</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="sd-card-actions">
+            <button class="sd-btn-book" (click)="openBooking(provider)">
+              <i class="pi pi-calendar-plus"></i>
+              Book This Provider
+            </button>
+            <button class="sd-btn-icon sd-btn-cart" (click)="addToCart(provider)"
+              [attr.aria-label]="'Add ' + provider.name + ' to cart'">
+              <i class="pi pi-shopping-cart"></i>
+            </button>
+            <button class="sd-btn-icon sd-btn-save" (click)="saveProvider(provider)"
+              [attr.aria-label]="'Save ' + provider.name">
+              <i class="pi pi-heart"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -137,113 +122,102 @@
   </ng-container>
 
   <!-- ════ SERVICE NOT FOUND ════ -->
-  <div *ngIf="!service" class="flex flex-column align-items-center justify-content-center py-8 gap-3">
-    <i class="pi pi-exclamation-circle text-5xl text-200"></i>
-    <h2 class="text-600 m-0">Service not found</h2>
-    <button class="p-2 px-4 border-1 surface-border border-round bg-white text-700 font-semibold cursor-pointer"
-      (click)="goBack()">
-      <i class="pi pi-arrow-left mr-2"></i> Back to Services
+  <div *ngIf="!service" class="sd-empty-state">
+    <i class="pi pi-exclamation-circle"></i>
+    <h2>Service not found</h2>
+    <button class="sd-back-btn" (click)="goBack()">
+      <i class="pi pi-arrow-left"></i> Back to Services
     </button>
   </div>
 
 </div>
 
 <!-- ════ CART MODAL (PrimeNG Dialog) ════ -->
-<p-dialog [(visible)]="cartVisible" [modal]="true" [draggable]="false" [resizable]="false" 
+<p-dialog [(visible)]="cartVisible" [modal]="true" [draggable]="false" [resizable]="false"
           [style]="{width: '100%', maxWidth: '28rem'}" [contentStyle]="{'padding': '0', 'border-radius': '1rem'}"
-          [maskStyle]="{'backdrop-filter': 'blur(4px)'}"
-          styleClass="border-round-2xl overflow-hidden shadow-8" 
+          [maskStyle]="{'backdrop-filter': 'blur(6px)', 'background': 'rgba(15,23,42,0.45)'}"
+          styleClass="sd-modal-dialog"
           [showHeader]="false" [closable]="false" appendTo="body"
           (onHide)="closeCartDialog()">
-  <div class="surface-card w-full">
+  <div class="sd-modal">
 
     <!-- Modal Header -->
-    <div class="p-4 border-bottom-1 surface-border flex align-items-center justify-content-between">
-      <div class="flex align-items-center gap-3">
-        <div class="flex align-items-center justify-content-center border-round-lg"
-          style="width:40px;height:40px;background:linear-gradient(135deg,#10b981,#059669);">
-          <i class="pi pi-shopping-cart text-xl" style="color:#ffffff;"></i>
+    <div class="sd-modal-header">
+      <div class="sd-modal-header-left">
+        <div class="sd-modal-icon sd-modal-icon--cart">
+          <i class="pi pi-shopping-cart"></i>
         </div>
-        <div>
-          <div class="text-900 font-bold text-lg">Add to Cart</div>
-          <div class="text-400 text-xs">{{service?.title}}</div>
+        <div class="sd-modal-title-group">
+          <span class="sd-modal-title">Add to Cart</span>
+          <span class="sd-modal-subtitle">{{service?.title}}</span>
         </div>
       </div>
-      <button class="bg-transparent border-none p-2 cursor-pointer text-500 hover:text-900"
-        (click)="cartVisible = false">
+      <button class="sd-modal-close" (click)="cartVisible = false" aria-label="Close dialog">
         <i class="pi pi-times"></i>
       </button>
     </div>
 
-    <div class="p-4">
+    <div class="sd-modal-body">
       <!-- Toast container for messages -->
       <p-toast></p-toast>
 
       <!-- SUCCESS STATE -->
-      <div *ngIf="cartSuccess()" class="flex flex-column align-items-center gap-3 py-2 text-center">
-        <div class="flex align-items-center justify-content-center border-circle"
-          style="width:72px;height:72px;background:#dcfce7;">
-          <i class="pi pi-check-circle text-4xl" style="color:#16a34a;"></i>
+      <div *ngIf="cartSuccess()" class="sd-modal-success">
+        <div class="sd-success-icon">
+          <i class="pi pi-check-circle"></i>
         </div>
-        <h3 class="text-900 font-bold text-xl m-0">Added to Cart!</h3>
-        <p class="text-500 text-sm line-height-3 m-0">
-          <strong class="text-900">{{selectedCartProvider?.name}}</strong> has been added to your cart.
+        <h3>Added to Cart!</h3>
+        <p>
+          <strong>{{selectedCartProvider?.name}}</strong> has been added to your cart.
         </p>
-        <div class="flex gap-2 w-full mt-3">
-          <button
-            class="flex-1 p-3 border-1 surface-border border-round bg-transparent text-700 font-semibold cursor-pointer"
-            (click)="closeCartDialog()">Continue Shopping</button>
-          <button class="flex-1 p-3 border-none border-round text-white font-bold cursor-pointer"
-            style="background:#0d9488;" routerLink="/app/customer/checkout">View Cart</button>
+        <div class="sd-success-actions">
+          <button class="sd-btn-secondary" (click)="closeCartDialog()">Continue Shopping</button>
+          <button class="sd-btn-primary" routerLink="/app/customer/checkout">View Cart</button>
         </div>
       </div>
 
       <!-- CART FORM -->
-      <div *ngIf="!cartSuccess()" class="flex flex-column gap-4">
-        <div class="flex align-items-center gap-3 p-3 border-round-lg" style="background:var(--surface-50);">
-          <div class="flex align-items-center justify-content-center border-circle"
-            [style]="{'background':'linear-gradient(135deg,#10b981,#059669)','color':'#fff','width':'40px','height':'40px','font-weight':'700'}">
+      <div *ngIf="!cartSuccess()" class="sd-modal-form">
+
+        <!-- Provider Info Strip -->
+        <div class="sd-modal-provider">
+          <div class="sd-modal-provider-avatar sd-modal-provider-avatar--cart">
             {{getInitials(selectedCartProvider?.name || '')}}
           </div>
-          <div class="flex flex-column">
-            <span class="text-900 font-semibold text-sm">{{selectedCartProvider?.name}}</span>
-            <span class="text-400 text-xs">{{selectedCartProvider?.companyName}}</span>
+          <div class="sd-modal-provider-info">
+            <span class="sd-modal-provider-name">{{selectedCartProvider?.name}}</span>
+            <span class="sd-modal-provider-company">{{selectedCartProvider?.companyName}}</span>
           </div>
-          <span class="ml-auto text-xl font-bold" style="color:#0d9488;">${{selectedCartProvider?.price}}</span>
+          <span class="sd-modal-provider-price">${{selectedCartProvider?.price}}</span>
         </div>
 
-        <div class="flex flex-column gap-2">
-          <label class="text-700 text-sm font-medium">Preferred Date</label>
-          <input type="date"
-            class="p-3 border-1 surface-border border-round outline-none focus:border-primary transition-colors"
-            [(ngModel)]="cartDate" />
+        <!-- Form Fields -->
+        <div class="sd-form-group">
+          <label class="sd-label">Preferred Date</label>
+          <input type="date" class="sd-input" [(ngModel)]="cartDate" />
         </div>
 
-        <div class="flex flex-column gap-2">
-          <label class="text-700 text-sm font-medium">Preferred Time</label>
-          <input type="time"
-            class="p-3 border-1 surface-border border-round outline-none focus:border-primary transition-colors"
-            [(ngModel)]="cartTime" />
+        <div class="sd-form-group">
+          <label class="sd-label">Preferred Time</label>
+          <input type="time" class="sd-input" [(ngModel)]="cartTime" />
         </div>
 
-        <div class="flex flex-column gap-2">
-          <label class="text-700 text-sm font-medium">Notes <span class="text-400 font-normal">(optional)</span></label>
-          <input type="text" placeholder="e.g. Please bring your own supplies"
-            class="p-3 border-1 surface-border border-round outline-none focus:border-primary transition-colors"
+        <div class="sd-form-group">
+          <label class="sd-label">Notes <span class="sd-label-optional">(optional)</span></label>
+          <input type="text" placeholder="e.g. Please bring your own supplies" class="sd-input"
             [(ngModel)]="cartNotes" />
         </div>
       </div>
     </div>
 
     <!-- Modal Footer -->
-    <div *ngIf="!cartSuccess()" class="p-4 border-top-1 surface-border flex justify-content-end gap-2">
-      <button class="p-2 px-4 border-none bg-transparent text-700 font-semibold cursor-pointer border-round"
-        (click)="cartVisible = false">Cancel</button>
-      <button class="p-2 px-4 border-none border-round text-white font-bold cursor-pointer"
-        [style.background]="canConfirmCart ? '#0d9488' : '#cbd5e1'" 
-        [disabled]="!canConfirmCart || cartLoading()" 
+    <div *ngIf="!cartSuccess()" class="sd-modal-footer">
+      <button class="sd-btn-cancel" (click)="cartVisible = false">Cancel</button>
+      <button class="sd-btn-primary"
+        [class.sd-btn-disabled]="!canConfirmCart || cartLoading()"
+        [disabled]="!canConfirmCart || cartLoading()"
         (click)="confirmAddToCart()">
-        <i *ngIf="cartLoading()" class="pi pi-spin pi-spinner mr-2"></i>
+        <i *ngIf="cartLoading()" class="pi pi-spin pi-spinner"></i>
         {{ cartLoading() ? 'Adding...' : 'Add to Cart' }}
       </button>
     </div>
@@ -251,101 +225,91 @@
 </p-dialog>
 
 <!-- ════ BOOKING MODAL (PrimeNG Dialog) ════ -->
-<p-dialog [(visible)]="bookingVisible" [modal]="true" [draggable]="false" [resizable]="false" 
+<p-dialog [(visible)]="bookingVisible" [modal]="true" [draggable]="false" [resizable]="false"
           [style]="{width: '100%', maxWidth: '28rem'}" [contentStyle]="{'padding': '0', 'border-radius': '1rem'}"
-          [maskStyle]="{'backdrop-filter': 'blur(4px)'}"
-          styleClass="border-round-2xl overflow-hidden shadow-8" 
+          [maskStyle]="{'backdrop-filter': 'blur(6px)', 'background': 'rgba(15,23,42,0.45)'}"
+          styleClass="sd-modal-dialog"
           [showHeader]="false" [closable]="false" appendTo="body"
           (onHide)="onDialogHide()">
-  <div class="surface-card w-full">
+  <div class="sd-modal">
 
     <!-- Modal Header -->
-    <div class="p-4 border-bottom-1 surface-border flex align-items-center justify-content-between">
-      <div class="flex align-items-center gap-3">
-        <div class="flex align-items-center justify-content-center border-round-lg"
-          style="width:40px;height:40px;background:linear-gradient(135deg,#ccfbf1,#a7f3d0);">
-          <i class="pi pi-calendar-plus text-xl" style="color:#0d9488;"></i>
+    <div class="sd-modal-header">
+      <div class="sd-modal-header-left">
+        <div class="sd-modal-icon sd-modal-icon--booking">
+          <i class="pi pi-calendar-plus"></i>
         </div>
-        <div>
-          <div class="text-900 font-bold text-lg">Book Service</div>
-          <div class="text-400 text-xs">{{service?.title}}</div>
+        <div class="sd-modal-title-group">
+          <span class="sd-modal-title">Book Service</span>
+          <span class="sd-modal-subtitle">{{service?.title}}</span>
         </div>
       </div>
-      <button class="bg-transparent border-none p-2 cursor-pointer text-500 hover:text-900"
-        (click)="bookingVisible = false">
+      <button class="sd-modal-close" (click)="bookingVisible = false" aria-label="Close dialog">
         <i class="pi pi-times"></i>
       </button>
     </div>
 
-    <div class="p-4">
+    <div class="sd-modal-body">
       <!-- Toast container for messages -->
       <p-toast></p-toast>
 
       <!-- SUCCESS STATE -->
-      <div *ngIf="bookingSuccess()" class="flex flex-column align-items-center gap-3 py-2 text-center">
-        <div class="flex align-items-center justify-content-center border-circle"
-          style="width:72px;height:72px;background:#dcfce7;">
-          <i class="pi pi-check-circle text-4xl" style="color:#16a34a;"></i>
+      <div *ngIf="bookingSuccess()" class="sd-modal-success">
+        <div class="sd-success-icon">
+          <i class="pi pi-check-circle"></i>
         </div>
-        <h3 class="text-900 font-bold text-xl m-0">Booking Confirmed!</h3>
-        <p class="text-500 text-sm line-height-3 m-0">
-          Your booking with <strong class="text-900">{{selectedProvider?.name}}</strong> has been created successfully.
+        <h3>Booking Confirmed!</h3>
+        <p>
+          Your booking with <strong>{{selectedProvider?.name}}</strong> has been created successfully.
         </p>
-        <div class="flex gap-2 w-full mt-3">
-          <button
-            class="flex-1 p-3 border-1 surface-border border-round bg-transparent text-700 font-semibold cursor-pointer"
-            (click)="onDialogHide()">Keep Browsing</button>
-          <button class="flex-1 p-3 border-none border-round text-white font-bold cursor-pointer"
-            style="background:#0d9488;" (click)="goToBookings()">View Bookings</button>
+        <div class="sd-success-actions">
+          <button class="sd-btn-secondary" (click)="onDialogHide()">Keep Browsing</button>
+          <button class="sd-btn-primary" (click)="goToBookings()">View Bookings</button>
         </div>
       </div>
 
       <!-- BOOKING FORM -->
-      <div *ngIf="!bookingSuccess()" class="flex flex-column gap-4">
-        <div class="flex align-items-center gap-3 p-3 border-round-lg" style="background:var(--surface-50);">
-          <div class="flex align-items-center justify-content-center border-circle"
-            [style]="{'background':'linear-gradient(135deg,#14b8a6,#0891b2)','color':'#fff','width':'40px','height':'40px','font-weight':'700'}">
+      <div *ngIf="!bookingSuccess()" class="sd-modal-form">
+
+        <!-- Provider Info Strip -->
+        <div class="sd-modal-provider">
+          <div class="sd-modal-provider-avatar sd-modal-provider-avatar--booking">
             {{getInitials(selectedProvider?.name || '')}}
           </div>
-          <div class="flex flex-column">
-            <span class="text-900 font-semibold text-sm">{{selectedProvider?.name}}</span>
-            <span class="text-400 text-xs">{{selectedProvider?.companyName}}</span>
+          <div class="sd-modal-provider-info">
+            <span class="sd-modal-provider-name">{{selectedProvider?.name}}</span>
+            <span class="sd-modal-provider-company">{{selectedProvider?.companyName}}</span>
           </div>
-          <span class="ml-auto text-xl font-bold" style="color:#0d9488;">${{selectedProvider?.price}}</span>
+          <span class="sd-modal-provider-price">${{selectedProvider?.price}}</span>
         </div>
 
-        <div class="flex flex-column gap-2">
-          <label class="text-700 text-sm font-medium">Preferred Date</label>
-          <input type="date"
-            class="p-3 border-1 surface-border border-round outline-none focus:border-primary transition-colors"
-            [(ngModel)]="bookingDate" />
+        <!-- Form Fields -->
+        <div class="sd-form-group">
+          <label class="sd-label">Preferred Date</label>
+          <input type="date" class="sd-input" [(ngModel)]="bookingDate" />
         </div>
 
-        <div class="flex flex-column gap-2">
-          <label class="text-700 text-sm font-medium">Preferred Time</label>
-          <input type="time"
-            class="p-3 border-1 surface-border border-round outline-none focus:border-primary transition-colors"
-            [(ngModel)]="bookingTime" />
+        <div class="sd-form-group">
+          <label class="sd-label">Preferred Time</label>
+          <input type="time" class="sd-input" [(ngModel)]="bookingTime" />
         </div>
 
-        <div class="flex flex-column gap-2">
-          <label class="text-700 text-sm font-medium">Notes <span class="text-400 font-normal">(optional)</span></label>
-          <input type="text" placeholder="e.g. Please bring your own supplies"
-            class="p-3 border-1 surface-border border-round outline-none focus:border-primary transition-colors"
+        <div class="sd-form-group">
+          <label class="sd-label">Notes <span class="sd-label-optional">(optional)</span></label>
+          <input type="text" placeholder="e.g. Please bring your own supplies" class="sd-input"
             [(ngModel)]="bookingNotes" />
         </div>
       </div>
     </div>
 
     <!-- Modal Footer -->
-    <div *ngIf="!bookingSuccess()" class="p-4 border-top-1 surface-border flex justify-content-end gap-2">
-      <button class="p-2 px-4 border-none bg-transparent text-700 font-semibold cursor-pointer border-round"
-        (click)="bookingVisible = false">Cancel</button>
-      <button class="p-2 px-4 border-none border-round text-white font-bold cursor-pointer"
-        [style.background]="canConfirm ? '#0d9488' : '#cbd5e1'" 
-        [disabled]="!canConfirm || bookingLoading()" 
+    <div *ngIf="!bookingSuccess()" class="sd-modal-footer">
+      <button class="sd-btn-cancel" (click)="bookingVisible = false">Cancel</button>
+      <button class="sd-btn-primary"
+        [class.sd-btn-disabled]="!canConfirm || bookingLoading()"
+        [disabled]="!canConfirm || bookingLoading()"
         (click)="confirmBooking()">
-        <i *ngIf="bookingLoading()" class="pi pi-spin pi-spinner mr-2"></i>
+        <i *ngIf="bookingLoading()" class="pi pi-spin pi-spinner"></i>
         {{ bookingLoading() ? 'Creating Booking...' : 'Book Now' }}
       </button>
     </div>

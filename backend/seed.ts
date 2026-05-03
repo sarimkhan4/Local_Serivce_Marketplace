@@ -927,7 +927,7 @@ async function seed() {
   for(const user of [...customers, ...providers]) {
      const notif = dataSource.manager.create(Notification, {
         user: user,
-        title: 'Welcome to LSM',
+        title: 'Welcome to your Local Service Marketplace',
         message: 'Thank you for joining our platform.',
         type: NotificationType.SYSTEM_ALERT,
         isRead: false,

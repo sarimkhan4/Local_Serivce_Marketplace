@@ -1,6 +1,6 @@
 .layout-wrapper {
   background-color: var(--color-bg-base, #f8fafc);
-  font-family: var(--font-family, 'Inter', sans-serif);
+  font-family: 'Fira Sans';
 }
 
 .layout-topbar {

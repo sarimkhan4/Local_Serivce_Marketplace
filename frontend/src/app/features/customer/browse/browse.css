@@ -61,7 +61,7 @@
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 0.9375rem;
-  font-family: inherit;
+  font-family: 'Fira Sans';
   background: #fff;
   color: #0f172a;
 }
@@ -89,7 +89,7 @@
   background: #fff;
   color: #334155;
   font-size: 0.875rem;
-  font-family: inherit;
+  font-family: 'Fira Sans';
   cursor: pointer;
 }
 
@@ -155,7 +155,7 @@
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 0.875rem;
-  font-family: inherit;
+  font-family: 'Fira Sans';
   background: #fff;
   color: #0f172a;
 }
@@ -315,7 +315,7 @@
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 600;
-  font-family: inherit;
+  font-family: 'Fira Sans';
   text-decoration: none;
   cursor: pointer;
   border: 1px solid transparent;

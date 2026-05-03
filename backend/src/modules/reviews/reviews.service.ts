@@ -133,6 +133,8 @@ export class ReviewsService {
     console.log(`[ReviewsService] Fetching reviews for provider ID: ${providerId}`);
 
     try {
+      // Single optimized query: eagerly load all relations including booking services
+      // to eliminate the N+1 attachServicesToBookings call
       const reviews = await this.reviewRepository
         .createQueryBuilder('review')
         .leftJoinAndSelect('review.booking', 'booking')
@@ -142,8 +144,37 @@ export class ReviewsService {
         .orderBy('review.createdAt', 'DESC')
         .getMany();
 
-      const bookings = reviews.map((r) => r.booking).filter(Boolean) as Booking[];
-      await this.attachServicesToBookings(bookings);
+      // Batch-load services for all bookings in a single query (no N+1)
+      const bookingIds = [...new Set(
+        reviews.map((r) => r.booking?.bookingId).filter((id) => id != null),
+      )];
+
+      if (bookingIds.length > 0) {
+        const rows = await this.bookingServiceRepository.find({
+          where: { booking: { bookingId: In(bookingIds) } },
+          relations: ['booking', 'service', 'service.category'],
+        });
+
+        const byBooking = new Map<number, { id: number; name: string; category?: unknown }[]>();
+        for (const row of rows) {
+          const bid = row.booking?.bookingId;
+          if (bid == null || !row.service) continue;
+          const list = byBooking.get(bid) ?? [];
+          list.push({
+            id: row.service.serviceId,
+            name: row.service.name,
+            category: row.service.category,
+          });
+          byBooking.set(bid, list);
+        }
+
+        for (const review of reviews) {
+          if (review.booking) {
+            (review.booking as Booking & { services: any[] }).services =
+              byBooking.get(review.booking.bookingId) ?? [];
+          }
+        }
+      }
 
       console.log(`[ReviewsService] Found ${reviews.length} reviews for provider ${providerId}`);
       return reviews;

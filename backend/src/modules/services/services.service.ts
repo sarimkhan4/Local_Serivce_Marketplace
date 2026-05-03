@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { Service } from '../../entities/service.entity';
 import { ProviderService } from '../../entities/provider-service.entity';
 
@@ -18,10 +18,43 @@ export class ServicesService {
   ) {}
 
   /**
-   * Fetch all global services with category
+   * Fetch all global services with category.
+   * Supports optional pagination and search for performance.
+   * When page/limit are omitted, returns all services (backward-compatible).
    */
-  async findAll(): Promise<Service[]> {
-    return this.serviceRepository.find({ relations: ['category'] });
+  async findAll(
+    page?: number,
+    limit?: number,
+    search?: string,
+  ): Promise<{ data: Service[]; total: number; page: number; limit: number; totalPages: number } | Service[]> {
+    // If no pagination params supplied, return plain array (backward-compatible)
+    if (page == null && limit == null && !search) {
+      return this.serviceRepository.find({ relations: ['category'] });
+    }
+
+    const take = limit ?? 20;
+    const skip = ((page ?? 1) - 1) * take;
+
+    const whereClause: any = {};
+    if (search && search.trim()) {
+      whereClause.name = Like(`%${search.trim()}%`);
+    }
+
+    const [data, total] = await this.serviceRepository.findAndCount({
+      where: whereClause,
+      relations: ['category'],
+      order: { serviceId: 'ASC' },
+      skip,
+      take,
+    });
+
+    return {
+      data,
+      total,
+      page: page ?? 1,
+      limit: take,
+      totalPages: Math.ceil(total / take),
+    };
   }
 
   /**

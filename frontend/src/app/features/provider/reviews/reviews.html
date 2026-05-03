@@ -9,19 +9,19 @@
       icon="pi pi-refresh"
       label="Refresh"
       (onClick)="refreshReviews()"
-      [loading]="loading"
-      [disabled]="loading"
+      [loading]="loading()"
+      [disabled]="loading()"
       [outlined]="true">
     </p-button>
   </header>
 
-  <p-message *ngIf="error" [severity]="'error'" [text]="error" [closable]="true"></p-message>
+  <p-message *ngIf="error()" [severity]="'error'" [text]="error()!" [closable]="true"></p-message>
 
-  <div *ngIf="loading" class="provider-reviews__loading">
+  <div *ngIf="loading()" class="provider-reviews__loading">
     <p-progressspinner [style]="{ width: '48px', height: '48px' }"></p-progressspinner>
   </div>
 
-  <ng-container *ngIf="!loading">
+  <ng-container *ngIf="!loading()">
     <section class="provider-reviews__summary" aria-label="Rating summary">
       <div class="provider-reviews__score">
         <span class="provider-reviews__score-num">{{ averageRating() | number: '1.1-1' }}</span>

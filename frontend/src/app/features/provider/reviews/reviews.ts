@@ -1,4 +1,4 @@
-import { Component, inject, computed, OnInit } from '@angular/core';
+import { Component, inject, computed, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -27,7 +27,8 @@ export interface RatingBreakdownRow {
   imports: [CommonModule, FormsModule, RatingModule, AvatarModule, ProgressBarModule, ProgressSpinnerModule, MessageModule, ButtonModule, ToastModule],
   templateUrl: './reviews.html',
   styleUrl: './reviews.css',
-  providers: [MessageService]
+  providers: [MessageService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Reviews implements OnInit {
   private titleService = inject(Title);
@@ -35,8 +36,8 @@ export class Reviews implements OnInit {
   private authService = inject(AuthService);
   private messageService = inject(MessageService);
 
-  loading = false;
-  error: string | null = null;
+  loading = signal(false);
+  error = signal<string | null>(null);
 
   // Get current provider ID from auth
   currentProviderId = computed(() => this.authService.currentUser()?.id);
@@ -66,12 +67,13 @@ export class Reviews implements OnInit {
     this.titleService.setTitle('Servicio PRO | Reviews');
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     const providerId = this.currentProviderId();
     if (providerId) {
-      await this.loadReviews();
+      // Fire and forget — don't block rendering with await
+      this.loadReviews();
     } else {
-      this.error = 'Unable to determine provider ID. Please log in again.';
+      this.error.set('Unable to determine provider ID. Please log in again.');
     }
   }
 
@@ -79,8 +81,8 @@ export class Reviews implements OnInit {
     const providerId = this.currentProviderId();
     if (!providerId) return;
 
-    this.loading = true;
-    this.error = null;
+    this.loading.set(true);
+    this.error.set(null);
     
     try {
       console.log(`[Reviews] Loading reviews for provider: ${providerId}`);
@@ -88,7 +90,7 @@ export class Reviews implements OnInit {
       console.log(`[Reviews] Reviews loaded successfully, count: ${this.myReviews().length}`);
     } catch (e) {
       console.error('[Reviews] Failed to load reviews:', e);
-      this.error = 'Failed to load reviews. Please try again.';
+      this.error.set('Failed to load reviews. Please try again.');
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
@@ -96,7 +98,7 @@ export class Reviews implements OnInit {
         life: 5000
       });
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 

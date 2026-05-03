@@ -12,7 +12,28 @@
     </div>
   </header>
 
-  <section class="provider-services__table-shell" aria-label="Services catalog">
+  <!-- Search Bar -->
+  <div class="provider-services__search">
+    <span class="p-input-icon-left provider-services__search-field">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Search services by name…"
+        class="provider-services__search-input" />
+    </span>
+    <span class="provider-services__records-info">
+      {{ totalRecords }} total services
+    </span>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="provider-services__loading">
+    <p-progressspinner [style]="{ width: '40px', height: '40px' }"></p-progressspinner>
+  </div>
+
+  <section *ngIf="!loading" class="provider-services__table-shell" aria-label="Services catalog">
     <p-table
       [value]="allViewModels"
       sortField="categoryName"
@@ -20,7 +41,7 @@
       rowGroupMode="subheader"
       groupRowsBy="categoryName"
       [scrollable]="true"
-      scrollHeight="75vh"
+      scrollHeight="60vh"
       styleClass="p-datatable-striped provider-services-table">
       <ng-template pTemplate="header">
         <tr>
@@ -69,6 +90,19 @@
       </ng-template>
     </p-table>
   </section>
+
+  <!-- Paginator -->
+  <div *ngIf="!loading && totalRecords > 0" class="provider-services__paginator-wrap">
+    <p-paginator
+      [rows]="pageSize"
+      [totalRecords]="totalRecords"
+      [first]="(currentPage - 1) * pageSize"
+      [rowsPerPageOptions]="[10, 15, 25, 50]"
+      (onPageChange)="onPageChange($event)"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Page {currentPage} of {totalPages}">
+    </p-paginator>
+  </div>
 </div>
 
 <p-dialog

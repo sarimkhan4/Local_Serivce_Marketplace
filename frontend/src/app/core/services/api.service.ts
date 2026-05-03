@@ -23,6 +23,14 @@ export class ApiService {
   getServices() {
     return this.http.get(`${this.baseUrl}/services`);
   }
+
+  getServicesPaginated(page: number, limit: number, search?: string) {
+    let params = `?page=${page}&limit=${limit}`;
+    if (search && search.trim()) {
+      params += `&search=${encodeURIComponent(search.trim())}`;
+    }
+    return this.http.get(`${this.baseUrl}/services${params}`);
+  }
   
   getProviderServices(providerId: string) {
     return this.http.get(`${this.baseUrl}/services/provider/${providerId}`);

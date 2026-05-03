@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Request, Query } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { IsPublic } from '../../common/decorators/public.decorator';
@@ -16,8 +16,14 @@ export class ServicesController {
 
   @IsPublic()
   @Get()
-  getAllServices() {
-    return this.servicesService.findAll();
+  getAllServices(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+  ) {
+    const pageNum = page ? Math.max(1, +page) : undefined;
+    const limitNum = limit ? Math.min(100, Math.max(1, +limit)) : undefined;
+    return this.servicesService.findAll(pageNum, limitNum, search);
   }
 
   @IsPublic()

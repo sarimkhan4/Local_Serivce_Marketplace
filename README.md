@@ -11,6 +11,12 @@ A comprehensive, full-stack platform designed for orchestrating local services. 
 
 ---
 
+<div align="center">
+  <video src="project_lsm.mp4" width="100%" controls autoplay loop muted playsinline></video>
+</div>
+
+---
+
 ## 🚀 Overview
 
 The **Local Service Management System (LSM)** is built using a modern technology stack to ensure performance, scalability, and an excellent developer and user experience. 

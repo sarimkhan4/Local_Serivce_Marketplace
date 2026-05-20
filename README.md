@@ -10,9 +10,7 @@
 A comprehensive, full-stack platform designed for orchestrating local services. Connecting customers with service providers seamlessly, managing everything from scheduling and bookings to payments and reviews.
 
 ---
-<div align="center">
-  <video src="https://github.com/sarimkhan4/Local_Service_Marketplace/raw/main/project_lsm.mp4" width="100%" controls autoplay loop muted playsinline></video>
-</div>
+![Watch the video](https://github.com/sarimkhan4/Local_Service_Marketplace/raw/main/project_lsm.mp4)
 
 ---
 

@@ -1,4 +1,4 @@
-# Local Service Management System (LSM)
+## Local Service Management System (LSM)
 
 ![LSM Banner](https://img.shields.io/badge/LSM-Local%20Service%20Management-blueviolet?style=for-the-badge)
 ![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
